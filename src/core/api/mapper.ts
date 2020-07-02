@@ -1,0 +1,41 @@
+export const databoxMapper = {
+  databoxAcceptanceTime: "acceptanceTime",
+  databoxAllowSubstDelivery: "allowSubstDelivery",
+  databoxAttachmentsCount: "attachmentsCount",
+  databoxDeliveryDate: "deliveryDate",
+  databoxLegalTitleLaw: "legalTitleLaw",
+  databoxLegalTitlePar: "legalTitlePar",
+  databoxLegalTitlePoint: "legalTitlePoint",
+  databoxLegalTitleSect: "legalTitleSect",
+  databoxLegalTitleYear: "legalTitleYear",
+  databoxMessageState: "messageState",
+  databoxMessageType: "messageType",
+  databoxNotRegisteredReason: "notRegisteredReason",
+  databoxPersonalDelivery: "personalDelivery",
+  databoxRecipient: "recipient",
+  databoxRecipientAddress: "recipientAddress",
+  databoxRecipientDataBoxType: "recipientDataBoxType",
+  databoxRecipientDocumentIdent: "recipientDocumentIdent",
+  databoxRecipientDocumentRefNumber: "recipientDocumentRefNumber",
+  databoxRecipientName: "recipientName",
+  databoxSender: "sender",
+  databoxSenderAddress: "senderAddress",
+  databoxSenderDataBoxType: "senderDataBoxType",
+  databoxSenderIdent: "senderIdent",
+  databoxSenderName: "senderName",
+  databoxSenderRefNumber: "senderRefNumber",
+  databoxSubject: "subject",
+  databoxToHands: "toHands"
+};
+
+export const emailMapper = {
+  emailAttachmentsCount: "attachmentsCount",
+  emailDeliveryDate: "deliveryDate",
+  emailMessageId: "messageId",
+  emailNotRegisteredReason: "notRegisteredReason",
+  emailRecipient: "recipient",
+  emailRecipientName: "recipientName",
+  emailSender: "sender",
+  emailSenderName: "senderName",
+  emailSubject: "subject"
+};

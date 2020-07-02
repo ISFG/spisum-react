@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <title>SpisUm</title>
+
+    <meta charset="utf-8" />
+    <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta name="versions-branch" content="{{versions.branch}}" />
+    <meta name="versions-revision" content="{{versions.revision}}" />
+    <meta name="versions-version" content="{{versions.version}}" />
+    <meta name="versions-datetime" content="{{versions.datetime}}" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="%PUBLIC_URL%/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.png" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap&subset=latin-ext" rel="stylesheet"> 
+    <script src="%PUBLIC_URL%/static/js/browser-detector.min.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
+    <script
+      src="%PUBLIC_URL%/static/js/browser-polyfill.min.js?v=<%= htmlWebpackPlugin.options.version %>"
+      async
+    ></script>
+
+    <style>
+      body,
+      html {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.87);
+        margin: 0;
+        height: 100%;
+        font-family: Roboto, Helvetica, Arial, sans-serif !important;
+      }
+
+      #root {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100%;
+        min-height: 0;
+      }
+
+      #unsupported-root,
+      #loader-container {
+        display: none;
+      }
+
+      section.unsupported .gray {
+        opacity: 0.5;
+      }
+
+      section.unsupported .bold {
+        font-weight: 700;
+      }
+
+      section.unsupported p {
+        margin: 0;
+        margin-bottom: 20px;
+      }
+
+      section.unsupported a {
+        color: #354052;
+        text-decoration: none;
+      }
+
+      section.unsupported table {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        vertical-align: middle;
+        border-spacing: 0;
+      }
+
+      section.unsupported .content {
+        text-align: left;
+      }
+
+      section.unsupported .white-placeholder {
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+        padding: 50px;
+        margin-top: 10px;
+      }
+
+      section.unsupported .white-placeholder p.text {
+        line-height: 1.4em;
+      }
+
+      section.unsupported .title {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      section.unsupported .title span {
+        white-space: nowrap;
+      }
+
+      section.unsupported .button {
+        padding: 8px 15px;
+        border-radius: 3px;
+        border: 1px solid #bbced3;
+        margin: 0;
+        font-weight: 600;
+        background-color: white;
+        cursor: pointer;
+      }
+
+      section.unsupported .button.primary {
+        border-color: rgb(255, 152, 0);
+        background-color: rgb(255, 152, 0);
+        color: white;
+      }
+
+      section.unsupported .buttons {
+        padding-top: 10px;
+      }
+
+      @media (max-height: 600px), (max-width: 500px) {
+        section.unsupported table {
+          height: calc(100% - 100px);
+        }
+      }
+
+      .loader-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        align-items: center;
+        justify-content: center;
+      }
+
+      .loader-item {
+        max-height: 100px;
+        max-width: 300px;
+      }
+
+      .loader-spinner {
+        max-height: 300px;
+        max-width: 300px;
+      }
+
+      .loader-text {
+        white-space: nowrap;
+        text-align: center;
+        position: relative;
+      }
+
+      .loader {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .circular {
+        animation: rotate 2s linear infinite;
+        height: 100px;
+        position: relative;
+        width: 100px;
+      }
+
+      .path {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+        stroke: #b6463a;
+        animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+        stroke-linecap: round;
+      }
+
+      @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes dash {
+        0% {
+          stroke-dasharray: 1, 200;
+          stroke-dashoffset: 0;
+        }
+
+        50% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -35;
+        }
+
+        100% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -124;
+        }
+      }
+
+      @keyframes color {
+        100%,
+        0% {
+          stroke: #d62d20;
+        }
+
+        40% {
+          stroke: #0057e7;
+        }
+
+        66% {
+          stroke: #008744;
+        }
+
+        80%,
+        90% {
+          stroke: #ffa700;
+        }
+      }
+
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background: #b3b3b3;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <section class="unsupported">
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td width="500px">
+                <div class="content">
+                  <div class="white-placeholder">
+                    <p class="title">
+                      <span>Aplikaci nelze spustit</span>
+                      <span>(JavaScript required)</span>
+                    </p>
+                    <p class="text">
+                      Omlouváme se, ale aplikace SpisUm vyžaduje zapnutý
+                      JavaScript ve vašem webovém prohlížeči.
+                      <br /><br />
+                      We're sorry, but SpisUm doesn't work properly without
+                      JavaScript enabled.
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </noscript>
+    <section id="unsupported-root" class="unsupported">
+      <table>
+        <tbody>
+          <tr>
+            <td></td>
+            <td width="500px">
+              <div class="content">
+                <div class="white-placeholder">
+                  <p class="title">
+                    Váš internetový prohlížeč je zastaralý
+                  </p>
+                  <p class="text">
+                    Pro větší bezpečnost, rychlost a lepší zkušenost s aplikaci
+                    SpisUm si aktualizujte svůj prohlížeč.
+                  </p>
+                  <table class="buttons">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <a
+                            href="https://www.google.com/intl/cs/chrome/"
+                            class="button primary"
+                            id="unsupported-link"
+                          >
+                            Aktualizovat prohlížeč
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <div id="root">
+      <div id="loader-container" class="loader-container">
+        <div class="loader-spinner">
+          <svg class="circular">
+            <circle
+              class="path"
+              cx="50"
+              cy="50"
+              r="20"
+              fill="none"
+              stroke-width="5"
+              stroke-miterlimit="10"
+            ></circle>
+          </svg>
+        </div>
+        <div class="loader-item">
+          <div id="loader-text" class="loader-text">Načítání...</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

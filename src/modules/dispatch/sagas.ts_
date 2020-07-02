@@ -1,0 +1,3 @@
+import { watchSomeAction } from "./features/someFeature/_sagas";
+
+export default const moduleSaga = [watchSomeAction];

@@ -1,0 +1,3 @@
+import { SomeAction1, SomeAction2 } from "./features/someFeature/_actions"
+
+export type EvidenceActionsType = SomeAction1 | SecondAction2;

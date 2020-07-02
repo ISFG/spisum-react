@@ -1,0 +1,36 @@
+{
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": [
+      "__tests__/**/*",
+      "config/**/*.js",
+      "custom_modules/**/*.ts",
+      "node_modules/**/*.ts",
+      "src-js/**/*.js",
+      "**/*.test.tsx",
+      "**/*.test.ts",
+      "**/*.test.js"
+    ],
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "curly": [true, "ignore-same-line"],
+    "interface-name": [false],
+    "member-access": false,
+    "quotemark": true,
+    "no-any": {
+      "severity": "warning"
+    },
+    "no-console": {
+      "severity": "warning"
+    },
+    "no-empty": false,
+    "object-literal-sort-keys": {
+      "severity": "warning"
+    },
+    "comment-format": {
+      "severity": "warning"
+    },
+    "variable-name": false
+  }
+}

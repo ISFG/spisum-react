@@ -1,0 +1,26 @@
+{
+  "git.confirmSync": false,
+  "team.showWelcomeMessage": false,
+  "explorer.confirmDelete": false,
+  "editor.tabSize": 2,
+  "prettier.useTabs": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "explorer.confirmDragAndDrop": false,
+  "explorer.compactFolders": false,
+  "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.fixAll.tslint": true
+  },
+  "cSpell.enabled": false
+}
