@@ -111,26 +111,6 @@ http {
             proxy_pass http://127.0.0.1:5000;
         }
 
-        location /alfresco/ {
-            proxy_hide_header Access-Control-Allow-Origin;
-            proxy_hide_header Access-Control-Allow-Methods;
-            proxy_hide_header Access-Control-Allow-Headers;
-            add_header Access-Control-Allow-Origin * always;
-
-            if ($request_method = 'OPTIONS') {
-                add_header Access-Control-Allow-Origin *;
-                add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, DELETE, PUT';
-                add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,Group';
-                return 204;
-            }
-
-            proxy_pass http://127.0.0.1:8082;
-
-            # If using external proxy / load balancer (for initial redirect if no trailing slash)
-            absolute_redirect off;
-        }
-
-
         listen 443 ssl; # managed by Certbot
         ssl_certificate /etc/letsencrypt/live/hostname.domain/fullchain.pem; # managed by Certbot
         ssl_certificate_key /etc/letsencrypt/live/hostname.domain/privkey.pem; # managed by Certbot
