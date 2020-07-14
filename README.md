@@ -134,8 +134,8 @@ You can set SSL connection following this guide https://www.nginx.com/blog/using
 
 ## Default users
 
-Administrator (this user can create groups and spisum users), username: sAdmin, password: sAdmin
-Superuser (this user is superuser in spisum), username: spisum, password: spisum
+- Administrator (this user can create groups and spisum users), username: sAdmin, password: sAdmin
+- Superuser (this user is superuser in spisum), username: spisum, password: spisum
 
 ## Supported browsers
 
