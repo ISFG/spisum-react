@@ -3,7 +3,7 @@ import { EntityList } from "core/entities";
 import { createProxy } from "share/utils/getPath";
 import { ActionType } from "typesafe-actions";
 
-export type MembersStateType = MembersSuccessResponseType & {
+export type MembersStateType = EntityList<Member> & {
   isLoading: boolean;
   error: string | null;
 };
@@ -14,8 +14,6 @@ export interface Member {
 }
 
 export const membersProxy = createProxy<Member>();
-
-export type MembersSuccessResponseType = EntityList<Member>;
 
 export interface MembersRequestType {
   maxItems?: number;

@@ -2,21 +2,30 @@ import { callAsyncAction } from "core/action";
 import { documentForSignatureActionType } from "core/api/document/_actions";
 import { SslProperties } from "core/api/models";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
-import {DialogContentPropsType, DialogType} from "core/components/dialog/_types";
+import {
+  DialogContentPropsType,
+  DialogType
+} from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { ForSignatureContent } from "./ForSignatureContent";
 import { ForSignatureFormValues } from "./_types";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const forSignatureDialog = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
         const onSuccess = () => {
           dispatch(documentViewAction__Refresh(true));
           onClose();
@@ -40,7 +49,7 @@ export const forSignatureDialog = {
                 group,
                 user
               } as SslProperties,
-              nodeId: (dialogData as GenericDocument).id
+              nodeId: (dialogProps.data as GenericDocument).id
             }
           })
         );

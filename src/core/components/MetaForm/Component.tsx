@@ -6,25 +6,21 @@ import { mapRedundantMetaFormValues } from "../../mappers/api/document";
 import { useAutoSaveDocument } from "../dialog/hooks/useAutoSaveDocument";
 import { useMetaFormDocument } from "../dialog/hooks/useMetaFormDocument";
 import { useSyncFormValidityWithDialog } from "../dialog/hooks/useSyncFormValidityWithDialog";
-import {
-  DialogDataProps,
-  DialogDataType,
-  TabAndDialogChannelType
-} from "../dialog/_types";
+import { DialogDataProps, TabAndDialogChannelType } from "../dialog/_types";
 import { FormState } from "../reactiveFormik/_types";
 import { metaFormAction__Clear } from "./_actions";
 import { FormValues } from "./_types";
 
 interface OwnProps<T> {
   channel: TabAndDialogChannelType;
-  dialogData?: DialogDataType;
+  dialogProps: DialogDataProps;
   MetaForm: React.ComponentType<MetaFormProps<T>>;
   onClose?: VoidFunction;
 }
 
 const MetaFormContainer = <T extends FormValues>({
   channel,
-  dialogData,
+  dialogProps,
   MetaForm,
   onClose
 }: OwnProps<T>) => {
@@ -37,14 +33,13 @@ const MetaFormContainer = <T extends FormValues>({
     nodeType
   } = useMetaFormDocument();
 
-  const dialogDataTyped = dialogData as DialogDataProps;
   const setFormRef = useSyncFormValidityWithDialog<T>(channel);
   const setFormAutosaveRef = useAutoSaveDocument<T>({
     channel,
     documentId: documentId as string,
-    saveOnOpen: dialogDataTyped?.saveOnOpen,
+    saveOnOpen: dialogProps.saveOnOpen,
     storeFormValues: formValues as T,
-    useAutoSave: dialogDataTyped?.useAutoSave
+    useAutoSave: dialogProps.useAutoSave
   });
 
   useEffect(() => {
@@ -70,7 +65,7 @@ const MetaFormContainer = <T extends FormValues>({
 
   const checkFormUnsavedChanges = useCallback(
     (ref) => {
-      if (dialogDataTyped?.isReadonly) {
+      if (dialogProps.isReadonly) {
         return;
       }
       if (ref?.values && formValues) {
@@ -97,7 +92,7 @@ const MetaFormContainer = <T extends FormValues>({
       <MetaForm
         initialValues={(channel?.state?.formValues || formValues) as T}
         formRef={setReferences}
-        readonly={!!dialogDataTyped?.isReadonly}
+        readonly={!!dialogProps.isReadonly}
       />
     </div>
   ) : (

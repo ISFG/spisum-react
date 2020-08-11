@@ -1,14 +1,14 @@
+import {
+  StyledFieldWide,
+  useStyles
+} from "core/components/dialog/Dialog.styles";
 import { useSyncFormValidityWithDialog } from "core/components/dialog/hooks/useSyncFormValidityWithDialog";
 import { DialogContentType } from "core/components/dialog/_types";
 import { FormState } from "core/components/reactiveFormik/_types";
 import { Form, Formik, FormikHelpers } from "formik";
 import { TextField } from "formik-material-ui";
 import React from "react";
-import {
-  StyledFieldWide,
-  useStyles
-} from "../../../../core/components/dialog/Dialog.styles";
-import { lang, t } from "../../../../translation/i18n";
+import { lang, t } from "translation/i18n";
 import { lastPathMember, translationPath } from "../../../utils/getPath";
 import { retentionProposalProxy, RetentionProposalValues } from "./_types";
 import { validate } from "./_validations";

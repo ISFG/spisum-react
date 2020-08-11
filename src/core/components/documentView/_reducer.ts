@@ -34,8 +34,8 @@ export default (
     case LOCATION_CHANGE: {
       return {
         ...state,
-        selected: [],
-        pageNumber: 0
+        pageNumber: 0,
+        selected: []
       };
     }
     case getType(documentViewAction.request):

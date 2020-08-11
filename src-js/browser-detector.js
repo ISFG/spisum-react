@@ -6,7 +6,7 @@ var unBr = {
 	firefox: 37,
 	fxiOS: 10,
 	opera: 37,
-	msie: 11,
+	msie: 12,
 	safari: 9,
 	closeEnabled: false,
 	cookie: false

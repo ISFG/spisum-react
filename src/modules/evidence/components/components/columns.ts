@@ -1,7 +1,7 @@
 import { DataColumn, DataColumnType } from "core/components/dataTable/_types";
 import { File, FileMetaType, fileProxy } from "core/entities";
 import { classPath, translationPath } from "share/utils/getPath";
-import { lang, t } from "../../../../translation/i18n";
+import { lang, t } from "translation/i18n";
 
 const readableValues = [
   {

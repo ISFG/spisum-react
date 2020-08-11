@@ -1,6 +1,7 @@
+import { SpisumNodeTypes } from "enums";
 import { isObject } from "lodash";
 import { createProxy, lastPathMember } from "share/utils/getPath";
-import { SpisumNodeTypes } from "../enums";
+import { traverseNodeType } from "share/utils/utils";
 import {
   CmProperties,
   Node,
@@ -10,6 +11,7 @@ import {
   SslDatabox,
   SslDataFolder,
   SslEmail,
+  SslFile,
   SslProperties,
   SslShipment
 } from "./api/models";
@@ -23,12 +25,14 @@ export type Component = Node<SslComponent>;
 export type Folder = Node<SslDataFolder>;
 export type ShipmentDocument = Node<SslShipment>;
 export type Concept = Node<SslConcept>;
+export type FileDocument = Node<SslFile>;
 
 export type Document =
   | AnalogDocument
   | Component
   | DataboxDocument
   | EmailDocument
+  | FileDocument
   | GenericDocument
   | ShipmentDocument
   | TechnicalCarrierDocument
@@ -64,5 +68,9 @@ export const isGenericDocument = (
   document.hasOwnProperty(lastPathMember(genericDocumentProxy.id).path) &&
   document.hasOwnProperty(lastPathMember(genericDocumentProxy.nodeType).path);
 
-export const isFile = (document: unknown): document is GenericDocument =>
-  isGenericDocument(document) && document.nodeType === SpisumNodeTypes.File;
+export const isFile = (document: unknown): document is GenericDocument => {
+  return (
+    isGenericDocument(document) &&
+    traverseNodeType(document.nodeType) === SpisumNodeTypes.File
+  );
+};

@@ -2,7 +2,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import { SslAnalogWithOwner } from "core/api/models";
 import Datepicker from "core/components/datepicker/Component";
+import { StyledKeyboardDatePickerFifth } from "core/components/datepicker/Component.styles";
 import { DateTimePicker } from "core/components/datetimepicker";
+import { StyledDateTimePickerFifth } from "core/components/datetimepicker/Component.styles";
 import {
   StyledFieldFifth,
   StyledFieldWide,
@@ -18,15 +20,13 @@ import { DocumentType } from "enums";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-material-ui";
 import React from "react";
-import { WithTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RootStateType } from "reducers";
+import { SslDeliveryMode } from "share/components/form/fields/SSLDeliveryMode";
 import { lastPathMember, translationPath } from "share/utils/getPath";
-import { lang, t, withTranslation } from "translation/i18n";
-import { StyledKeyboardDatePickerFifth } from "../../../../core/components/datepicker/Component.styles";
-import { StyledDateTimePickerFifth } from "../../../../core/components/datetimepicker/Component.styles";
-import { SSLDeliveryMode } from "../../form/fields/SSLDeliveryMode";
-import { SSLStateField } from "../../form/fields/SSLStateField";
+import { lang, t, WithTranslation } from "translation/i18n";
+import { SslDocumentState } from "../../form/fields/SSLDocumentState";
 import { validate } from "./_validations";
 
 const Component = ({
@@ -57,6 +57,11 @@ const Component = ({
         const handlePlanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           filePlan = shreddingPlans.find((plan) => plan.id === e.target.value);
           fileMarks = filePlan?.items || [];
+
+          if (!e.target.value) {
+            setFieldValue(lastPathMember(sslPropsProxy.fileMark).path, "");
+          }
+
           setRetentionValues(values.fileMark);
         };
 
@@ -97,7 +102,7 @@ const Component = ({
               label={t(translationPath(lang.general.pid))}
             />
 
-            <SSLDeliveryMode
+            <SslDeliveryMode
               component={StyledFormControlFifth}
               disabled={true}
               required={true}
@@ -165,7 +170,7 @@ const Component = ({
               <Field
                 component={Select}
                 data-test-id="meta-input-fileMark"
-                disabled={isReadonly}
+                disabled={isReadonly || !values.filePlan}
                 name={lastPathMember(sslPropsProxy.fileMark).path}
                 inputProps={{
                   id: "fileMark",
@@ -248,7 +253,7 @@ const Component = ({
               </Field>
             </FormControlWithError>
 
-            <SSLStateField />
+            <SslDocumentState />
 
             <StyledFieldFifth
               component={TextField}
@@ -269,6 +274,13 @@ const Component = ({
             />
 
             <SenderRadioWrapper
+              disabledFields={
+                values.form === "digital" &&
+                (values.documentType === "databox" ||
+                  values.documentType === "email")
+                  ? [lastPathMember(sslPropsProxy.sender_contact).path]
+                  : []
+              }
               initialValues={initialValues}
               setFieldValue={setFieldValue}
               readonly={[isReadonly, isReadonly, true]}

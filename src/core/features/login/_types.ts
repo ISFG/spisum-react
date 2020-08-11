@@ -39,6 +39,7 @@ export interface LoginResponseType {
   expire: number;
   remember: SessionRememberType;
   user: string;
+  signer: boolean;
 }
 
 export interface LoginSetSessionType {
@@ -105,10 +106,10 @@ export interface SessionType {
   status: SessionStatus;
   token?: string;
   user?: PersonType;
+  signer: boolean;
 }
 
 export interface SslPathsType {
-  id: string;
   childs: SslPathsType[];
   name: string;
   path: string;

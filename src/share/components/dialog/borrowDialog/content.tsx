@@ -7,20 +7,26 @@ import {
   DialogType
 } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import { BorrowDialog } from "./BorrowDialog";
 import { BorrowFormValues } from "./_types";
 
 export const borrowDialog = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
         const onSuccess = () => {
           dispatch(documentViewAction__Refresh(true));
           onClose();
@@ -35,7 +41,7 @@ export const borrowDialog = {
         const { group, user } = channels.contentTab.state
           ?.formValues as BorrowFormValues;
 
-        const { nodeType, id } = dialogData as GenericDocument;
+        const { nodeType, id } = dialogProps.data as GenericDocument;
 
         const action =
           nodeType === SpisumNodeTypes.Document

@@ -41,10 +41,6 @@ export const validationSchema = yup.object().shape({
     .path]: yup
     .string()
     .required(t(translationPath(lang._validations.required))),
-  [lastPathMember(sslDataboxPropsProxy.senderRegistrationNumber)
-    .path]: yup
-    .string()
-    .max(100, t(translationPath(lang.dialog.errors.maxLen), { len: 100 })),
   [lastPathMember(sslDataboxPropsProxy.settleToDate).path]: yup
     .string()
     .nullable()

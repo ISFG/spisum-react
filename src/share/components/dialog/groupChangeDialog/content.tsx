@@ -11,7 +11,7 @@ import { GroupChangeContent } from "./GroupChangeContent";
 import { GroupChangeFormValuesType } from "./_types";
 
 export const groupChangeDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
       ({ channels, dispatch, onClose, buttonState }) => {

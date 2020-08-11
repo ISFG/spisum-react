@@ -1,3 +1,5 @@
+import { SpisumNodeTypes } from "enums";
+
 export const isEmptyString = (value: string | null | undefined) =>
   !value || value.toString().trim() === "";
 
@@ -60,4 +62,32 @@ const colorList = {
   x: "#ADD8E6",
   y: "#B0C4DE",
   z: "#DDA0DD"
+};
+
+export const traverseNodeType = (
+  nodeType: SpisumNodeTypes
+): SpisumNodeTypes => {
+  if (
+    nodeType === SpisumNodeTypes.Document ||
+    nodeType === SpisumNodeTypes.TakeDocumentForProcessing ||
+    nodeType === SpisumNodeTypes.TakeDocumentProcessed ||
+    nodeType === SpisumNodeTypes.DocumentRM
+  ) {
+    return SpisumNodeTypes.Document;
+  }
+  if (
+    nodeType === SpisumNodeTypes.File ||
+    nodeType === SpisumNodeTypes.TakeFileOpen ||
+    nodeType === SpisumNodeTypes.TakeFileClosed ||
+    nodeType === SpisumNodeTypes.FileRM
+  ) {
+    return SpisumNodeTypes.File;
+  }
+  if (
+    nodeType === SpisumNodeTypes.Concept ||
+    nodeType === SpisumNodeTypes.TakeConcept
+  ) {
+    return SpisumNodeTypes.Concept;
+  }
+  return nodeType;
 };

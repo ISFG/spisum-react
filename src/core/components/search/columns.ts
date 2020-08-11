@@ -1,10 +1,10 @@
-import { DataColumn } from "../dataTable/_types";
-import { GenericDocument, genericDocumentProxy } from "../../types";
+import { lang, t } from "translation/i18n";
 import { SenderType, SpisumNodeTypes } from "../../../enums";
 import { classPath, translationPath } from "../../../share/utils/getPath";
-import { lang, t } from "../../../translation/i18n";
-import { SessionType } from "../../features/login/_types";
 import { isUserInLeadership } from "../../../share/utils/user";
+import { SessionType } from "../../features/login/_types";
+import { GenericDocument, genericDocumentProxy } from "../../types";
+import { DataColumn } from "../dataTable/_types";
 
 export const defaultColumn: DataColumn<GenericDocument> = {
   getValue: (x) =>
@@ -13,7 +13,7 @@ export const defaultColumn: DataColumn<GenericDocument> = {
       : x?.properties?.ssl?.senderType === SenderType.Own
       ? x?.createdAt
       : x?.properties?.ssl?.deliveryDate,
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
     classPath(genericDocumentProxy.createdAt).path,
@@ -22,7 +22,9 @@ export const defaultColumn: DataColumn<GenericDocument> = {
   label: t(translationPath(lang.general.dateOfEvidence))
 };
 
-export const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
+export const getColumns = (
+  session: SessionType
+): DataColumn<GenericDocument>[] => {
   const columns: DataColumn<GenericDocument>[] = [
     {
       keys: [classPath(genericDocumentProxy.properties!.ssl!.pid).path],
@@ -35,8 +37,7 @@ export const getColumns = (session: SessionType): DataColumn<GenericDocument>[] 
           : item.properties?.ssl?.fileIdentificator,
       keys: [
         classPath(genericDocumentProxy.properties!.ssl!.ssid).path,
-        classPath(genericDocumentProxy.properties!.ssl!.fileIdentificator)
-          .path
+        classPath(genericDocumentProxy.properties!.ssl!.fileIdentificator).path
       ],
       label: `${t(translationPath(lang.general.referenceNumber))}/${t(
         translationPath(lang.general.fileIdentificator)
@@ -51,8 +52,7 @@ export const getColumns = (session: SessionType): DataColumn<GenericDocument>[] 
   if (isUserInLeadership(session)) {
     columns.push({
       keys: [
-        classPath(genericDocumentProxy.properties!.cm!.owner?.displayName)
-          .path
+        classPath(genericDocumentProxy.properties!.cm!.owner?.displayName).path
       ],
       label: t(translationPath(lang.general.owner))
     });

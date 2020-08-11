@@ -3,20 +3,26 @@ import { createShipmentsAction } from "core/api/node/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import { CreateShipment } from "./CreateShipment";
 
 export const createShipmentDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ onClose, dispatch, channels, buttonState, dialogData }) => {
+      ({
+        onClose,
+        dispatch,
+        channels,
+        buttonState,
+        dialogProps
+      }) => {
         const metaState = channels?.contentTab?.state;
 
         if (!metaState) return;
@@ -26,6 +32,8 @@ export const createShipmentDialog: DialogContentType = {
           buttonState.setIsPending(false);
         };
 
+        const data = dialogProps.data as DialogDataGenericData;
+
         dispatch(
           callAsyncAction({
             action: createShipmentsAction,
@@ -34,8 +42,8 @@ export const createShipmentDialog: DialogContentType = {
             payload: {
               ...metaState?.formValues,
               components: metaState?.selectedComponentsIds,
-              nodeId: (dialogData as DialogDataProps)?.id,
-              nodeType: (dialogData as DialogDataProps)?.nodeType
+              nodeId: data?.id,
+              nodeType: data?.nodeType
             }
           })
         );

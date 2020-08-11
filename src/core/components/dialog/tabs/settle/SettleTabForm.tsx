@@ -1,16 +1,15 @@
-import { InputLabel, MenuItem } from "@material-ui/core";
 import { SslAnalog } from "core/api/models";
 import { DateTimePicker } from "core/components/datetimepicker";
 import { StyledField, useStyles } from "core/components/dialog/Dialog.styles";
-import FormControlWithError from "core/components/formControlWithError";
 import { MetaFormProps } from "core/components/MetaForm/_types";
 import { FormState } from "core/components/reactiveFormik/_types";
 import { sslPropsProxy } from "core/types";
 import { SettleMethod } from "enums";
-import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-material-ui";
+import { Form, Formik } from "formik";
+import { TextField } from "formik-material-ui";
 import React from "react";
 import { withTranslation } from "react-i18next";
+import { EnumSelect } from "share/components/form/enumSelect/EnumSelect";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation } from "translation/i18n";
 
@@ -31,34 +30,13 @@ const Component = ({
       {({ values }: FormState<SslAnalog>) => {
         return (
           <Form className={classes.form}>
-            <FormControlWithError
+            <EnumSelect
+              enumType={SettleMethod}
+              translations={lang.enums.settleMethod}
+              disabled={readonly}
+              label={t(translationPath(lang.general.settleMethod))}
               name={lastPathMember(sslPropsProxy.settleMethod).path}
-            >
-              <InputLabel>
-                {t(translationPath(lang.general.settleMethod))}
-              </InputLabel>
-              <Field
-                component={Select}
-                disabled={readonly}
-                name={lastPathMember(sslPropsProxy.settleMethod).path}
-              >
-                <MenuItem value={SettleMethod.Document}>
-                  {t(translationPath(lang.enums.settleMethod.document))}
-                </MenuItem>
-                <MenuItem value={SettleMethod.Forward}>
-                  {t(translationPath(lang.enums.settleMethod.forward))}
-                </MenuItem>
-                <MenuItem value={SettleMethod.TakeIntoAccount}>
-                  {t(translationPath(lang.enums.settleMethod.takeIntoAccount))}
-                </MenuItem>
-                <MenuItem value={SettleMethod.DocumentNote}>
-                  {t(translationPath(lang.enums.settleMethod.documentNote))}
-                </MenuItem>
-                <MenuItem value={SettleMethod.Other}>
-                  {t(translationPath(lang.enums.settleMethod.other))}
-                </MenuItem>
-              </Field>
-            </FormControlWithError>
+            />
             <StyledField
               component={TextField}
               data-test-id="meta-input-settleReason"

@@ -9,10 +9,10 @@ import DataTable from "../dataTable/Component";
 import { ControlsBarType, DataColumn } from "../dataTable/_types";
 import {
   documentViewAction,
+  DocumentViewActionType,
   documentViewAction__Clear,
   documentViewAction__Refresh,
-  documentViewAction__SetSelected,
-  DocumentViewActionType
+  documentViewAction__SetSelected
 } from "./_actions";
 import { tryToGetLastReadDate } from "./_methods";
 import {
@@ -125,12 +125,12 @@ const Component = <T extends DocumentViewType>({
 
   useEffect(() => {
     if (defaultSortAsc && sortAsc === null) {
-      sortAsc = defaultSortAsc;
+      sortAsc = defaultSortAsc; // eslint-disable-line react-hooks/exhaustive-deps
     }
 
     if (defaultSortColumn && sortColumnIndex === null) {
-      sortColumnIndex = columns.indexOf(defaultSortColumn);
-      sortKeys = defaultSortColumn.keys;
+      sortColumnIndex = columns.indexOf(defaultSortColumn); // eslint-disable-line react-hooks/exhaustive-deps
+      sortKeys = defaultSortColumn.keys; // eslint-disable-line react-hooks/exhaustive-deps
     }
   }, []);
 

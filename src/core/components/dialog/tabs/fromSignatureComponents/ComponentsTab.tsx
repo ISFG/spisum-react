@@ -4,6 +4,8 @@ import { useStyles } from "core/components/dialog/Dialog.styles";
 import { DataTableValues } from "core/components/documentView/_types";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { RootStateType } from "reducers";
 import { File } from "../../../../entities";
 import { generateColumns } from "./columns";
 import { controls, readOnlyControls } from "./controls";
@@ -65,12 +67,14 @@ const ComponentsTab = <T,>({
   selectedComponents,
   handleSelectionChange
 }: OwnProps<T>) => {
+  const { signer } = useSelector(
+    (state: RootStateType) => state.loginReducer.session
+  );
   const dataTableValues: DataTableValues = {
     resetIcons: true
   };
   useTranslation();
   const dialogClasses = useStyles();
-
   const cols = useMemo(() => generateColumns(findMainFile(items), isReadonly), [
     items,
     isReadonly
@@ -82,10 +86,12 @@ const ComponentsTab = <T,>({
         controls={
           !isReadonly
             ? controls({
-                handleSign
+                handleSign,
+                signer
               })
             : readOnlyControls({
-                handleSign
+                handleSign,
+                signer
               })
         }
         breadcrumbs={[]}

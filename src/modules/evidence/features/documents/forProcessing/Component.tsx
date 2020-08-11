@@ -30,7 +30,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
     x?.properties?.ssl?.senderType === "own"
       ? x?.createdAt
       : x?.properties?.ssl?.deliveryDate,
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
     classPath(genericDocumentProxy.createdAt).path
@@ -112,8 +112,8 @@ const Component = () => {
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     dispatch(
       openDocumentWithSaveButtonsAction({
-        ...row,
-        canUploadComponents: row.properties?.ssl?.senderType === SenderType.Own
+        canUploadComponents: row.properties?.ssl?.senderType === SenderType.Own,
+        data: row
       })
     );
   };
@@ -134,20 +134,20 @@ const Component = () => {
   const handleCreateNewDocumentFile = (selected: GenericDocument[]) => {
     dispatch(
       dialogOpenAction({
-        dialogData: selected[0],
+        dialogProps: { data: selected[0] },
         dialogType: DialogType.CreateNewDocumentFile
       })
     );
   };
 
   const handleHandoverDocument = (selected: GenericDocument[]) => {
-    dispatch(handoverDocument(selected[0]));
+    dispatch(handoverDocument({ data: selected[0] }));
   };
 
   const handleForSignatureDocument = (selected: GenericDocument[]) => {
     dispatch(
       dialogOpenAction({
-        dialogData: selected[0],
+        dialogProps: { data: selected[0] },
         dialogType: DialogType.ForSignature
       })
     );
@@ -156,7 +156,7 @@ const Component = () => {
   const handleSendShipment = (selected: GenericDocument[]) => {
     dispatch(
       dialogOpenAction({
-        dialogData: selected[0],
+        dialogProps: { data: selected[0] },
         dialogType: DialogType.SendShipment
       })
     );
@@ -165,15 +165,15 @@ const Component = () => {
   const handleOpenLostDestroyedDocumentDialog = (
     selected: GenericDocument[]
   ) => {
-    dispatch(lostDestroyedDialogOpen(selected[0]));
+    dispatch(lostDestroyedDialogOpen({ data: selected[0] }));
   };
 
   const handleOpenSettleDocumentDialog = (selected: GenericDocument[]) => {
-    dispatch(settleDocumentDialogOpen(selected[0]));
+    dispatch(settleDocumentDialogOpen({ data: selected[0] }));
   };
 
   const handleOpenCancelDialog = (selected: GenericDocument[]) => {
-    dispatch(evidenceCancelDialogOpen(selected[0]));
+    dispatch(evidenceCancelDialogOpen({ data: selected[0] }));
   };
 
   const onDataUpdated = useCallback(
@@ -193,7 +193,7 @@ const Component = () => {
         .catch(() => {
           //noop
         }),
-    []
+    [] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   return (

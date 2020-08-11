@@ -1,9 +1,9 @@
 import VersionTabContainer from "core/components/dialog/tabs/version/VersionTabContainer";
-import { DialogContentPropsType } from "core/components/dialog/_types";
 import React from "react";
 import { useDocumentId } from "../../hooks/useDocumentId";
+import { DialogTabContentPropsType } from "../../_types";
 
-export const VersionTab = (props: DialogContentPropsType) => {
+export const VersionTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {

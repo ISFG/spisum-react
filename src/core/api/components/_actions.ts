@@ -19,7 +19,7 @@ export const componentCreateAction = createSafeAsyncAction(
   "@components/COMPONENT_CREATE_ACTION_REQUEST",
   "@components/COMPONENT_CREATE_ACTION_SUCCESS",
   "@components/COMPONENT_CREATE_ACTION_FAILURE"
-)<DocumentComponentCreateRequestType, { file: globalThis.File }, ErrorType>();
+)<DocumentComponentCreateRequestType, { file: globalThis.File, componentId?: string }, ErrorType>();
 
 export const componentDeleteAction = createSafeAsyncAction(
   "@components/COMPONENT_DELETE_ACTION_REQUEST",

@@ -4,10 +4,11 @@ import { ErrorType } from "types";
 
 export interface CommentsPropsType {
   comments?: { entry: Comment }[];
+  isLoading: boolean;
+  isReadonly: boolean;
   onAddClick: (comment: Comment) => void;
   onLoadMore: () => void;
   pagination?: Pagination;
-  isReadonly: boolean | undefined;
 }
 
 export interface NewCommentPropsType {

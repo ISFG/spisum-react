@@ -11,8 +11,8 @@ import { Field, Form, Formik } from "formik";
 import { Select } from "formik-material-ui";
 import React from "react";
 import { useSelector } from "react-redux";
+import { RootStateType } from "reducers";
 import { lang, t } from "translation/i18n";
-import { RootStateType } from "../../../../reducers";
 import { lastPathMember, translationPath } from "../../../utils/getPath";
 import {
   ActiveGroupType,

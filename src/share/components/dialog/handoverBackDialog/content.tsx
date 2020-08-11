@@ -1,22 +1,21 @@
 import { callAsyncAction } from "core/action";
 import { documentOwnerCancelActionType } from "core/api/document/_actions";
+import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { DocumentHandoverContent } from "./DocumentHandoverContent";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const handoverBackDialog: DialogContentType = {
-  actions: [
-    {
-      color: "primary",
-      colorThemeType: "success",
-      name: t(translationPath(lang.dialog.buttons.confirm)),
-      onClick({ dispatch, dialogData, onClose, buttonState }) {
-        if (!dialogData) {
+  actions: () => [
+    secondaryAction(
+      t(translationPath(lang.dialog.buttons.confirm)),
+      ({ dispatch, dialogProps, onClose, buttonState }) => {
+        if (!dialogProps.data) {
           return;
         }
 
@@ -37,13 +36,12 @@ export const handoverBackDialog: DialogContentType = {
             onError,
             onSuccess,
             payload: {
-              nodeId: (dialogData as GenericDocument).id
+              nodeId: (dialogProps.data as GenericDocument).id
             }
           })
         );
-      },
-      type: "outlined"
-    }
+      }
+    )
   ],
   content: DocumentHandoverContent,
   title: (props) => (

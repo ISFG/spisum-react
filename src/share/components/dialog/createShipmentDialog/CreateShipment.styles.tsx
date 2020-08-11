@@ -1,6 +1,7 @@
+import { MenuItem } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { StyledDivThird } from "../../../../core/components/dialog/Dialog.styles";
-import styled from "../../../../styles";
+import { StyledDivThird } from "core/components/dialog/Dialog.styles";
+import styled from "styles";
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,6 +42,11 @@ export const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
+
+export const StyledMenuItem = styled(MenuItem)(() => ({
+  content: " ",
+  minHeight: "1.5em"
+}));
 
 export const StyledPriceField = styled(StyledDivThird)<{}>(() => ({
   "& > span": {

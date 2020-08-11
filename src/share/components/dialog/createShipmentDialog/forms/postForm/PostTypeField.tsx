@@ -1,16 +1,16 @@
 import { Chip } from "@material-ui/core";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Field, useFormikContext } from "formik";
-import { Select } from "formik-material-ui";
-import React from "react";
 import {
   StyledFormControl,
   useStyles
-} from "../../../../../../core/components/dialog/Dialog.styles";
-import FormControlWithError from "../../../../../../core/components/formControlWithError";
-import { PostType, PostTypeLangMap } from "../../../../../../enums";
-import { lang, t } from "../../../../../../translation/i18n";
+} from "core/components/dialog/Dialog.styles";
+import FormControlWithError from "core/components/formControlWithError";
+import { PostType, PostTypeLangMap } from "enums";
+import { Field, useFormikContext } from "formik";
+import { Select } from "formik-material-ui";
+import React from "react";
+import { lang, t } from "translation/i18n";
 import { lastPathMember, translationPath } from "../../../../../utils/getPath";
 import { CreateShipmentFormValuesProxy } from "../../_types";
 

@@ -1,24 +1,24 @@
 import { DialogContentPropsType } from "core/components/dialog/_types";
-import React, { useEffect } from "react";
 import { isGenericDocument } from "core/types";
+import React, { useEffect } from "react";
 import { ChangeFileMarkForm } from "./ChangeFileMarkForm";
 
 export const ChangeFileMarkDialogContent = ({
   channel,
-  dialogData
+  dialogProps
 }: DialogContentPropsType) => {
   useEffect(() => {
     channel.setIsSaved(true);
   }, [channel]);
 
-  if (!isGenericDocument(dialogData)) {
+  if (!isGenericDocument(dialogProps.data)) {
     return <div />;
   }
 
   return (
     <ChangeFileMarkForm
-      originalFileMark={dialogData.properties?.ssl?.fileMark}
-      shreddingPlanId={dialogData.properties?.ssl?.filePlan}
+      originalFileMark={dialogProps.data.properties?.ssl?.fileMark}
+      shreddingPlanId={dialogProps.data.properties?.ssl?.filePlan}
       channel={channel}
     />
   );

@@ -1,9 +1,10 @@
-import { call, put, select, take, takeEvery } from "redux-saga/effects";
-import { createRequest, getURL } from "share/utils/fetch";
+import { call, put, take, takeEvery } from "redux-saga/effects";
+import { getURL } from "share/utils/fetch";
 import { ActionType, getType } from "typesafe-actions";
-import { RootStateType } from "../../../reducers";
 import { notificationAction } from "../../components/notifications/_actions";
 import { NotificationComponent } from "../../components/notifications/_types";
+import { HttpClient } from "../../services/HttpClient";
+import { getService } from "../dependencyInjection";
 import {
   uploadFailureAction,
   uploadFileAction,
@@ -38,17 +39,10 @@ export function* watchUploadFileWithNotificationAction() {
 }
 
 export function* uploadFileSaga({ endpoint, file }: UploadInfo) {
-  const activeGroup = yield select(
-    (state: RootStateType) => state.loginReducer.session.activeGroup
-  );
-  const privateToken = yield select(
-    (state: RootStateType) => state.loginReducer.session.token
-  );
+  const httpClient = getService(HttpClient);
 
-  const { headers } = createRequest({
-    activeGroup,
-    method: "POST",
-    privateToken
+  const { headers } = httpClient.createRequest({
+    method: "POST"
   });
 
   const channel = yield call(createUploadFileChannel, {

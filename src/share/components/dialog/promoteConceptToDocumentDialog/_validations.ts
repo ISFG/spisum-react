@@ -1,6 +1,6 @@
 import moment from "moment";
+import { lang, t } from "translation/i18n";
 import * as yup from "yup";
-import { lang, t } from "../../../../translation/i18n";
 import { lastPathMember, translationPath } from "../../../utils/getPath";
 import { validateErrors } from "../../../utils/validation";
 import {

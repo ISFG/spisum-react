@@ -6,9 +6,8 @@ import {
   codeListsAction,
   codeListsShreaddingPlanAction,
   loginAction,
-
-  LoginActionType, loginAction__ClearError,
-
+  LoginActionType,
+  loginAction__ClearError,
   loginKeepAction,
   loginSetSessionTokenAction,
   loginUpdateExpireInAction,
@@ -30,7 +29,7 @@ export const initialState: LoginStateType = {
       main: [],
       repository: []
     },
-    maxItems: 10,
+    maxItems: 50,
     paths: null,
     shreddingPlans: []
   },
@@ -42,6 +41,7 @@ export const initialState: LoginStateType = {
     isAdmin: false,
     myGroups: [],
     remember: null,
+    signer: true,
     status: SessionStatus.UNAUTHORIZED,
     token: undefined,
     user: undefined
@@ -129,6 +129,7 @@ export default (
         session: {
           ...state.session,
           remember: action.payload.remember,
+          signer: action.payload.signer,
           status: SessionStatus.AUTHORIZED
         }
       };

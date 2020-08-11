@@ -1,3 +1,4 @@
+import { DialogDataProps } from "core/components/dialog/_types";
 import { GenericDocument } from "core/types";
 import { createAnalogDocument } from "share/components/dialog/analogDetailsDialog/_actions";
 import { createTechnicalDataCarriesDocument } from "share/components/dialog/technicalDataCarriesDetailsDialog/_actions";
@@ -30,14 +31,12 @@ import {
   DocumentFoundRequestType,
   DocumentFromSignatureActionType,
   DocumentHandoverRequestType,
-  DocumentReadonly,
   DocumentRecoverRequestType,
   DocumentRevertVersionRequestType,
   DocumentSaveAndUpdateRequestType,
   DocumentSettleRequestType,
   DocumentShreddingDiscardRequestType,
-  DocumentUpdateSaveRequestType,
-  DocumentWithSaveButtonsRequestType
+  DocumentUpdateSaveRequestType
 } from "./_types";
 
 export const documentCreateActionType = createSafeAsyncAction(
@@ -158,7 +157,7 @@ export const documentRemoveFromFavoriteAction = createSafeAsyncAction(
 
 export const openDocumentWithSaveButtonsAction = createSafeAction(
   "@document/OPEN_DOCUMENT_WITH_SAVE_BUTTONS"
-)<DocumentWithSaveButtonsRequestType>();
+)<DialogDataProps>();
 
 export const documentForSignatureActionType = createSafeAsyncAction(
   "@document/FOR_SIGNATURE_ACTION_REQUEST",
@@ -174,11 +173,11 @@ export const documentFromSignatureActionType = createSafeAsyncAction(
 
 export const openDocumentReadonlyDetailsAction = createSafeAction(
   "@document/OPEN_DOCUMENT_READONLY"
-)<DocumentReadonly>();
+)<DialogDataProps>();
 
 export const openDocumentDetailsAction = createSafeAction(
   "@document/OPEN_DOCUMENT_WITH_REGISTER_BUTTONS"
-)<GenericDocument>();
+)<DialogDataProps>();
 
 export const documentChangeFileMarkAction = createSafeAsyncAction(
   "@document/CHANGE_FILE_MARK_ACTION_REQUEST",

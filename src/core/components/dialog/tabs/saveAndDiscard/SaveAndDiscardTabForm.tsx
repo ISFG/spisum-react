@@ -36,7 +36,7 @@ const Component = ({
         return (
           <Form className={classes.form}>
             <DateTimePicker
-              className={classes.datepickerLongLabel}
+              className={classes.longLabel}
               component={StyledDateTimePickerFifth}
               data-test-id="meta-input-toRepositoryDate"
               disabled={readonly}

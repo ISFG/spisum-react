@@ -83,6 +83,7 @@ describe("Login page tests", () => {
             groups: [],
             myGroups: [],
             remember: null,
+            signer: false,
             status: SessionStatus.UNAUTHORIZED
           }
         }
@@ -114,6 +115,7 @@ describe("Login page tests", () => {
             groups: [],
             myGroups: [],
             remember: null,
+            signer: false,
             status: SessionStatus.UNAUTHORIZED
           }
         }
@@ -149,6 +151,7 @@ describe("Login page tests", () => {
             groups: [],
             myGroups: [],
             remember: null,
+            signer: false,
             status: SessionStatus.UNAUTHORIZED
           }
         }

@@ -3,7 +3,8 @@ import { getType } from "typesafe-actions";
 import {
   addCommentsInTab,
   CommentsActionType,
-  CommentsSuccessResponseInTabType, commentsTab__Clear,
+  CommentsSuccessResponseInTabType,
+  commentsTab__Clear,
   fetchCommentsInTab
 } from "./_actions";
 import { CommentsTabStateType } from "./_types";
@@ -12,11 +13,11 @@ const initialState: CommentsTabStateType = {
   error: null,
   isLoading: false,
   list: {
-    entries: [],
+    entries: undefined,
     pagination: {
       count: 0,
       hasMoreItems: false,
-      maxItems: 25,
+      maxItems: 50,
       skipCount: 0,
       totalItems: 0
     }

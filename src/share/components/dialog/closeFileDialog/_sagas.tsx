@@ -14,7 +14,7 @@ export function* watchCloseFileDialogAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.CloseFile
       })
     );

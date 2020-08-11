@@ -7,10 +7,11 @@ export type PossibleAutocompleteOptions = GroupMember;
 
 export type AutocompleteOptionsType = PossibleAutocompleteOptions[];
 
-export interface AutocompleteOnChange {
-  onChange: (e: Event, value: PossibleAutocompleteOptions) => void;
-}
-
 export type AutocompleteComponentType = React.ComponentType<
-  AutocompleteOnChange & AutocompleteProps<PossibleAutocompleteOptions>
+  AutocompleteProps<
+    PossibleAutocompleteOptions,
+    undefined,
+    undefined,
+    undefined
+  >
 >;

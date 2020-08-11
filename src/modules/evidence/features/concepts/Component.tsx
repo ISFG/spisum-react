@@ -6,6 +6,8 @@ import {
   Send
 } from "@material-ui/icons";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { SessionType } from "core/features/login/_types";
@@ -16,17 +18,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { dialogOpenConceptDetails } from "share/components/dialog/conceptDetailsDialog/_actions";
 import { evidenceCreateConceptDialogOpen } from "share/components/dialog/createConceptDialog/_actions";
+import { handoverDocument } from "share/components/dialog/documentHandoverDialog/_actions";
 import { evidenceCancelDialogOpen } from "share/components/dialog/evidenceCancelDialog/_actions";
 import { classPath, translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
 import { isUserInLeadership } from "share/utils/user";
 import { lang, t, withTranslation } from "translation/i18n";
-import { dialogOpenAction } from "../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../core/components/dialog/_types";
-import { handoverDocument } from "../../../../share/components/dialog/documentHandoverDialog/_actions";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.createdAt).path],
   label: t(translationPath(lang.general.dateOfCreation))
 };
@@ -61,9 +61,6 @@ const Component = () => {
   const session = useSelector(
     (state: RootStateType) => state.loginReducer.session
   );
-  const userId = useSelector(
-    (state: RootStateType) => state.loginReducer.session.user?.id
-  );
   const relativePath = useSelector((state: RootStateType) =>
     getRelativePath(
       state.loginReducer.global.paths,
@@ -74,7 +71,7 @@ const Component = () => {
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) =>
-    dispatch(dialogOpenConceptDetails(row));
+    dispatch(dialogOpenConceptDetails({ data: row }));
 
   const controls: ControlsBarType<GenericDocument> = {
     default: {
@@ -99,7 +96,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.PromoteConceptToDocument
               })
             );
@@ -116,7 +113,7 @@ const Component = () => {
         */
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(handoverDocument(selected[0]));
+            dispatch(handoverDocument({ data: selected[0] }));
           },
           icon: <Send />,
           title: t(translationPath(lang.general.handOVer))
@@ -125,10 +122,8 @@ const Component = () => {
       more: [
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(evidenceCancelDialogOpen(selected[0]));
+            dispatch(evidenceCancelDialogOpen({ data: selected[0] }));
           },
-          filter: (x) =>
-            (userId && x?.properties?.cm?.owner?.id === userId) === true,
           icon: <Delete />,
           title: t(translationPath(lang.general.cancel))
         }

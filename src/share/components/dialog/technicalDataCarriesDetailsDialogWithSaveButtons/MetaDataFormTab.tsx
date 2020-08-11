@@ -17,10 +17,10 @@ const FORMS = {
 
 const MetaDataTab = ({
   channel,
-  dialogData,
+  dialogProps,
   onClose
 }: DialogContentPropsType) => {
-  const sslProps = (dialogData as GenericDocument)?.properties?.ssl;
+  const sslProps = (dialogProps.data as GenericDocument)?.properties?.ssl;
   const form = sslProps?.form;
   const senderType = sslProps?.senderType;
 
@@ -31,7 +31,7 @@ const MetaDataTab = ({
   return (
     <MetaFormContainer<SslAnalog>
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       MetaForm={selectedForm}
       onClose={onClose}
     />

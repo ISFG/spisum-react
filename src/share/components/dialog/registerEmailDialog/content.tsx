@@ -11,26 +11,28 @@ import {
 } from "core/components/dialog/lib/actionsFactory";
 import { CommentsTab } from "core/components/dialog/tabs/comments";
 import { ComponentsTab } from "core/components/dialog/tabs/components";
-import {
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "core/components/dialog/_types";
+import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
-import { EmailDocument } from "core/types";
+import NamedTitle from "core/components/namedTitle";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import { handoverDocument } from "../documentHandoverDialog/_actions";
+import { HandoverDocumentPayloadType } from "../documentHandoverDialog/_types";
 import { MetadataFormTab } from "./MetadataFormTab";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const registerEmailDialog: DialogContentType = createDocumentDialog({
-  actions: [
+  actions: () => [
     primaryAction(
       t(translationPath(lang.dialog.form.toRegister)),
-      ({ dispatch, channels, onClose, dialogData, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        onClose,
+        dialogProps,
+        buttonState
+      }) => {
         const formValues = channels?.Metadata?.state?.formValues;
         if (!formValues) return;
 
@@ -42,12 +44,12 @@ export const registerEmailDialog: DialogContentType = createDocumentDialog({
           }
 
           dispatch(documentViewAction__Refresh(true));
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
           onClose();
         };
 
         const onError = () => {
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
           buttonState.setIsPending(false);
         };
 
@@ -74,7 +76,13 @@ export const registerEmailDialog: DialogContentType = createDocumentDialog({
     ),
     secondaryAction(
       t(translationPath(lang.dialog.form.toRegisterAndRefer)),
-      ({ dispatch, channels, onClose, buttonState, dialogData }) => {
+      ({
+        dispatch,
+        channels,
+        onClose,
+        buttonState,
+        dialogProps
+      }) => {
         const formValues = channels?.Metadata?.state?.formValues;
         if (!formValues) return;
 
@@ -87,10 +95,15 @@ export const registerEmailDialog: DialogContentType = createDocumentDialog({
 
           dispatch(
             handoverDocument({
-              id: channels?.Metadata?.state?.id
-            } as EmailDocument)
+              data: {
+                id: channels?.Metadata?.state?.id
+              },
+              onClose: () => {
+                dispatch(documentViewAction__Refresh(true));
+              }
+            } as HandoverDocumentPayloadType)
           );
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
           onClose();
         };
 

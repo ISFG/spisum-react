@@ -8,11 +8,11 @@ const initialState: NodeVersionStateType = {
   error: null,
   isLoading: false,
   list: {
-    entries: [],
+    entries: undefined,
     pagination: {
       count: 0,
       hasMoreItems: false,
-      maxItems: 25,
+      maxItems: 50,
       skipCount: 0,
       totalItems: 0
     }

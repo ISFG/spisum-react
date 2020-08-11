@@ -7,6 +7,7 @@ import {
   Whatshot
 } from "@material-ui/icons";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { openFileDetailsAction } from "core/components/dialog/tabs/tableOfContents/_actions";
 import { dialogOpenAction } from "core/components/dialog/_actions";
 import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
@@ -35,10 +36,9 @@ import { classPath, translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
 import { isUserInLeadership } from "share/utils/user";
 import { lang, t, withTranslation } from "translation/i18n";
-import { openFileDetailsAction } from "../../../../../core/components/dialog/tabs/tableOfContents/_actions";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.closureDate).path],
   label: t(translationPath(lang.general.closureDate))
 };
@@ -71,7 +71,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
       label: t(translationPath(lang.general.sender))
     },
     {
-      isDate: true,
+      isDateTime: true,
       keys: [classPath(genericDocumentProxy.properties!.ssl!.createdDate).path],
       label: t(translationPath(lang.general.dateOfEvidence))
     },
@@ -150,8 +150,10 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               submitToRepositoryDialogOpen({
-                onSubmitActionName: SubmitToRepositoryDialog.Files,
-                selected
+                data: {
+                  entityType: SubmitToRepositoryDialog.Files,
+                  selected
+                }
               })
             );
           },
@@ -164,14 +166,20 @@ const Component = () => {
       items: [
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(openFileDetailsAction({ ...selected[0], readonly: true }));
+            dispatch(
+              openFileDetailsAction({
+                data: selected[0],
+                initiator: SpisumNodeTypes.File,
+                isReadonly: true
+              })
+            );
           },
           icon: <Description />,
           title: t(translationPath(lang.general.showDetails))
         },
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(handoverDocument(selected[0]));
+            dispatch(handoverDocument({ data: selected[0] }));
           },
           icon: <Send />,
           title: t(translationPath(lang.general.handOVer))
@@ -210,7 +218,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.OpenFile
               })
             );
@@ -222,7 +230,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.SendShipment
               })
             );
@@ -234,8 +242,10 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               submitToRepositoryDialogOpen({
-                onSubmitActionName: SubmitToRepositoryDialog.Files,
-                selected
+                data: {
+                  entityType: SubmitToRepositoryDialog.Files,
+                  selected
+                }
               })
             );
           },
@@ -258,7 +268,7 @@ const Component = () => {
         */
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(lostDestroyedDialogOpen(selected[0]));
+            dispatch(lostDestroyedDialogOpen({ data: selected[0] }));
           },
           filter: (x) =>
             x.properties?.ssl?.form === DocumentType.Analog ||
@@ -285,7 +295,7 @@ const Component = () => {
   );
 
   const handleDoubleClick = (row: ShipmentDocument) => {
-    dispatch(openFileDetailsAction(row));
+    dispatch(openFileDetailsAction({ data: row }));
   };
 
   return (

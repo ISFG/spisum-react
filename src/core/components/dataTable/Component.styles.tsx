@@ -110,7 +110,16 @@ export const useStyles = makeStyles(() => {
       overflow: "auto"
     },
     pagination: {
-      "& > div": { width: "100%" },
+      "& .MuiSelect-icon": {
+        top: "auto"
+      },
+      "& .MuiSelect-select": {
+        fontSize: "0.875rem",
+        paddingBottom: "4px"
+      },
+      "& > div": {
+        width: "100%"
+      },
       background: "#fff",
       borderTop: "1px solid #B6BBBE",
       bottom: "0",

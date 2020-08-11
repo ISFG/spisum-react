@@ -32,6 +32,7 @@ describe("ResolveDefaultRoute test", () => {
               groups: [],
               myGroups: [],
               remember: null,
+              signer: false,
               status
             }
           }
@@ -85,6 +86,7 @@ describe("ResolveDefaultRoute test", () => {
               groups: [],
               myGroups: [],
               remember: null,
+              signer: false,
               status: SessionStatus.UNAUTHORIZED
             }
           }

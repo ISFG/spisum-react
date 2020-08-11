@@ -15,7 +15,7 @@ export const componentCreateAction = createSafeAsyncAction(
   "@concepts/COMPONENT_CREATE_ACTION_REQUEST",
   "@concepts/COMPONENT_CREATE_ACTION_SUCCESS",
   "@concepts/COMPONENT_CREATE_ACTION_FAILURE"
-)<ComponentCreateRequestType, { file: globalThis.File }, ErrorType>();
+)<ComponentCreateRequestType, { file: globalThis.File, componentId?: string }, ErrorType>();
 
 export const componentDeleteAction = createSafeAsyncAction(
   "@concepts/COMPONENT_DELETE_ACTION_REQUEST",

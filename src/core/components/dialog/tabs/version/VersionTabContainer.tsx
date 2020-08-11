@@ -6,15 +6,15 @@ import { NodeVersion } from "core/api/models";
 import { nodeVersionAction } from "core/api/node/_actions";
 import { ControlsBarType } from "core/components/dataTable/_types";
 import { SpisumNodeTypes } from "enums";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { DialogContentPropsType, DialogDataProps } from "../../_types";
+import { DialogTabContentPropsType } from "../../_types";
 import VersionTab from "./VersionTab";
 
-type VersionTabContainerProps = DialogContentPropsType & {
+type VersionTabContainerProps = DialogTabContentPropsType & {
   nodeId: string;
 };
 
@@ -25,12 +25,14 @@ interface VersionTabContainerState {
 
 const initialState: VersionTabContainerState = {
   pageNumber: 0,
-  rowsPerPage: 25
+  rowsPerPage: 50
 };
 
 const VersionTabContainer = ({
-  nodeId,
-  dialogData
+  channel,
+  dialogProps,
+  isActive,
+  nodeId
 }: VersionTabContainerProps) => {
   const [{ pageNumber, rowsPerPage }, setState] = useState<
     VersionTabContainerState
@@ -39,7 +41,7 @@ const VersionTabContainer = ({
   const { entries, totalItems, isLoading, error } = useSelector(
     (state: RootStateType) => {
       return {
-        entries: state.versionReducer.list.entries?.map((e) => e.entry) || [],
+        entries: state.versionReducer.list.entries?.map((e) => e.entry),
         error: state.versionReducer.error,
         isLoading: state.versionReducer.isLoading,
         totalItems: state.versionReducer.list.pagination?.totalItems || 0
@@ -48,17 +50,30 @@ const VersionTabContainer = ({
   );
 
   const dispatch = useDispatch();
-  const loadData = () =>
-    dispatch(
-      nodeVersionAction.request({
-        maxItems: rowsPerPage,
-        nodeId,
-        skipCount: pageNumber * rowsPerPage
-      })
-    );
+  const loadData = useCallback(
+    () =>
+      dispatch(
+        nodeVersionAction.request({
+          maxItems: rowsPerPage,
+          nodeId,
+          skipCount: pageNumber * rowsPerPage
+        })
+      ),
+    [pageNumber, rowsPerPage] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  channel.refreshData = loadData;
 
   useEffect(() => {
-    loadData();
+    if (isActive && entries === undefined) {
+      loadData();
+    }
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isActive) {
+      loadData();
+    }
   }, [pageNumber, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChangePage: (
@@ -91,7 +106,7 @@ const VersionTabContainer = ({
 
   const controls: ControlsBarType<NodeVersion> = {};
 
-  if (!(dialogData as DialogDataProps).isReadonly) {
+  if (!dialogProps.isReadonly) {
     controls.single = {
       items: [
         {
@@ -113,7 +128,7 @@ const VersionTabContainer = ({
               })
             );
           },
-          filter: (x) => entries[0] !== x,
+          filter: (x) => (entries ? entries[0] !== x : false),
           icon: <Restore />,
           title: t(translationPath(lang.general.revertVersion))
         }
@@ -128,7 +143,7 @@ const VersionTabContainer = ({
   return (
     <VersionTab
       controls={controls}
-      items={entries}
+      items={entries || []}
       totalItems={totalItems}
       pageNumber={pageNumber}
       refreshTable={loadData}

@@ -4,11 +4,14 @@ import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 
-const FileOpenDialog = ({ channel, dialogData }: DialogContentPropsType) => {
+const FileOpenDialog = ({
+  channel,
+  dialogProps
+}: DialogContentPropsType) => {
   return (
     <ReasonForm
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       reasonLabel={t(translationPath(lang.general.fileOpenReason))}
     />
   );

@@ -1,5 +1,5 @@
 import { MenuItemType, SubmenuItemType } from "core/components/menu/_types";
-import { menuItems } from "core/hooks/useMenuItemsWithPermissons";
+import { rootMenuItems } from "core/hooks/useMenuItemsWithPermissons";
 import { findRedirect } from "share/utils/routerRedirect";
 
 describe("Test loop in menu redirect", () => {
@@ -25,13 +25,13 @@ describe("Test loop in menu redirect", () => {
     }
   };
 
-  findAllRoutes(Object.values(menuItems));
+  findAllRoutes(Object.values(rootMenuItems));
 
   const isInMenuLoop = (url: any) => {
     let tryNumber = 0;
     const maxTry = 100;
     do {
-      url = findRedirect(url, Object.values(menuItems));
+      url = findRedirect(url, Object.values(rootMenuItems));
       if (!url) break;
     } while (++tryNumber < maxTry);
 

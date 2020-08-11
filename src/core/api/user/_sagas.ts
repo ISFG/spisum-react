@@ -1,6 +1,7 @@
 import produce from "immer";
 import { omit } from "lodash";
 import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
+import { lang, t } from "translation/i18n";
 import { ActionType, getType } from "typesafe-actions";
 import { SpisumGroups } from "../../../enums";
 import { RootStateType } from "../../../reducers";
@@ -12,7 +13,6 @@ import {
 import { convertResponse } from "../../../share/utils/convert";
 import { fetchSaga } from "../../../share/utils/fetch";
 import { lastPathMember, translationPath } from "../../../share/utils/getPath";
-import { lang, t } from "../../../translation/i18n";
 import { ApiURL } from "../../apiURL";
 import { dialogOpenAction } from "../../components/dialog/_actions";
 import { DialogType } from "../../components/dialog/_types";
@@ -127,7 +127,7 @@ export function* watchUserActions() {
   yield takeLatest(getType(openCreateUserDialogAction), function* () {
     yield put(
       dialogOpenAction({
-        dialogData: {
+        dialogProps: {
           dontUseDataModifiedDialog: true
         },
         dialogType: DialogType.CreateUser
@@ -175,7 +175,7 @@ export function* watchUserActions() {
   }: ActionType<typeof openEditUserDialogAction>) {
     yield put(
       dialogOpenAction({
-        dialogData: {
+        dialogProps: {
           dontUseDataModifiedDialog: true
         },
         dialogType: DialogType.EditUserDialog

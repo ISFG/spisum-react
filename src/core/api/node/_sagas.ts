@@ -1,12 +1,20 @@
 import contentDisposition from "content-disposition";
+import { fetchDocument } from "core/action";
 import { ApiURL } from "core/apiURL";
+import { notificationAction } from "core/components/notifications/_actions";
+import { NotificationSeverity } from "core/components/notifications/_types";
+import { FileDocument } from "core/types";
 import { Associations } from "enums";
 import produce from "immer";
 import mime from "mime-types";
 import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 import { convertResponse } from "share/utils/convert";
 import { fetchSaga } from "share/utils/fetch";
+import { translationPath } from "share/utils/getPath";
+import { handleResponse } from "share/utils/typesafeActions";
 import { isEmptyString } from "share/utils/utils";
+import { t } from "translation/i18n";
+import lang from "translation/lang";
 import { ActionType, getType } from "typesafe-actions";
 import { RootStateType } from "../../../reducers";
 import { openFileDetailsAction } from "../../components/dialog/tabs/tableOfContents/_actions";
@@ -294,22 +302,42 @@ export function* watchNodeDetailsAction() {
   yield takeLatest(getType(openFileDetailsAction), function* ({
     payload
   }: ActionType<typeof openFileDetailsAction>) {
-    const readonly = !!payload.readonly;
+    const { isReadonly } = payload;
+    const document = payload.data as FileDocument;
 
     yield put(
-      metaFormAction__Update({
-        documentId: payload.id,
-        formValues: {
-          ...defaultFileFormValues,
-          ...payload?.properties?.ssl,
-          createdAt: payload?.createdAt || null,
-          owner: payload.properties?.cm?.owner?.displayName || ""
-        },
-        nodeType: payload.nodeType
+      fetchDocument.request({
+        id: document.id,
+        nodeType: document.nodeType
       })
     );
 
-    const mergedFormValues = produce(payload, (draft) => {
+    const [successResponse, , success] = yield handleResponse(fetchDocument);
+
+    if (!success) {
+      yield put(
+        notificationAction({
+          message: t(translationPath(lang.dialog.notifications.actionFailed)),
+          severity: NotificationSeverity.Error
+        })
+      );
+      return;
+    }
+
+    yield put(
+      metaFormAction__Update({
+        documentId: successResponse.entry?.id,
+        formValues: {
+          ...defaultFileFormValues,
+          ...successResponse.entry?.properties?.ssl,
+          createdAt: successResponse.entry?.createdAt || null,
+          owner: successResponse.entry?.properties?.cm?.owner?.displayName || ""
+        },
+        nodeType: successResponse.entry?.nodeType
+      })
+    );
+
+    const mergedFormValues = produce(document, (draft: FileDocument) => {
       if (draft?.properties?.ssl) {
         draft.properties.ssl = {
           ...defaultFileFormValues,
@@ -321,11 +349,11 @@ export function* watchNodeDetailsAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: {
-          ...mergedFormValues,
-          isReadonly: readonly
+        dialogProps: {
+          ...payload,
+          data: mergedFormValues
         },
-        dialogType: readonly
+        dialogType: isReadonly
           ? DialogType.FileDetailsReadonly
           : DialogType.FileDetails
       })

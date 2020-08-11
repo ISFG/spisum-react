@@ -2,7 +2,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import { SslAnalogWithOwner } from "core/api/models";
 import Datepicker from "core/components/datepicker";
+import { StyledKeyboardDatePickerFifth } from "core/components/datepicker/Component.styles";
 import { DateTimePicker } from "core/components/datetimepicker";
+import { StyledDateTimePickerFifth } from "core/components/datetimepicker/Component.styles";
 import {
   StyledFakeFieldFifth,
   StyledFieldFifth,
@@ -23,10 +25,8 @@ import { useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation, withTranslation } from "translation/i18n";
-import { StyledKeyboardDatePickerFifth } from "../../../../core/components/datepicker/Component.styles";
-import { StyledDateTimePickerFifth } from "../../../../core/components/datetimepicker/Component.styles";
-import { SSLDeliveryMode } from "../../form/fields/SSLDeliveryMode";
-import { SSLStateField } from "../../form/fields/SSLStateField";
+import { SslDeliveryMode } from "../../form/fields/SSLDeliveryMode";
+import { SslDocumentState } from "../../form/fields/SSLDocumentState";
 import { validate } from "./_validations";
 
 const Component = ({
@@ -58,6 +58,11 @@ const Component = ({
         const handlePlanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           filePlan = shreddingPlans.find((plan) => plan.id === e.target.value);
           fileMarks = filePlan?.items || [];
+
+          if (!e.target.value) {
+            setFieldValue(lastPathMember(sslPropsProxy.fileMark).path, "");
+          }
+
           setRetentionValues(values.fileMark);
         };
 
@@ -133,10 +138,10 @@ const Component = ({
               name={lastPathMember(sslPropsProxy.deliveryDate).path}
               label={t(translationPath(lang.general.deliveryDateAndTime))}
             />
-            <SSLDeliveryMode
+            <SslDeliveryMode
               component={StyledFormControlFifth}
               disabled={true}
-              enabledModes={[
+              allowedModes={[
                 DeliveryMode.Currier,
                 DeliveryMode.Personally,
                 DeliveryMode.Post
@@ -189,7 +194,7 @@ const Component = ({
               name={lastPathMember(sslPropsProxy.filePlan).path}
               component={StyledFormControlFifth}
             >
-              <InputLabel htmlFor="filePlan" required={true}>
+              <InputLabel htmlFor="filePlan">
                 {t(translationPath(lang.general.filePlan))}
               </InputLabel>
               <Field
@@ -216,13 +221,13 @@ const Component = ({
               name={lastPathMember(sslPropsProxy.fileMark).path}
               component={StyledFormControlFifth}
             >
-              <InputLabel htmlFor="fileMark" required={true}>
+              <InputLabel htmlFor="fileMark">
                 {t(translationPath(lang.general.fileMark))}
               </InputLabel>
               <Field
                 component={Select}
                 data-test-id="meta-input-fileMark"
-                disabled={isReadonly}
+                disabled={isReadonly || !values.filePlan}
                 name={lastPathMember(sslPropsProxy.fileMark).path}
                 inputProps={{
                   id: "fileMark",
@@ -268,7 +273,7 @@ const Component = ({
               label={t(translationPath(lang.general.owner))}
             />
 
-            <SSLStateField />
+            <SslDocumentState />
             <StyledFieldFifth
               component={TextField}
               data-test-id="meta-input-retentionMode"

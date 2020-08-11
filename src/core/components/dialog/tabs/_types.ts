@@ -1,7 +1,7 @@
-import { DialogContentPropsType } from "../_types";
+import { DialogContentPropsType, DialogTabContentPropsType } from "../_types";
 
 export interface TabPropsType {
-  content: (props: DialogContentPropsType) => JSX.Element;
+  content: (props: DialogTabContentPropsType) => JSX.Element;
   label: string;
   filter?: (prop: DialogContentPropsType) => boolean;
 }

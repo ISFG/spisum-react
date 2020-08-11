@@ -14,7 +14,7 @@ export function* watchRecoverDialogAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: { data: payload },
         dialogType: DialogType.RecoverDialog
       })
     );

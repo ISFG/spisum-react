@@ -3,29 +3,37 @@ import { ApiURL } from "core/apiURL";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
 import { documentSaveReasonFormActionType } from "core/components/reasonForm/_actions";
 import { ReasonFormValues } from "core/components/reasonForm/_types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import ConvertToOutputFormatDialog from "./ConvertToOutputFormatDialog";
 
 export const convertToOutputFormatDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
-        const data = dialogData as DialogDataProps;
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
+        const data = dialogProps.data as DialogDataGenericData;
         const componentId = data?.componentId;
 
         buttonState.setIsPending(true);
 
         const onSuccess = () => {
-          if (data?.onSuccess) data.onSuccess();
+          if (dialogProps.onSuccess) {
+            dialogProps.onSuccess();
+          }
           onClose();
         };
 
@@ -47,7 +55,7 @@ export const convertToOutputFormatDialog: DialogContentType = {
                 reason: (channels?.contentTab?.state
                   ?.formValues as ReasonFormValues).reason
               },
-              nodeId: (dialogData as DialogDataProps).id,
+              nodeId: data.id,
               url
             }
           })

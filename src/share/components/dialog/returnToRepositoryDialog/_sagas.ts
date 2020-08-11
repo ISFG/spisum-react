@@ -1,6 +1,6 @@
+import { ApiURL } from "core/apiURL";
 import { call, put, takeEvery } from "redux-saga/effects";
 import { ActionType, getType } from "typesafe-actions";
-import { ApiURL } from "../../../../core/apiURL";
 import { fetchSaga } from "../../../utils/fetch";
 import { returnToRepositoryActionType } from "./_actions";
 

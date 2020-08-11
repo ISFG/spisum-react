@@ -13,18 +13,18 @@ import { CommentsTab } from "core/components/dialog/tabs/comments";
 import { ComponentsTab } from "core/components/dialog/tabs/components";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
-import { GenericDocument } from "core/types";
+import NamedTitle from "core/components/namedTitle";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import { handoverDocument } from "../documentHandoverDialog/_actions";
+import { HandoverDocumentPayloadType } from "../documentHandoverDialog/_types";
 import MetaDataTab from "./MetaDataFormTab";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const technicalDataCarriesDetailsDialog: DialogContentType = createDocumentDialog(
   {
-    actions: [
+    actions: () => [
       primaryAction(
         t(translationPath(lang.dialog.form.toRegister)),
         ({ dispatch, channels, onClose, buttonState }) => {
@@ -81,11 +81,16 @@ export const technicalDataCarriesDetailsDialog: DialogContentType = createDocume
 
             // Dialog data are empty since document is fresh new,
             // thus we have to get id from tab state
-            const bearer = {
-              id: channels?.Metadata?.state?.id
-            };
-
-            dispatch(handoverDocument(bearer as GenericDocument));
+            dispatch(
+              handoverDocument({
+                data: {
+                  id: channels?.Metadata?.state?.id
+                },
+                onClose: () => {
+                  dispatch(documentViewAction__Refresh(true));
+                }
+              } as HandoverDocumentPayloadType)
+            );
             onClose();
           };
 

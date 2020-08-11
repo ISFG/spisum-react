@@ -1,4 +1,5 @@
 import { callAsyncAction } from "core/action";
+import { componentUpdateAction } from "core/api/components/_actions";
 import {
   componentCreateAction,
   componentDeleteAction,
@@ -6,9 +7,10 @@ import {
   componentViewAction
 } from "core/api/concept/components/_actions";
 import { DataColumn, ValueType } from "core/components/dataTable/_types";
+import { useMetaFormDocument } from "core/components/dialog/hooks/useMetaFormDocument";
 import {
-  DialogContentPropsType,
-  DialogDataProps
+  DialogDataGenericData,
+  DialogTabContentPropsType
 } from "core/components/dialog/_types";
 import { notificationAction } from "core/components/notifications/_actions";
 import { NotificationSeverity } from "core/components/notifications/_types";
@@ -21,9 +23,7 @@ import { renameComponentAction } from "share/components/dialog/renameComponentDi
 import { translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
 import { lang, t } from "translation/i18n";
-import { componentUpdateAction } from "../../../../core/api/components/_actions";
-import { useMetaFormDocument } from "../../../../core/components/dialog/hooks/useMetaFormDocument";
-import { ErrorTypeWithFailedIds } from "../../../../types";
+import { ErrorTypeWithFailedIds } from "types";
 import ComponentsTab from "./ComponentsTab";
 import { sortComponents } from "./methods";
 import { SelectedComponentsFnType } from "./_types";
@@ -43,20 +43,21 @@ const initialState: CommentsTabContainerState = {
   rowsPerPage: 100
 };
 
-type OwnProps = DialogContentPropsType & {
+type OwnProps = DialogTabContentPropsType & {
   nodeId: string;
   isReadOnly?: boolean;
 };
 
 const EvidenceComponentsTabContainer = React.memo(
-  ({ channel, isReadOnly, nodeId, dialogData }: OwnProps) => {
+  ({ channel, isReadOnly, isActive, nodeId, dialogProps }: OwnProps) => {
     const dispatch = useDispatch();
     const [
       { pageNumber, rowsPerPage, sortKeys, sortColumnIndex, sortAsc },
       setState
     ] = useState<CommentsTabContainerState>(initialState);
+    const [wasLoaded, setWasLoaded] = useState<boolean>(false);
 
-    const nodeType = (dialogData as DialogDataProps)?.nodeType;
+    const nodeType = (dialogProps.data as DialogDataGenericData)?.nodeType;
     const { components, error, isLoading } = useSelector(
       (state: RootStateType) => state.conceptComponentsReducer
     );
@@ -94,8 +95,19 @@ const EvidenceComponentsTabContainer = React.memo(
         })
       );
 
+    channel.refreshData = fetchComponents;
+
     useEffect(() => {
-      fetchComponents();
+      if (isActive && !wasLoaded) {
+        fetchComponents();
+        setWasLoaded(true);
+      }
+    }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      if (isActive) {
+        fetchComponents();
+      }
     }, [nodeId, rowsPerPage, pageNumber]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -370,7 +382,7 @@ const EvidenceComponentsTabContainer = React.memo(
         handleSortingChange={handleSortingChange}
         handleUploadComponent={handleUploadComponent}
         isLoading={isLoading}
-        isReadonly={isReadOnly || !!(dialogData as DialogDataProps)?.isReadonly}
+        isReadonly={isReadOnly || !!dialogProps.isReadonly}
         items={sortedComponents}
         pageNumber={pageNumber}
         refreshTable={fetchComponents}

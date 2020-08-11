@@ -17,43 +17,12 @@ import { ActionType } from "typesafe-actions";
 import { documentRegisterAction } from "../../../_actions";
 
 const defaultColumn: DataColumn<DataboxDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(dataBoxDocumentProxy.properties!.ssl!.databoxDeliveryDate).path
   ],
   label: t(translationPath(lang.general.delivery))
 };
-
-const columns: DataColumn<DataboxDocument>[] = [
-  {
-    keys: [
-      classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSubject).path
-    ],
-    label: t(translationPath(lang.general.subject))
-  },
-  {
-    keys: [
-      classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSenderName).path
-    ],
-    label: t(translationPath(lang.general.sender))
-  },
-  defaultColumn,
-  {
-    keys: [
-      classPath(dataBoxDocumentProxy.properties!.ssl!.databoxAttachmentsCount)
-        .path
-    ],
-    label: t(translationPath(lang.general.attachmentsCount))
-  },
-  {
-    keys: [
-      classPath(
-        dataBoxDocumentProxy.properties!.ssl!.databoxNotRegisteredReason
-      ).path
-    ],
-    label: t(translationPath(lang.general.notRegisterReason))
-  }
-];
 
 const Component = () => {
   const dispatch = useDispatch<
@@ -65,6 +34,58 @@ const Component = () => {
       >
     >
   >();
+
+  const databoxAccounts = useSelector(
+    (state: RootStateType) => state.databoxReducer.databoxAccounts
+  );
+
+  const columns: DataColumn<DataboxDocument>[] = [
+    {
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSubject).path
+      ],
+      label: t(translationPath(lang.general.subject))
+    },
+    {
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSenderName).path
+      ],
+      label: t(translationPath(lang.general.sender))
+    },
+    defaultColumn,
+    {
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxAttachmentsCount)
+          .path
+      ],
+      label: t(translationPath(lang.general.attachmentsCount))
+    },
+    {
+      keys: [
+        classPath(
+          dataBoxDocumentProxy.properties!.ssl!.databoxNotRegisteredReason
+        ).path
+      ],
+      label: t(translationPath(lang.general.notRegisterReason))
+    }
+  ];
+
+  if (databoxAccounts?.length > 1) {
+    columns.push({
+      getValue: (x) => {
+        return (
+          databoxAccounts.find(
+            (y) => y.username === x.properties?.ssl?.databoxRecipientUid
+          )?.name || x.properties?.ssl?.databoxRecipientUid
+        );
+      },
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxRecipientUid)
+          .path
+      ],
+      label: t(translationPath(lang.general.recipient))
+    });
+  }
 
   const paths = useSelector(
     (state: RootStateType) => state.loginReducer.global.paths
@@ -79,7 +100,7 @@ const Component = () => {
   );
 
   const dispatchOpenDialog: (row: DataboxDocument) => void = (row) => {
-    dispatch(dialogOpenDataboxDetails(row));
+    dispatch(dialogOpenDataboxDetails({ data: row }));
   };
 
   const controls: ControlsBarType<DataboxDocument> = {

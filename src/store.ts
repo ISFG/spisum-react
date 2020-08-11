@@ -21,6 +21,18 @@ const persistConfig = {
   storage: localForage
 };
 
+let _store: ReturnType<typeof createAppStore>;
+
+export const getStore = () => {
+  if (_store) {
+    return _store;
+  }
+
+  _store = createAppStore();
+
+  return _store;
+};
+
 export const createAppStore = () => {
   const history = createBrowserHistory();
   const sagaMiddleware = createSagaMiddleware();

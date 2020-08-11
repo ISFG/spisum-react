@@ -1,22 +1,28 @@
 import { callAsyncAction } from "core/action";
+import { createRetentionProposalAction } from "core/api/retention/_actions";
+import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
+import { GenericDocument } from "core/types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { createRetentionProposalAction } from "../../../../core/api/retention/_actions";
-import { secondaryAction } from "../../../../core/components/dialog/lib/actionsFactory";
-import NamedTitle from "../../../../core/components/namedTitle";
-import { GenericDocument } from "../../../../core/types";
 import { CreateRetentionProposalContent } from "./CreateRetentionProposalDialog";
 import { RetentionProposalValues } from "./_types";
 
 export const createRetentionProposalDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.form.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
-        const ids = (dialogData as GenericDocument[]).map(
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
+        const ids = (dialogProps.data as GenericDocument[]).map(
           (selected) => selected?.properties?.ssl?.ref
         );
 

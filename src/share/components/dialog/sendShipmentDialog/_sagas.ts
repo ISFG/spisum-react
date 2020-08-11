@@ -4,10 +4,10 @@ import {
   transformDocumentShipmentsPayload,
   transformDocumentShipmentsRequestPayload
 } from "core/mappers/api/document";
+import { SpisumNodeTypes } from "enums";
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { convertResponse, getPropertySortName } from "share/utils/convert";
 import { ActionType, getType } from "typesafe-actions";
-import { SpisumNodeTypes } from "../../../../enums";
 import { fetchSaga } from "../../../utils/fetch";
 import { returnShipmentAction } from "../returnShipment/_actions";
 import { sendShipmentAction } from "./_actions";

@@ -7,7 +7,7 @@ import { translationPath } from "../../../utils/getPath";
 
 export const CancelDialogContent: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const classes = useStyles();
 
@@ -15,7 +15,7 @@ export const CancelDialogContent: DialogContentType["content"] = ({
     <div className={classes.modalSmall}>
       <ReasonForm
         channel={channel}
-        dialogData={dialogData}
+        dialogProps={dialogProps}
         reasonLabel={t(translationPath(lang.general.reasonForCancel))}
       />
     </div>

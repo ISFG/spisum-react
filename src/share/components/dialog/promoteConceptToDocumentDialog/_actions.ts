@@ -3,7 +3,7 @@ import {
   NodeChildAssociationEntry,
   SslProperties
 } from "core/api/models";
-import { ErrorType } from "../../../../types";
+import { ErrorType } from "types";
 import { createSafeAsyncAction } from "../../../utils/typesafeActions";
 import { PromoteConceptToDocumentRequestType } from "./_types";
 

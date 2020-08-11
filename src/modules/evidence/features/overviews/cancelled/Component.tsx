@@ -24,7 +24,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
       : x?.properties?.ssl?.senderType === "own"
       ? x?.createdAt
       : x?.properties?.ssl?.deliveryDate,
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
     classPath(genericDocumentProxy.createdAt).path,
@@ -41,9 +41,9 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
     },
     {
       getValue: (item) =>
-        item.nodeType === SpisumNodeTypes.Document
-          ? item.properties?.ssl?.ssid
-          : item.properties?.ssl?.fileIdentificator,
+        item.nodeType === SpisumNodeTypes.File
+          ? item.properties?.ssl?.fileIdentificator
+          : item.properties?.ssl?.ssid,
       keys: [
         classPath(genericDocumentProxy.properties!.ssl!.ssid).path,
         classPath(genericDocumentProxy.properties!.ssl!.fileIdentificator).path
@@ -64,7 +64,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
       label: t(translationPath(lang.general.cancelReason))
     },
     {
-      isDate: true,
+      isDateTime: true,
       keys: [classPath(genericDocumentProxy.properties!.ssl!.cancelDate).path],
       label: t(translationPath(lang.general.cancelDate))
     }
@@ -100,15 +100,28 @@ const Component = () => {
     if (row.nodeType === SpisumNodeTypes.Document) {
       dispatch(
         openDocumentWithSaveButtonsAction({
-          ...row,
           canUploadComponents: false,
+          data: row,
+          hideManageShipmentsIcon: true,
           isReadonly: true
         })
       );
     } else if (row.nodeType === SpisumNodeTypes.File) {
-      dispatch(openFileDetailsAction({ ...row, readonly: true }));
+      dispatch(
+        openFileDetailsAction({
+          data: row,
+          hideManageShipmentsIcon: true,
+          isReadonly: true
+        })
+      );
     } else if (row.nodeType === SpisumNodeTypes.Concept) {
-      dispatch(dialogOpenConceptDetails({ ...row, isReadonly: true }));
+      dispatch(
+        dialogOpenConceptDetails({
+          data: row,
+          hideManageShipmentsIcon: true,
+          isReadonly: true
+        })
+      );
     }
   };
 

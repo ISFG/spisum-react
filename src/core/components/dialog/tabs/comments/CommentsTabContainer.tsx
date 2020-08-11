@@ -1,9 +1,9 @@
 import { Comment } from "core/api/models";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { Dispatch } from "redux";
-import { DialogContentPropsType, DialogDataProps } from "../../_types";
+import { DialogDataGenericData, DialogTabContentPropsType } from "../../_types";
 import CommentsTab from "./CommentsTab";
 import {
   addCommentsInTab,
@@ -19,25 +19,24 @@ type CommentsTabContainerState = {
 
 const initialState: CommentsTabContainerState = {
   pageNumber: 0,
-  rowsPerPage: 25
+  rowsPerPage: 50
 };
 
-type CommentsTabContainerProps = DialogContentPropsType & {
+type CommentsTabContainerProps = DialogTabContentPropsType & {
   nodeId: string;
 };
 
 const CommentsTabContainer = ({
   channel,
-  nodeId,
-  dialogData
+  dialogProps,
+  isActive,
+  nodeId
 }: CommentsTabContainerProps) => {
   const dispatch = useDispatch<Dispatch<CommentsActionType>>();
   const [{ pageNumber, rowsPerPage }, setState] = useState<
     CommentsTabContainerState
   >(initialState);
-  const isReadonly = !!(dialogData as DialogDataProps)?.isReadonly
-    ? (dialogData as DialogDataProps).isReadonly
-    : false;
+  const isReadonly = !!dialogProps.isReadonly;
   const { entries, pagination, isLoading } = useSelector(
     (state: RootStateType) => ({
       entries: state.commentsReducer.list.entries,
@@ -47,9 +46,9 @@ const CommentsTabContainer = ({
     })
   );
 
-  const nodeType = (dialogData as DialogDataProps)?.nodeType;
+  const nodeType = (dialogProps.data as DialogDataGenericData)?.nodeType;
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     dispatch(
       fetchCommentsInTab.request({
         append: pageNumber !== 0,
@@ -59,6 +58,20 @@ const CommentsTabContainer = ({
         skipCount: pageNumber * rowsPerPage
       })
     );
+  }, [pageNumber, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  channel.refreshData = loadData;
+
+  useEffect(() => {
+    if (isActive && entries === undefined) {
+      loadData();
+    }
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isActive) {
+      loadData();
+    }
   }, [pageNumber, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(
@@ -79,7 +92,10 @@ const CommentsTabContainer = ({
   };
 
   const handleGetMoreNotes = () => {
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
+
     if (pagination && pagination.hasMoreItems) {
       setState((state) => ({
         pageNumber: state.pageNumber + 1,
@@ -91,10 +107,11 @@ const CommentsTabContainer = ({
   return (
     <CommentsTab
       isReadonly={isReadonly}
-      comments={entries}
+      comments={entries || []}
       pagination={pagination}
       onAddClick={handleAddNote}
       onLoadMore={handleGetMoreNotes}
+      isLoading={isLoading}
     />
   );
 };

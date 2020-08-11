@@ -14,10 +14,16 @@ import { PromoteConceptToDocumentContent } from "./PromoteConceptToDocumentConte
 import { promoteConceptToDocumentAction } from "./_actions";
 
 export const promoteConceptToDocumentDialog = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
         const formValues = channels?.contentTab?.state?.formValues;
         if (!formValues) return;
         const onSuccess = () => {
@@ -38,7 +44,7 @@ export const promoteConceptToDocumentDialog = {
             onSuccess,
             payload: {
               body: formValues,
-              nodeId: (dialogData as GenericDocument).id
+              nodeId: (dialogProps.data as GenericDocument).id
             }
           })
         );

@@ -1,9 +1,9 @@
-import { DialogContentPropsType } from "core/components/dialog/_types";
 import React from "react";
-import CommentsTabContainer from "./CommentsTabContainer";
 import { useDocumentId } from "../../hooks/useDocumentId";
+import { DialogTabContentPropsType } from "../../_types";
+import CommentsTabContainer from "./CommentsTabContainer";
 
-export const CommentsTab = (props: DialogContentPropsType) => {
+export const CommentsTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {

@@ -1,24 +1,26 @@
 import { callAsyncAction } from "core/action";
 import { evidenceSubmitToRepository } from "core/api/evidence/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
-import { DialogContentType, DialogType } from "core/components/dialog/_types";
+import {
+  DialogContentType,
+  DialogDataGenericData,
+  DialogType
+} from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
+import { GenericDocument } from "core/types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import SubmitToDialogContent from "./SubmitToRepositoryDialog";
-import {
-  SubmitToRepositoryDialogType,
-  SubmitToRepositoryFormValuesType
-} from "./_types";
+import { SubmitToRepositoryFormValuesType } from "./_types";
 
 export const submitToDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState, channels }) => {
-        if (!dialogData) {
+      ({ dispatch, dialogProps, onClose, buttonState, channels }) => {
+        if (!dialogProps.data) {
           return;
         }
         const onSuccess = () => {
@@ -28,10 +30,12 @@ export const submitToDialog: DialogContentType = {
 
         buttonState.setIsPending(true);
 
+        const data = dialogProps.data as DialogDataGenericData;
+
         const activeGroupId = (channels?.contentTab?.state
           ?.formValues as SubmitToRepositoryFormValuesType)?.activeGroup;
-        const ids = (dialogData as SubmitToRepositoryDialogType).selected.map(
-          (select) => select.id
+        const ids = (data?.selected as GenericDocument[]).map(
+          (select: GenericDocument) => select.id
         );
         const body = {
           group: activeGroupId,
@@ -45,8 +49,8 @@ export const submitToDialog: DialogContentType = {
             onSuccess,
             payload: {
               body,
-              entityType: (dialogData as SubmitToRepositoryDialogType)
-                ?.onSubmitActionName
+              entityType: (dialogProps.data as DialogDataGenericData)
+                ?.entityType
             }
           })
         );

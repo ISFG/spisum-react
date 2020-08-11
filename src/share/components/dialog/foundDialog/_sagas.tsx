@@ -14,7 +14,7 @@ export function* watchFoundDialogAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: { data: payload },
         dialogType: DialogType.FoundDialog
       })
     );

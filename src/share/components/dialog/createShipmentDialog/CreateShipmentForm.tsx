@@ -1,16 +1,11 @@
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 import clsx from "clsx";
 import DataTable from "core/components/dataTable";
 import { DataColumn } from "core/components/dataTable/_types";
-import {
-  StyledFormControl,
-  useStyles
-} from "core/components/dialog/Dialog.styles";
+import { useStyles } from "core/components/dialog/Dialog.styles";
 import { useSyncFormValidityWithDialog } from "core/components/dialog/hooks/useSyncFormValidityWithDialog";
 import {
+  DialogDataGenericData,
   DialogDataProps,
-  DialogDataType,
   TabAndDialogChannelType
 } from "core/components/dialog/_types";
 import {
@@ -18,12 +13,12 @@ import {
   ShipmentDocument,
   shipmentDocumentProxy
 } from "core/types";
-import { Field, Form, Formik, FormikHelpers } from "formik";
-import { Select } from "formik-material-ui";
+import { SendModeValues, SpisumNodeTypes } from "enums";
+import { Form, Formik, FormikHelpers } from "formik";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { EnumSelect } from "share/components/form/enumSelect/EnumSelect";
 import { lang, t } from "translation/i18n";
-import { SendModeValues, SpisumNodeTypes } from "../../../../enums";
 import {
   classPath,
   lastPathMember,
@@ -64,7 +59,7 @@ const attachmentComponentBlacklist = [
 
 interface OwnProps {
   channel: TabAndDialogChannelType;
-  dialogData: DialogDataType;
+  dialogProps: DialogDataProps;
   handleChangePage: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
     page: number
@@ -97,7 +92,7 @@ const getComponentMaxSizeAndCount = (sendMode: string) => {
 export const CreateShipmentForm = React.memo(
   ({
     channel,
-    dialogData,
+    dialogProps,
     handleChangePage,
     handleChangeRowsPerPage,
     handleSortingChange,
@@ -109,7 +104,8 @@ export const CreateShipmentForm = React.memo(
     const dialogClasses = useStyles();
     const classes = useShipmentStyles();
     const isFileType =
-      (dialogData as DialogDataProps).nodeType === SpisumNodeTypes.File;
+      (dialogProps.data as DialogDataGenericData).nodeType ===
+      SpisumNodeTypes.File;
     const setFormRef = useSyncFormValidityWithDialog(channel);
     const [selectedItemsInfo, setSelectedItemsInfo] = useState({
       itemsSizeInBytes: 0,
@@ -204,7 +200,7 @@ export const CreateShipmentForm = React.memo(
           personalDelivery: false,
           postItemCashOnDelivery: 0,
           postItemStatedPrice: 0,
-          postItemType: "",
+          postItemType: null,
           postItemTypeOther: "",
           postItemWeight: "",
           postType: [],
@@ -228,7 +224,8 @@ export const CreateShipmentForm = React.memo(
           ) => {
             const value = e.target.value as SendModeValues;
             const sslSubject =
-              (dialogData as GenericDocument)?.properties?.ssl?.subject || "";
+              (dialogProps.data as GenericDocument)?.properties?.ssl?.subject ||
+              "";
             setFieldValue("sendMode", value);
             setFieldValue(
               "subject",
@@ -246,50 +243,24 @@ export const CreateShipmentForm = React.memo(
 
           return (
             <Form className={dialogClasses.form}>
-              <StyledFormControl>
-                <InputLabel
-                  htmlFor={
-                    lastPathMember(CreateShipmentFormValuesProxy.sendMode).path
-                  }
-                >
-                  {t(translationPath(lang.general.sendMode))}
-                </InputLabel>
-                <Field
-                  required={true}
-                  component={Select}
-                  data-test-id="create-shipment-sendMode"
-                  name={
-                    lastPathMember(CreateShipmentFormValuesProxy.sendMode).path
-                  }
-                  inputProps={{
-                    id: lastPathMember(CreateShipmentFormValuesProxy.sendMode)
-                      .path,
-                    onChange: handleSendModeChange
-                  }}
-                >
-                  <MenuItem value={SendModeValues.Email} disabled={isFileType}>
-                    {t(translationPath(lang.enums.deliveryMode.email))}
-                  </MenuItem>
-                  <MenuItem
-                    value={SendModeValues.Databox}
-                    disabled={isFileType}
-                  >
-                    {t(translationPath(lang.enums.deliveryMode.databox))}
-                  </MenuItem>
-                  <MenuItem value={SendModeValues.Personally}>
-                    {t(translationPath(lang.enums.deliveryMode.personally))}
-                  </MenuItem>
-                  <MenuItem value={SendModeValues.Post}>
-                    {t(translationPath(lang.enums.deliveryMode.post))}
-                  </MenuItem>
-                  <MenuItem
-                    value={SendModeValues.Publish}
-                    disabled={isFileType}
-                  >
-                    {t(translationPath(lang.enums.deliveryMode.publish))}
-                  </MenuItem>
-                </Field>
-              </StyledFormControl>
+              <EnumSelect
+                enumType={SendModeValues}
+                translations={lang.enums.deliveryMode}
+                name={
+                  lastPathMember(CreateShipmentFormValuesProxy.sendMode).path
+                }
+                label={t(translationPath(lang.general.sendMode))}
+                disabledItems={
+                  isFileType
+                    ? [
+                        SendModeValues.Databox,
+                        SendModeValues.Email,
+                        SendModeValues.Publish
+                      ]
+                    : undefined
+                }
+                onChange={handleSendModeChange}
+              />
               <FormFieldsBasedOnSendMode
                 readonly={readonly}
                 sendModeValue={values.sendMode}

@@ -1,11 +1,8 @@
 import { SslProperties } from "core/api/models";
 import { senderFormValidationObject } from "core/components/senderForm/_validations";
-import {
-  MOMENT_HELPER_DATE_FORMAT,
-  MOMENT_HELPER_TIME_FORMAT
-} from "core/helpers/api/document";
 import { sslPropsProxy } from "core/types";
 import moment from "moment";
+import { mergeDateTime } from "share/utils/date";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { validateErrors } from "share/utils/validation";
 import { lang, t } from "translation/i18n";
@@ -23,8 +20,7 @@ export const validationSchema = yup.object().shape({
       lastPathMember(sslPropsProxy.deliveryDate).path,
       t(translationPath(lang.dialog.errors.datePastOnly)),
       (deliveryDate) => {
-        const date = moment(deliveryDate).format(MOMENT_HELPER_DATE_FORMAT);
-        return moment(date).isBefore(moment());
+        return moment(deliveryDate).startOf("day").isBefore(moment());
       }
     ),
   [lastPathMember(sslPropsProxy.deliveryTime).path]: yup
@@ -35,10 +31,10 @@ export const validationSchema = yup.object().shape({
       t(translationPath(lang.dialog.errors.timePastOnly)),
       function (deliveryTime) {
         const deliveryDate = this.parent.deliveryDate;
-        if (!deliveryTime || !deliveryDate) return true;
-        const date = moment(deliveryDate).format(MOMENT_HELPER_DATE_FORMAT);
-        const time = moment(deliveryTime).format(MOMENT_HELPER_TIME_FORMAT);
-        return moment(`${date} ${time}`).isBefore(moment());
+
+        return moment(mergeDateTime(deliveryDate, deliveryTime)).isBefore(
+          moment()
+        );
       }
     ),
   [lastPathMember(sslPropsProxy.deliveryMode).path]: yup

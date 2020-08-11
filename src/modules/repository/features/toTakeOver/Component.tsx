@@ -18,12 +18,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
+import { traverseNodeType } from "share/utils/utils";
 import { validateItems } from "share/utils/validation";
 import { lang, t, withTranslation } from "translation/i18n";
 import * as yup from "yup";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.shreddingYear).path],
   label: t(translationPath(lang.general.yearOfShredding))
 };
@@ -100,18 +101,42 @@ const Component = () => {
     if (row.nodeType === SpisumNodeTypes.TakeDocumentProcessed) {
       dispatch(
         openDocumentWithSaveButtonsAction({
-          ...row,
           canUploadComponents: false,
-          id: row.properties?.ssl?.takeRef || row.id,
+          data: {
+            ...row,
+            id: row.properties?.ssl?.takeRef || row.id,
+            nodeType: traverseNodeType(row.nodeType),
+            properties: {
+              ...row.properties,
+              ssl: {
+                ...row.properties?.ssl,
+                pid: row.properties?.ssl?.pidRef
+              }
+            }
+          },
+          hideManageShipmentsIcon: true,
+          initiator: SpisumNodeTypes.File,
           isReadonly: true
         })
       );
     } else if (row.nodeType === SpisumNodeTypes.TakeFileClosed) {
       dispatch(
         openFileDetailsAction({
-          ...row,
-          id: row.properties?.ssl?.takeRef || row.id,
-          readonly: true
+          data: {
+            ...row,
+            id: row.properties?.ssl?.takeRef || row.id,
+            nodeType: traverseNodeType(row.nodeType),
+            properties: {
+              ...row.properties,
+              ssl: {
+                ...row.properties?.ssl,
+                pid: row.properties?.ssl?.pidRef
+              }
+            }
+          },
+          hideManageShipmentsIcon: true,
+          initiator: SpisumNodeTypes.File,
+          isReadonly: true
         })
       );
     }
@@ -122,10 +147,7 @@ const Component = () => {
       items: [
         {
           action: (selected: GenericDocument[]) =>
-            dispatchOpenDialog({
-              ...selected[0],
-              id: selected[0].properties?.ssl?.takeRef || selected[0].id
-            }),
+            dispatchOpenDialog(selected[0]),
           icon: <Description />,
           title: t(translationPath(lang.general.showDetails))
         },
@@ -138,7 +160,7 @@ const Component = () => {
                 payload: {
                   nodeId:
                     selected[0].properties?.ssl?.takeRef || selected[0].id,
-                  nodeType: selected[0].nodeType
+                  nodeType: traverseNodeType(selected[0].nodeType)
                 }
               })
             );
@@ -163,9 +185,12 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  ...selected[0],
-                  id: selected[0].properties?.ssl?.takeRef || selected[0].id
+                dialogProps: {
+                  data: {
+                    ...selected[0],
+                    id: selected[0].properties?.ssl?.takeRef || selected[0].id,
+                    nodeType: traverseNodeType(selected[0].nodeType)
+                  }
                 },
                 dialogType: DialogType.DeclineHandover
               })
@@ -191,9 +216,12 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  ...selected[0],
-                  id: selected[0].properties?.ssl?.takeRef || selected[0].id
+                dialogProps: {
+                  data: {
+                    ...selected[0],
+                    id: selected[0].properties?.ssl?.takeRef || selected[0].id,
+                    nodeType: traverseNodeType(selected[0].nodeType)
+                  }
                 },
                 dialogType: DialogType.ChangeFileMark
               })

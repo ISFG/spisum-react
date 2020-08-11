@@ -13,7 +13,7 @@ import { ChangePasswordDialog } from "./ChangePasswordDialog";
 import { ChangePasswordFormValues } from "./_types";
 
 export const changePasswordDialog = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
       ({ dispatch, channels, onClose, buttonState }) => {

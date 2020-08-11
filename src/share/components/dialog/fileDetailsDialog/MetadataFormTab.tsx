@@ -6,13 +6,13 @@ import { FileDetailsMetadataForm } from "./FileDetailsMetadataForm";
 
 const MetaDataTab = ({
   channel,
-  dialogData,
+  dialogProps,
   onClose
 }: DialogContentPropsType) => {
   return (
     <MetaFormContainer<SslAnalog>
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       MetaForm={FileDetailsMetadataForm}
       onClose={onClose}
     />

@@ -1,6 +1,6 @@
 import { callAsyncAction } from "core/action";
 import { documentUpdateActionType } from "core/api/document/_actions";
-import { DocumentWithSaveButtonsRequestType } from "core/api/document/_types";
+import { getDocumentSaveButtonsActions } from "core/api/document/_methods";
 import { NodeChildAssociationEntry, SslProperties } from "core/api/models";
 import {
   primaryAction,
@@ -26,8 +26,8 @@ import MetaDataTab from "./MetadataFormTab";
 
 export const documentDetailsWithSaveButtonsDialog: DialogContentType = createDocumentDialog(
   {
-    actions: [
-      primaryAction(
+    actions: (dialogProps) => {
+      const primaryButton = primaryAction(
         t(translationPath(lang.dialog.form.save)),
         ({ dispatch, channels, onClose, buttonState }) => {
           const formValues = channels?.Metadata?.state?.formValues;
@@ -68,8 +68,8 @@ export const documentDetailsWithSaveButtonsDialog: DialogContentType = createDoc
             })
           );
         }
-      ),
-      secondaryAction(
+      );
+      const secondaryButton = secondaryAction(
         t(translationPath(lang.dialog.form.saveAndRefer)),
         ({ dispatch, channels, onClose, buttonState }) => {
           const formValues = channels?.Metadata?.state?.formValues;
@@ -89,8 +89,10 @@ export const documentDetailsWithSaveButtonsDialog: DialogContentType = createDoc
             dispatch(documentViewAction__UpdateItem(response));
             dispatch(
               handoverDocument({
-                id: channels?.Metadata?.state?.id
-              } as GenericDocument)
+                data: {
+                  id: channels?.Metadata?.state?.id
+                }
+              })
             );
             onClose();
           };
@@ -116,8 +118,17 @@ export const documentDetailsWithSaveButtonsDialog: DialogContentType = createDoc
             })
           );
         }
-      )
-    ],
+      );
+      const {
+        showPrimaryAction,
+        showSecondaryAction
+      } = getDocumentSaveButtonsActions(dialogProps);
+
+      return [
+        ...(showPrimaryAction ? [primaryButton] : []),
+        ...(showSecondaryAction ? [secondaryButton] : [])
+      ];
+    },
     tabs: [
       {
         content: MetaDataTab,
@@ -133,16 +144,14 @@ export const documentDetailsWithSaveButtonsDialog: DialogContentType = createDoc
       },
       {
         content: ShipmentTab,
-        filter: ({ dialogData }) =>
-          (dialogData as DocumentWithSaveButtonsRequestType)
-            ?.hideShipmentsTab !== true,
+        filter: ({ dialogProps }) => dialogProps.hideShipmentsTab !== true,
         label: t(translationPath(lang.dialog.tabs.shipment))
       },
       {
         content: SettleTab,
-        filter: ({ dialogData }) => {
+        filter: ({ dialogProps }) => {
           const { state } =
-            (dialogData as GenericDocument)?.properties?.ssl || {};
+            (dialogProps.data as GenericDocument)?.properties?.ssl || {};
 
           return SettleTab.filter(state);
         },
@@ -150,9 +159,9 @@ export const documentDetailsWithSaveButtonsDialog: DialogContentType = createDoc
       },
       {
         content: SaveAndDiscardTab,
-        filter: ({ dialogData }) => {
+        filter: ({ dialogProps }) => {
           const { state } =
-            (dialogData as GenericDocument)?.properties?.ssl || {};
+            (dialogProps.data as GenericDocument)?.properties?.ssl || {};
 
           return SaveAndDiscardTab.filter(state);
         },

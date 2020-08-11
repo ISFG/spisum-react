@@ -1,17 +1,17 @@
 import { nodeHistoryAction } from "core/api/node/_actions";
 import { getType } from "typesafe-actions";
-import { historyTab__Clear, HistoryTabActionTypes } from "./_actions";
+import { HistoryTabActionTypes, historyTab__Clear } from "./_actions";
 import { NodeHistoryStateType } from "./_types";
 
 const initialState: NodeHistoryStateType = {
   error: null,
   isLoading: false,
   list: {
-    entries: [],
+    entries: undefined,
     pagination: {
       count: 0,
       hasMoreItems: false,
-      maxItems: 25,
+      maxItems: 50,
       skipCount: 0,
       totalItems: 0
     }

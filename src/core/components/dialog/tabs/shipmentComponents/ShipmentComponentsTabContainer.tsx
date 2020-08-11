@@ -14,7 +14,7 @@ import { getRelativePath } from "share/utils/query";
 import { callAsyncAction } from "../../../../action";
 import { File } from "../../../../entities";
 import { useMetaFormDocument } from "../../hooks/useMetaFormDocument";
-import { DialogContentPropsType, DialogDataProps } from "../../_types";
+import { DialogDataGenericData, DialogTabContentPropsType } from "../../_types";
 import ComponentsTab from "./ComponentsTab";
 import { componentValidation, sortComponents } from "./methods";
 import { SelectedComponentsFnType } from "./_types";
@@ -32,29 +32,31 @@ const initialState: ComponentsTabContainerState = {
   rowsPerPage: 100
 };
 
-type OwnProps = DialogContentPropsType & {
+type OwnProps = DialogTabContentPropsType & {
   nodeId: string;
   isReadOnly?: boolean;
 };
 
 const ShipmentComponentsTabContainer = React.memo(
-  ({ channel, isReadOnly, nodeId, dialogData }: OwnProps) => {
+  ({ channel, isReadOnly, nodeId, dialogProps, isActive }: OwnProps) => {
     const dispatch = useDispatch();
     const { components, error, isLoading, selected } = useSelector(
       (state: RootStateType) => state.componentShipmentReducer
     );
-    const { nodeType } = dialogData as ShipmentFormValues;
+    const { nodeType } = dialogProps.data as ShipmentFormValues;
     const [{ pageNumber, rowsPerPage }, setState] = useState<
       ComponentsTabContainerState
     >({
       ...initialState,
       selectedComponents: selected.entities
     });
+    const [wasLoaded, setWasLoaded] = useState<boolean>(false);
+
     const metaFormDocument = useMetaFormDocument();
     const readonly =
       isReadOnly ||
-      !!(dialogData as DialogDataProps)?.isReadonly ||
-      !!(dialogData as DialogDataProps)?.isComponentReadonly;
+      !!dialogProps.isReadonly ||
+      !!dialogProps.isComponentReadonly;
     const componentsDir = useSelector((state: RootStateType) =>
       getRelativePath(
         state.loginReducer.global.paths,
@@ -74,7 +76,7 @@ const ShipmentComponentsTabContainer = React.memo(
           action: componentViewShipmentAction,
           onSuccessNotification: null,
           payload: {
-            documentId: (dialogData as DialogDataProps)?.documentId,
+            documentId: (dialogProps.data as DialogDataGenericData)?.documentId,
             include: ["properties", "path"],
             maxItems: rowsPerPage,
             nodeId,
@@ -84,8 +86,19 @@ const ShipmentComponentsTabContainer = React.memo(
         })
       );
 
+    channel.refreshData = fetchComponents;
+
     useEffect(() => {
-      fetchComponents();
+      if (isActive && !wasLoaded) {
+        fetchComponents();
+        setWasLoaded(true);
+      }
+    }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      if (isActive) {
+        fetchComponents();
+      }
     }, [nodeId, rowsPerPage, pageNumber]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -95,9 +108,9 @@ const ShipmentComponentsTabContainer = React.memo(
       channel.setPreviewItem({
         ...sortedComponents[0],
         entityId: nodeId,
-        nodeType: (dialogData as DialogDataProps)?.nodeType
+        nodeType: (dialogProps.data as DialogDataGenericData)?.nodeType
       });
-    }, [channel, dialogData, nodeId, sortedComponents]);
+    }, [channel, dialogProps, nodeId, sortedComponents]);
 
     const handleChangePage: (
       event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
@@ -185,7 +198,7 @@ const ShipmentComponentsTabContainer = React.memo(
         handleSelectionChange={handleSelectionChange}
         selected={selected.entities}
         isLoading={isLoading}
-        isReadonly={isReadOnly || !!(dialogData as DialogDataProps)?.isReadonly}
+        isReadonly={isReadOnly || !!dialogProps.isReadonly}
         items={sortedComponents}
         pageNumber={pageNumber}
         nodeType={nodeType}

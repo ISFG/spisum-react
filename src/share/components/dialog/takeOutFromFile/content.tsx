@@ -1,23 +1,29 @@
+import { callAsyncAction } from "core/action";
+import { removeFromFileAction } from "core/api/file/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { callAsyncAction } from "../../../../core/action";
-import { removeFromFileAction } from "../../../../core/api/file/_actions";
-import NamedTitle from "../../../../core/components/namedTitle";
 import { TakeOutFromFile } from "./TakeOutFromFile";
 
 export const takeOutFromFileDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState, channels }) => {
+      ({
+        dispatch,
+        dialogProps,
+        onClose,
+        buttonState,
+        channels
+      }) => {
         const componentsIds =
           channels?.contentTab?.state?.selectedComponentsIds;
 
@@ -34,7 +40,7 @@ export const takeOutFromFileDialog: DialogContentType = {
             onSuccess,
             payload: {
               componentsIds,
-              nodeId: (dialogData as DialogDataProps)?.id
+              nodeId: (dialogProps.data as DialogDataGenericData)?.id
             }
           })
         );

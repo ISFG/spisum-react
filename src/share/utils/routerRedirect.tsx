@@ -5,8 +5,7 @@ import { RootRouterType } from "router";
 
 export const findRedirect = (
   location: string,
-  itemsOfMenu: (MenuItemType | SubmenuItemType)[],
-  isInHidden: boolean = false
+  itemsOfMenu: (MenuItemType | SubmenuItemType)[]
 ): RootRouterType | null => {
   for (const item of itemsOfMenu) {
     if (
@@ -14,14 +13,14 @@ export const findRedirect = (
       item.url.toLowerCase().trimEnd("/") === location &&
       item.redirectTo
     ) {
-      return item.isHidden ? null : item.redirectTo;
+      return item.redirectTo;
     }
     const redirectInSubmenu =
       item.submenu &&
       item.submenu.length &&
-      findRedirect(location, item.submenu, isInHidden || item.isHidden);
+      findRedirect(location, item.submenu);
     if (redirectInSubmenu) {
-      return item.isHidden ? null : redirectInSubmenu;
+      return redirectInSubmenu;
     }
   }
   return null;

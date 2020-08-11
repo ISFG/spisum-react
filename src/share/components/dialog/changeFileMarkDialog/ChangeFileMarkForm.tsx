@@ -13,7 +13,7 @@ import { Field, Form, Formik, FormikHelpers, FormikState } from "formik";
 import { Select } from "formik-material-ui";
 import React from "react";
 import { lastPathMember, translationPath } from "share/utils/getPath";
-import { lang, t } from "../../../../translation/i18n";
+import { lang, t } from "translation/i18n";
 import { ChangeFileMarkFormValues } from "./_types";
 import { validate } from "./_validations";
 

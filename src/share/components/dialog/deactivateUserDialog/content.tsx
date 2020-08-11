@@ -1,24 +1,24 @@
 import { callAsyncAction } from "core/action";
+import { deactivateUserAction } from "core/api/user/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
+import { NotificationSeverity } from "core/components/notifications/_types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { deactivateUserAction } from "../../../../core/api/user/_actions";
-import NamedTitle from "../../../../core/components/namedTitle";
-import { NotificationSeverity } from "../../../../core/components/notifications/_types";
 import CancelDialog from "../cancelDialog/CancelDialog";
 
 export const deactivateUserDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState }) => {
-        if (!dialogData) {
+      ({ dispatch, dialogProps, onClose, buttonState }) => {
+        if (!dialogProps.data) {
           return;
         }
 
@@ -44,7 +44,7 @@ export const deactivateUserDialog: DialogContentType = {
               severity: NotificationSeverity.Success
             },
             payload: {
-              userId: (dialogData as DialogDataProps).id
+              userId: (dialogProps.data as DialogDataGenericData).id
             }
           })
         );
@@ -56,7 +56,7 @@ export const deactivateUserDialog: DialogContentType = {
       {...props}
       style={{ fontWeight: "bold" }}
       question={t(translationPath(lang.dialog.content.deactivateUser), {
-        id: (props.dialogData as DialogDataProps)?.id
+        id: (props.dialogProps.data as DialogDataGenericData)?.id
       })}
     />
   ),

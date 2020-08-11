@@ -4,15 +4,15 @@ import { ControlsBarType } from "core/components/dataTable/_types";
 import { dialogOpenAction } from "core/components/dialog/_actions";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
 import { ShipmentDocument } from "core/types";
 import { Associations } from "enums";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { RootStateType } from "reducers";
 import { lang, t } from "translation/i18n";
-import { RootStateType } from "../../../../reducers";
 import { translationPath } from "../../../utils/getPath";
 import { shipmentDetailDialogOpen } from "../shipmentDetailDialog/_action";
 import { SendShipment } from "./SendShipment";
@@ -21,20 +21,20 @@ import { SendShipmentState, ShipmentAssocTypes } from "./_types";
 const initialState: SendShipmentState = {
   createdShipment: {
     pageNumber: 0,
-    rowsPerPage: 25
+    rowsPerPage: 50
   },
   returnedShipment: {
     pageNumber: 0,
-    rowsPerPage: 25
+    rowsPerPage: 50
   }
 };
 
 export const SendShipmentContainer: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const dispatch = useDispatch();
-  const nodeId = (dialogData as DialogDataProps).id as string;
+  const nodeId = (dialogProps.data as DialogDataGenericData).id as string;
   const [{ createdShipment, returnedShipment }, setState] = useState<
     SendShipmentState
   >(initialState);
@@ -170,7 +170,12 @@ export const SendShipmentContainer: DialogContentType["content"] = ({
             // but just remove deleted item from the shipmentsReducer
             dispatch(
               dialogOpenAction({
-                dialogData: { id: selected[0].id, onClose: loadData },
+                dialogProps: {
+                  data: {
+                    id: selected[0].id
+                  },
+                  onClose: loadData
+                },
                 dialogType: DialogType.CancelShipment
               })
             );
@@ -188,11 +193,15 @@ export const SendShipmentContainer: DialogContentType["content"] = ({
       items: [
         {
           action: (selected: ShipmentDocument[]) => {
+            const data = dialogProps.data;
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  ...dialogData,
-                  id: nodeId,
+                dialogProps: {
+                  ...dialogProps,
+                  data: {
+                    ...data,
+                    id: nodeId
+                  },
                   onClose: loadData
                 },
                 dialogType: DialogType.CreateShipment

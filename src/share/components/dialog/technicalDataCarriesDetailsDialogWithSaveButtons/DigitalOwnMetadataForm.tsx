@@ -3,6 +3,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { SslAnalogWithOwner } from "core/api/models";
 import Datepicker from "core/components/datepicker/Component";
 import {
+  StyledKeyboardDatePickerFifth,
+  StyledKeyboardDateTimePickerFifth
+} from "core/components/datepicker/Component.styles";
+import { DateTimePicker } from "core/components/datetimepicker";
+import {
   StyledFakeFieldFifth,
   StyledFieldFifth,
   StyledFieldWide,
@@ -22,12 +27,7 @@ import { useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation, withTranslation } from "translation/i18n";
-import {
-  StyledDatepickerFifth,
-  StyledKeyboardDatePickerFifth
-} from "../../../../core/components/datepicker/Component.styles";
-import { DateTimePicker } from "../../../../core/components/datetimepicker";
-import { SSLStateField } from "../../form/fields/SSLStateField";
+import { SslDocumentState } from "../../form/fields/SSLDocumentState";
 import { validate } from "./_validations";
 
 const Component = ({
@@ -58,6 +58,11 @@ const Component = ({
         const handlePlanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           filePlan = shreddingPlans.find((plan) => plan.id === e.target.value);
           fileMarks = filePlan?.items || [];
+
+          if (!e.target.value) {
+            setFieldValue(lastPathMember(sslPropsProxy.fileMark).path, "");
+          }
+
           setRetentionValues(values.fileMark);
         };
 
@@ -98,7 +103,7 @@ const Component = ({
               label={t(translationPath(lang.general.pid))}
             />
             <DateTimePicker
-              component={StyledDatepickerFifth}
+              component={StyledKeyboardDateTimePickerFifth}
               data-test-id="meta-input-createdAt"
               disabled={true}
               name={lastPathMember(analogDocumentProxy.createdAt).path}
@@ -126,7 +131,7 @@ const Component = ({
               </Field>
             </StyledFormControlFifth>
 
-            <SSLStateField />
+            <SslDocumentState />
 
             <StyledFieldFifth
               component={TextField}
@@ -163,7 +168,7 @@ const Component = ({
               <Field
                 component={Select}
                 data-test-id="meta-input-fileMark"
-                disabled={isReadonly}
+                disabled={isReadonly || !values.filePlan}
                 name={lastPathMember(sslPropsProxy.fileMark).path}
                 inputProps={{
                   id: "fileMark",
@@ -265,6 +270,13 @@ const Component = ({
             />
 
             <SenderRadioWrapper
+              disabledFields={
+                values.form === "digital" &&
+                (values.documentType === "databox" ||
+                  values.documentType === "email")
+                  ? [lastPathMember(sslPropsProxy.sender_contact).path]
+                  : []
+              }
               initialValues={initialValues}
               setFieldValue={setFieldValue}
               readonly={true}

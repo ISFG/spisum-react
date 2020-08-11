@@ -34,7 +34,7 @@ export const generateColumns = (
       label: t(translationPath(lang.general.electronicSeal))
     },
     {
-      isDate: true,
+      isDateTime: true,
       keys: [classPath(fileProxy.usedTime).path],
       label: t(translationPath(lang.general.dateAndTimeSafe))
     }

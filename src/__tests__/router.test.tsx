@@ -7,7 +7,7 @@ import Dashboard from "core/features/dashboard";
 import Login from "core/features/login";
 import { initialState } from "core/features/login/_reducer";
 import { SessionStatus } from "core/features/login/_types";
-import { menuItems } from "core/hooks/useMenuItemsWithPermissons";
+import { rootMenuItems } from "core/hooks/useMenuItemsWithPermissons";
 import { CoreRoutes } from "core/routes";
 import { mount } from "enzyme";
 import React from "react";
@@ -31,6 +31,7 @@ describe("Router test", () => {
               groups: [],
               myGroups: [],
               remember: null,
+              signer: false,
               status
             }
           }
@@ -87,7 +88,7 @@ describe("Router test", () => {
       }
     };
 
-    testDuplicity(Object.values(menuItems));
+    testDuplicity(Object.values(rootMenuItems));
     expect(redundantUrls).toMatchObject([]);
   });
 });

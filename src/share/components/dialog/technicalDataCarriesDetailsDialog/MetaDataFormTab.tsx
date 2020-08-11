@@ -6,13 +6,13 @@ import { DigitalEvidateMetadataForm } from "./DigitalEvidateMetadataForm";
 
 const MetaDataTab = ({
   channel,
-  dialogData,
+  dialogProps,
   onClose
 }: DialogContentPropsType) => {
   return (
     <MetaFormContainer<SslAnalog>
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       MetaForm={DigitalEvidateMetadataForm}
       onClose={onClose}
     />

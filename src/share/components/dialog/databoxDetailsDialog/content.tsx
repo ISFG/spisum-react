@@ -5,26 +5,26 @@ import {
 import { ReadOnlyComponentsTab } from "core/components/dialog/tabs/components";
 import { dialogOpenAction } from "core/components/dialog/_actions";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
 import { DataboxDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
 import { documentRegisterAction } from "modules/mailroom/features/income/_actions";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { MetadataFormTab } from "./MetadataFormTab";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
+import { MetadataFormTab } from "./MetadataFormTab";
 
 export const databoxDetailsDialog: DialogContentType = createDocumentDialog({
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.form.register)),
-      ({ dispatch, dialogData, onClose }) => {
+      ({ dispatch, dialogProps, onClose }) => {
         onClose();
         dispatch(
           documentRegisterAction({
             dialogType: DialogType.RegisterDatabox,
-            document: dialogData as DataboxDocument,
+            document: dialogProps.data as DataboxDocument,
             nodeType: SpisumNodeTypes.Databox,
             onSuccess: onClose
           })
@@ -34,11 +34,11 @@ export const databoxDetailsDialog: DialogContentType = createDocumentDialog({
 
     primaryAction(
       t(translationPath(lang.dialog.form.notRegister)),
-      ({ dispatch, dialogData, onClose }) => {
+      ({ dispatch, dialogProps, onClose }) => {
         dispatch(
           dialogOpenAction({
-            dialogData: {
-              ...dialogData,
+            dialogProps: {
+              ...dialogProps,
               onSuccess: onClose
             },
             dialogType: DialogType.DontRegisterDocument

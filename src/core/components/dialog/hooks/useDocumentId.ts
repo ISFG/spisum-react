@@ -1,11 +1,9 @@
-import { DialogContentPropsType, DialogDataProps } from "../_types";
+import { DialogContentPropsType, DialogDataGenericData } from "../_types";
 import { useMetaFormDocument } from "./useMetaFormDocument";
 
 export const useDocumentId = (props: DialogContentPropsType) => {
-  const dialogData = props.dialogData as DialogDataProps;
+  const data = props.dialogProps.data as DialogDataGenericData;
   const metaFormDocument = useMetaFormDocument();
 
-  return (
-    dialogData?.id || dialogData?.documentId || metaFormDocument.documentId
-  );
+  return data?.id || data?.documentId || metaFormDocument.documentId;
 };

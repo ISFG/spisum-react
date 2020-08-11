@@ -1,5 +1,5 @@
+import { SendModeValues } from "enums";
 import React, { useMemo } from "react";
-import { SendModeValues } from "../../../../../../enums";
 import { CreateShipmentFormValues } from "../../_types";
 import { DataboxFormFields } from "../databoxForm/DataboxFormFields";
 import { EmailFormFields } from "../emailForm/EmailFormFields";

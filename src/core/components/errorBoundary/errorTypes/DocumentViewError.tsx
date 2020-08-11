@@ -1,13 +1,13 @@
+import { Button } from "@material-ui/core";
+import clsx from "clsx";
 import React from "react";
+import { translationPath } from "share/utils/getPath";
+import { lang, t } from "translation/i18n";
+import { useStyles } from "../../dialog/Dialog.styles";
 import {
   ErrorPic,
   useStyles as useBoundariesStyles
 } from "../ErrorBoundary.styles";
-import { Button } from "@material-ui/core";
-import { useStyles } from "../../dialog/Dialog.styles";
-import { lang, t } from "../../../../translation/i18n";
-import { translationPath } from "../../../../share/utils/getPath";
-import clsx from "clsx";
 
 export const DocumentViewError = () => {
   const classes = useStyles();

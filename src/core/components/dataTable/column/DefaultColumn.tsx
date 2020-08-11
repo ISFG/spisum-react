@@ -18,7 +18,7 @@ export function DefaultColumn<Row, ColumnValue>({
   return (
     <TableCell
       key={columnIndex}
-      className={clsx(column.isDate && classes.date)}
+      className={clsx((column.isDate || column.isDateTime) && classes.date)}
     >
       {getFormattedValue<Row, ColumnValue>(column, columnValue)}
     </TableCell>
@@ -26,13 +26,16 @@ export function DefaultColumn<Row, ColumnValue>({
 }
 
 const getFormattedValue = <Row, ColumnValue>(
-  { isDate, isBoolean }: DataColumn<Row>,
+  { isDate, isDateTime, isBoolean }: DataColumn<Row>,
   value: ColumnValue
 ) => {
   if (value === null || value === undefined) {
     return value;
   }
   if (isDate) {
+    return formatDate(((value as unknown) as string) || "", "");
+  }
+  if (isDateTime) {
     return formatDate(((value as unknown) as string) || "");
   }
   if (isBoolean) {

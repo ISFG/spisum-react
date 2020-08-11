@@ -1,5 +1,7 @@
 import { Backspace, Description, Telegram } from "@material-ui/icons";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import {
@@ -11,15 +13,13 @@ import { SitePaths, SpisumNodeTypes } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
+import { shipmentDetailDialogOpen } from "share/components/dialog/shipmentDetailDialog/_action";
 import { classPath, translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
-import { dialogOpenAction } from "../../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../../core/components/dialog/_types";
-import { shipmentDetailDialogOpen } from "../../../../../share/components/dialog/shipmentDetailDialog/_action";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.toDispatchDate).path],
   label: t(translationPath(lang.general.toDispatchDate))
 };
@@ -42,12 +42,12 @@ export const columns: DataColumn<GenericDocument>[] = [
   },
   defaultColumn,
   {
-    isDate: true,
+    isDateTime: true,
     keys: [classPath(genericDocumentProxy.properties!.ssl!.dateFrom).path],
     label: t(translationPath(lang.general.dateFrom))
   },
   {
-    isDate: true,
+    isDateTime: true,
     keys: [classPath(genericDocumentProxy.properties!.ssl!.dateTo).path],
     label: t(translationPath(lang.general.dateTo))
   }
@@ -88,7 +88,7 @@ const Component = () => {
           action: (selected) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ReturnShipment
               })
             );
@@ -100,7 +100,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.DispatchPublishShipment
               })
             );

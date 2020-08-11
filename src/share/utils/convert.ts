@@ -1,12 +1,15 @@
 import { format, isValid, parseISO } from "date-fns";
 import cs from "date-fns/locale/cs";
 
-export const formatDate = (date?: string, timeFormat?: string) => {
+export const formatDate = (
+  date?: string,
+  timeFormat: string = "dd.MM.yyyy HH:mm:ss"
+) => {
   if (date && isValid(parseISO(date))) {
     if (timeFormat) {
       return format(parseISO(date), timeFormat, { locale: cs });
     } else {
-      return format(parseISO(date), "dd.MM.yyyy HH:mm:ss", { locale: cs });
+      return format(parseISO(date), "dd.MM.yyyy", { locale: cs });
     }
   }
   return date;

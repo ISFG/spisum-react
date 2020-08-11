@@ -7,20 +7,20 @@ import {
   WorkOff
 } from "@material-ui/icons";
 import { tableOfContentsAction } from "core/api/node/_actions";
-import React, { useEffect, useState } from "react";
+import { GenericDocument } from "core/types";
+import { default as React, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
-import { settleDocumentDialogOpen } from "../../../../../share/components/dialog/settleDocumentDialog/_actions";
-import { translationPath } from "../../../../../share/utils/getPath";
-import { lang, t } from "../../../../../translation/i18n";
+import { settleDocumentDialogOpen } from "share/components/dialog/settleDocumentDialog/_actions";
+import { translationPath } from "share/utils/getPath";
+import { lang, t } from "translation/i18n";
 import { openDocumentWithSaveButtonsAction } from "../../../../api/document/_actions";
-import { GenericDocument } from "../../../../types";
 import { ControlsBarType } from "../../../dataTable/_types";
 import { dialogOpenAction } from "../../_actions";
-import { DialogContentPropsType, DialogType } from "../../_types";
+import { DialogTabContentPropsType, DialogType } from "../../_types";
 import TableOfContentsTab from "./TableOfContentsTab";
 
-type TableOfContentsTabContainerProps = DialogContentPropsType & {
+type TableOfContentsTabContainerProps = DialogTabContentPropsType & {
   nodeId: string;
 };
 
@@ -31,15 +31,19 @@ interface TableOfContentsTabContainerState {
 
 const initialState: TableOfContentsTabContainerState = {
   pageNumber: 0,
-  rowsPerPage: 25
+  rowsPerPage: 50
 };
 
 const TableOfContentsTabContainer = ({
-  nodeId
+  channel,
+  isActive,
+  nodeId,
+  dialogProps
 }: TableOfContentsTabContainerProps) => {
   const [{ pageNumber, rowsPerPage }, setState] = useState<
     TableOfContentsTabContainerState
   >(initialState);
+  const [wasLoaded, setWasLoaded] = useState<boolean>(false);
 
   const { entities, totalItems, loading } = useSelector(
     (state: RootStateType) => {
@@ -52,17 +56,31 @@ const TableOfContentsTabContainer = ({
   );
 
   const dispatch = useDispatch();
-  const loadData = () =>
-    dispatch(
-      tableOfContentsAction.request({
-        maxItems: rowsPerPage,
-        nodeId,
-        skipCount: pageNumber * rowsPerPage
-      })
-    );
+  const loadData = useCallback(
+    () =>
+      dispatch(
+        tableOfContentsAction.request({
+          maxItems: rowsPerPage,
+          nodeId,
+          skipCount: pageNumber * rowsPerPage
+        })
+      ),
+    [pageNumber, rowsPerPage] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  channel.refreshData = loadData;
 
   useEffect(() => {
-    loadData();
+    if (isActive && !wasLoaded) {
+      loadData();
+      setWasLoaded(true);
+    }
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isActive) {
+      loadData();
+    }
   }, [pageNumber, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isDocumentProcessed = (document: GenericDocument): boolean => {
@@ -77,10 +95,12 @@ const TableOfContentsTabContainer = ({
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  id: nodeId,
-                  onClose: loadData,
-                  selected
+                dialogProps: {
+                  data: {
+                    id: nodeId,
+                    selected
+                  },
+                  onClose: loadData
                 },
                 dialogType: DialogType.TakeOutFromFile
               })
@@ -97,7 +117,8 @@ const TableOfContentsTabContainer = ({
           action: (selected: GenericDocument[]) => {
             dispatch(
               openDocumentWithSaveButtonsAction({
-                ...selected[0],
+                data: selected[0],
+                initiator: dialogProps?.initiator,
                 onClose: loadData
               })
             );
@@ -109,8 +130,8 @@ const TableOfContentsTabContainer = ({
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  ...selected[0],
+                dialogProps: {
+                  data: selected[0],
                   onClose: loadData
                 },
                 dialogType: DialogType.ForSignature
@@ -126,7 +147,7 @@ const TableOfContentsTabContainer = ({
         {
           action: (selected: GenericDocument[]) => {
             dispatch(
-              settleDocumentDialogOpen({ ...selected[0], onClose: loadData })
+              settleDocumentDialogOpen({ data: selected[0], onClose: loadData })
             );
           },
           filter: (doc) => {
@@ -139,8 +160,8 @@ const TableOfContentsTabContainer = ({
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  ...selected[0],
+                dialogProps: {
+                  data: selected[0],
                   onClose: loadData
                 },
                 dialogType: DialogType.CancelProcessing
@@ -157,8 +178,8 @@ const TableOfContentsTabContainer = ({
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  ...selected[0],
+                dialogProps: {
+                  data: selected[0],
                   onClose: loadData
                 },
                 dialogType: DialogType.SendShipment
@@ -172,10 +193,9 @@ const TableOfContentsTabContainer = ({
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  id: nodeId,
-                  onClose: loadData,
-                  selected
+                dialogProps: {
+                  data: { id: nodeId, selected },
+                  onClose: loadData
                 },
                 dialogType: DialogType.TakeOutFromFile
               })

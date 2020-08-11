@@ -1,6 +1,5 @@
 import MomentUtils from "@date-io/moment";
 import { StyledComponent } from "@emotion/styled";
-import { Theme } from "@material-ui/core";
 import {
   DateTimePickerProps,
   MuiPickersUtilsProvider
@@ -8,13 +7,14 @@ import {
 import { DatepickerValueType } from "core/components/datepicker/_types";
 import { useField, useFormikContext } from "formik";
 import React, { useEffect, useState } from "react";
+import { ITheme } from "styles";
 import { DateTimeFormats } from "../../../enums";
 import { StyledDateTimePicker } from "./Component.styles";
 const format: string = DateTimeFormats.FullDateTime;
 
 interface OwnProps {
   className?: string;
-  component?: StyledComponent<DateTimePickerProps, {}, Theme>;
+  component?: StyledComponent<DateTimePickerProps, {}, ITheme>;
   name: string;
   label: string;
   disableFuture?: boolean;

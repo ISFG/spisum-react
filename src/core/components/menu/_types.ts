@@ -7,7 +7,6 @@ export interface SubmenuItemType {
   __testId?: string;
   content?: React.ReactElement;
   icon?: React.ReactElement;
-  isHidden?: boolean;
   onClick?: (dispatch: Dispatch<RootActionsType>) => void;
   redirectTo?: RootRouterType;
   submenu?: SubmenuItemType[];

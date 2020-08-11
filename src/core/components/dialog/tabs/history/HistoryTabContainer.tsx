@@ -1,13 +1,13 @@
 import { NodeHistory } from "core/api/models";
 import { nodeHistoryAction } from "core/api/node/_actions";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
-import { DialogContentPropsType, DialogDataProps } from "../../_types";
+import { DialogDataGenericData, DialogTabContentPropsType } from "../../_types";
 import HistoryTab from "./HistoryTab";
 import { historyTab__Clear } from "./_actions";
 
-type HistoryTabContainerProps = DialogContentPropsType & {
+type HistoryTabContainerProps = DialogTabContentPropsType & {
   nodeId: string;
 };
 
@@ -18,7 +18,7 @@ interface HistoryTabContainerState {
 
 const initialState: HistoryTabContainerState = {
   pageNumber: 0,
-  rowsPerPage: 25
+  rowsPerPage: 50
 };
 
 const entryMapper = (item: { entry: NodeHistory }): NodeHistory => {
@@ -38,17 +38,19 @@ const entryMapper = (item: { entry: NodeHistory }): NodeHistory => {
 
 const HistoryTabContainer = ({
   nodeId,
-  dialogData
+  dialogProps,
+  isActive,
+  channel
 }: HistoryTabContainerProps) => {
   const [{ pageNumber, rowsPerPage }, setState] = useState<
     HistoryTabContainerState
   >(initialState);
 
-  const nodeType = (dialogData as DialogDataProps)?.nodeType;
+  const nodeType = (dialogProps.data as DialogDataGenericData)?.nodeType;
   const { entries, totalItems, isLoading, error } = useSelector(
     (state: RootStateType) => {
       return {
-        entries: state.historyReducer.list.entries?.map(entryMapper) || [],
+        entries: state.historyReducer.list.entries?.map(entryMapper),
         error: state.historyReducer.error,
         isLoading: state.historyReducer.isLoading,
         totalItems: state.historyReducer.list.pagination?.totalItems || 0
@@ -57,18 +59,32 @@ const HistoryTabContainer = ({
   );
 
   const dispatch = useDispatch();
-  const loadData = () =>
-    dispatch(
-      nodeHistoryAction.request({
-        maxItems: rowsPerPage,
-        nodeId,
-        nodeType,
-        skipCount: pageNumber * rowsPerPage
-      })
-    );
+  const loadData = useCallback(
+    () => {
+      dispatch(
+        nodeHistoryAction.request({
+          maxItems: rowsPerPage,
+          nodeId,
+          nodeType,
+          skipCount: pageNumber * rowsPerPage
+        })
+      );
+    },
+    [pageNumber, rowsPerPage] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  channel.refreshData = loadData;
 
   useEffect(() => {
-    loadData();
+    if (isActive && entries === undefined) {
+      loadData();
+    }
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isActive) {
+      loadData();
+    }
   }, [pageNumber, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(
@@ -103,7 +119,7 @@ const HistoryTabContainer = ({
 
   return (
     <HistoryTab
-      items={entries}
+      items={entries || []}
       totalItems={totalItems}
       pageNumber={pageNumber}
       refreshTable={loadData}

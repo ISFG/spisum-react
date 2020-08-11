@@ -28,7 +28,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
 
 export const columns: DataColumn<GenericDocument>[] = [
   {
-    keys: [classPath(genericDocumentProxy.properties!.ssl!.pid).path],
+    keys: [classPath(genericDocumentProxy.properties!.ssl!.pidRef).path],
     label: t(translationPath(lang.general.identifier))
   },
   {
@@ -83,18 +83,28 @@ const Component = () => {
     if (row.nodeType === SpisumNodeTypes.DocumentRM) {
       dispatch(
         openDocumentWithSaveButtonsAction({
-          ...row,
           canUploadComponents: false,
-          id: row?.properties?.ssl?.ref || row.id,
+          data: {
+            ...row,
+            id: row?.properties?.ssl?.ref || row.id,
+            nodeType: SpisumNodeTypes.Document
+          },
+          hideManageShipmentsIcon: true,
+          initiator: SpisumNodeTypes.File,
           isReadonly: true
         })
       );
     } else if (row.nodeType === SpisumNodeTypes.FileRM) {
       dispatch(
         openFileDetailsAction({
-          ...row,
-          id: row?.properties?.ssl?.ref || row.id,
-          readonly: true
+          data: {
+            ...row,
+            id: row?.properties?.ssl?.ref || row.id,
+            nodeType: SpisumNodeTypes.File
+          },
+          hideManageShipmentsIcon: true,
+          initiator: SpisumNodeTypes.File,
+          isReadonly: true
         })
       );
     }
@@ -107,7 +117,9 @@ const Component = () => {
           action: (selected) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected,
+                dialogProps: {
+                  data: selected
+                },
                 dialogType: DialogType.CreateRetentionProposal
               })
             );
@@ -126,7 +138,19 @@ const Component = () => {
           title: t(translationPath(lang.general.showDetails))
         },
         {
-          action: () => {},
+          action: (selected: GenericDocument[]) => {
+            dispatch(
+              dialogOpenAction({
+                dialogProps: {
+                  data: {
+                    ...selected[0],
+                    id: selected[0].properties?.ssl?.ref || selected[0].id
+                  }
+                },
+                dialogType: DialogType.ChangeFileMark
+              })
+            );
+          },
           icon: <SwapHoriz />,
           title: t(translationPath(lang.general.changeFileMark))
         },
@@ -134,7 +158,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ShreddingDiscard
               })
             );
@@ -147,7 +171,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.CancelDiscardDialog
               })
             );
@@ -160,7 +184,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ChangeToA
               })
             );
@@ -181,7 +205,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ChangeToS
               })
             );
@@ -199,10 +223,10 @@ const Component = () => {
           title: t(translationPath(lang.general.changeToS))
         },
         {
-          action: (selected) => {
+          action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected,
+                dialogProps: { data: selected },
                 dialogType: DialogType.CreateRetentionProposal
               })
             );

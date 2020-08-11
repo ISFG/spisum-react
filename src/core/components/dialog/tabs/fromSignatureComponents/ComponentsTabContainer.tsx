@@ -3,27 +3,22 @@ import {
   componentViewAction
 } from "core/api/components/_actions";
 import { DataColumn, ValueType } from "core/components/dataTable/_types";
+import { signer } from "core/helpers/api/Signer";
 import { GenericDocument } from "core/types";
 import { Associations, SpisumNodeTypes } from "enums";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
-import { translationPath } from "../../../../../share/utils/getPath";
-import { lang, t } from "../../../../../translation/i18n";
+import { translationPath } from "share/utils/getPath";
+import { lang, t } from "translation/i18n";
 import { callAsyncAction } from "../../../../action";
 import { ComponentType } from "../../../../api/components/_types";
 import { File } from "../../../../entities";
-import { getService } from "../../../../features/dependencyInjection";
-import { Signer } from "../../../../services/Signer";
 import { notificationAction } from "../../../notifications/_actions";
 import { NotificationSeverity } from "../../../notifications/_types";
 import { useMetaFormDocument } from "../../hooks/useMetaFormDocument";
 import { dialogOpenAction } from "../../_actions";
-import {
-  DialogContentPropsType,
-  DialogDataProps,
-  DialogType
-} from "../../_types";
+import { DialogContentPropsType, DialogType } from "../../_types";
 import ComponentsTab from "./ComponentsTab";
 import { sortComponents } from "./methods";
 
@@ -49,12 +44,11 @@ type OwnProps = DialogContentPropsType & {
 const ComponentsTabContainer = React.memo(
   ({
     channel,
+    componentType = ComponentType.Document,
+    dialogProps,
     isReadOnly,
-    nodeId,
-    dialogData,
-    componentType = ComponentType.Document
+    nodeId
   }: OwnProps) => {
-    const signer = getService(Signer);
     const [selectedComponents, setSelectedComponents] = useState<File[]>([]);
     const dispatch = useDispatch();
     const [
@@ -65,7 +59,7 @@ const ComponentsTabContainer = React.memo(
     const { components, error, isLoading } = useSelector(
       (state: RootStateType) => state.componentsReducer
     );
-    const nodeType = (dialogData as GenericDocument)?.nodeType;
+    const nodeType = (dialogProps.data as GenericDocument).nodeType;
 
     const sortedComponents = useMemo(() => {
       return components
@@ -149,7 +143,9 @@ const ComponentsTabContainer = React.memo(
         rowsPerPage: parseInt(event.target.value, 10)
       }));
     }, []);
+
     const metaFormDocument = useMetaFormDocument();
+
     const handleColumnChange = useCallback(
       (row: File, column: DataColumn<File>, value: ValueType) => {
         dispatch(
@@ -220,8 +216,7 @@ const ComponentsTabContainer = React.memo(
     };
 
     const isRowDisabled = (component: File) =>
-      component.fileIsInOutputFormat !== "yes";
-
+      component.fileIsInOutputFormat !== "yes" || !component?.canBeSigned;
     const handleSignDialogClose = () => {
       fetchComponents();
       setSelectedComponents([]);
@@ -233,13 +228,15 @@ const ComponentsTabContainer = React.memo(
 
     const handleSign = async (selected: File[]) => {
       // if selected components.length > 1 => BE returns batchID
-      const signerData = await signer.getSignerData(nodeId, selected);
+      const visual = dialogProps?.signerVisual || false;
+
+      const signerData = await signer.getSignerData(nodeId, selected, visual);
 
       if (signerData) {
         window.open(signerData.signer);
         dispatch(
           dialogOpenAction({
-            dialogData: {
+            dialogProps: {
               onClose: handleSignDialogClose,
               signerComponentId: signerData?.batchId || signerData.components[0]
             },
@@ -272,7 +269,7 @@ const ComponentsTabContainer = React.memo(
         isRowDisabled={isRowDisabled}
         handleSign={handleSign}
         isLoading={isLoading}
-        isReadonly={isReadOnly || !!(dialogData as DialogDataProps)?.isReadonly}
+        isReadonly={isReadOnly || !!dialogProps.isReadonly}
         items={sortedComponents}
         pageNumber={pageNumber}
         refreshTable={fetchComponents}

@@ -1,4 +1,4 @@
-import { createProxy } from "../../../../share/utils/getPath";
+import { createProxy } from "share/utils/getPath";
 
 export interface DailyImprint {
   id: string;

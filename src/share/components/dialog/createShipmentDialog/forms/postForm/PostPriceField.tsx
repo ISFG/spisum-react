@@ -1,8 +1,8 @@
 import InputAdornment from "@material-ui/core/InputAdornment";
+import { StyledField } from "core/components/dialog/Dialog.styles";
 import { useFormikContext } from "formik";
 import { TextField } from "formik-material-ui";
 import React, { useEffect } from "react";
-import { StyledField } from "../../../../../../core/components/dialog/Dialog.styles";
 
 export interface OwnProps {
   readonly: boolean;

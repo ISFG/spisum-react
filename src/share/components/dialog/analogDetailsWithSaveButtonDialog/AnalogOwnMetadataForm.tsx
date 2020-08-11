@@ -3,6 +3,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { SslAnalogWithOwner } from "core/api/models";
 import Datepicker from "core/components/datepicker";
 import {
+  StyledKeyboardDatePickerFifth,
+  StyledKeyboardDateTimePickerFifth
+} from "core/components/datepicker/Component.styles";
+import { DateTimePicker } from "core/components/datetimepicker";
+import { StyledDateTimePickerFifth } from "core/components/datetimepicker/Component.styles";
+import {
   StyledFakeFieldFifth,
   StyledFieldFifth,
   StyledFieldWide,
@@ -22,13 +28,7 @@ import { useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation, withTranslation } from "translation/i18n";
-import {
-  StyledDatepickerFifth,
-  StyledKeyboardDatePickerFifth
-} from "../../../../core/components/datepicker/Component.styles";
-import { DateTimePicker } from "../../../../core/components/datetimepicker";
-import { StyledDateTimePickerFifth } from "../../../../core/components/datetimepicker/Component.styles";
-import { SSLStateField } from "../../form/fields/SSLStateField";
+import { SslDocumentState } from "../../form/fields/SSLDocumentState";
 import { validate } from "./_validations";
 
 const Component = ({
@@ -59,6 +59,11 @@ const Component = ({
         const handlePlanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           filePlan = shreddingPlans.find((plan) => plan.id === e.target.value);
           fileMarks = filePlan?.items || [];
+
+          if (!e.target.value) {
+            setFieldValue(lastPathMember(sslPropsProxy.fileMark).path, "");
+          }
+
           setRetentionValues(values.fileMark);
         };
 
@@ -135,14 +140,14 @@ const Component = ({
               label={t(translationPath(lang.general.ssid))}
             />
             <DateTimePicker
-              component={StyledDatepickerFifth}
+              component={StyledKeyboardDateTimePickerFifth}
               data-test-id="meta-input-createdAt"
               disabled={true}
               name={lastPathMember(analogDocumentProxy.createdAt).path}
               label={t(translationPath(lang.general.dateOfCreation))}
             />
 
-            <SSLStateField />
+            <SslDocumentState />
 
             <StyledFieldFifth
               component={TextField}
@@ -222,7 +227,7 @@ const Component = ({
               <Field
                 component={Select}
                 data-test-id="meta-input-fileMark"
-                disabled={isReadonly}
+                disabled={isReadonly || !values.filePlan}
                 name={lastPathMember(sslPropsProxy.fileMark).path}
                 inputProps={{
                   id: "fileMark",

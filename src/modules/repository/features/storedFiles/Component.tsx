@@ -20,7 +20,7 @@ import { getRelativePath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.shreddingYear).path],
   label: t(translationPath(lang.general.yearOfShredding))
 };
@@ -77,13 +77,19 @@ const Component = () => {
       state.loginReducer.global.paths,
       null,
       SitePaths.Repository,
-      SitePaths.Files,
       SitePaths.Stored
     )
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) =>
-    dispatch(openFileDetailsAction({ ...row, readonly: true }));
+    dispatch(
+      openFileDetailsAction({
+        data: row,
+        hideManageShipmentsIcon: true,
+        initiator: SpisumNodeTypes.File,
+        isReadonly: true
+      })
+    );
 
   const controls: ControlsBarType<GenericDocument> = {
     single: {
@@ -98,7 +104,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ChangeFileMark
               })
             );
@@ -110,7 +116,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ChangeLocation
               })
             );
@@ -122,7 +128,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.Borrow
               })
             );

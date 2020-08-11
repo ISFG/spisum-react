@@ -24,8 +24,8 @@ import { NotificationSeverity } from "../../../notifications/_types";
 import { useMetaFormDocument } from "../../hooks/useMetaFormDocument";
 import { dialogOpenAction } from "../../_actions";
 import {
-  DialogContentPropsType,
-  DialogDataProps,
+  DialogDataGenericData,
+  DialogTabContentPropsType,
   DialogType
 } from "../../_types";
 import ComponentsTab from "./ComponentsTab";
@@ -45,7 +45,7 @@ const initialState: CommentsTabContainerState = {
   rowsPerPage: 100
 };
 
-type OwnProps = DialogContentPropsType & {
+type OwnProps = DialogTabContentPropsType & {
   nodeId: string;
   isReadOnly?: boolean;
   componentType?: ComponentType;
@@ -54,23 +54,26 @@ type OwnProps = DialogContentPropsType & {
 const ComponentsTabContainer = React.memo(
   ({
     channel,
+    componentType = ComponentType.Document,
+    dialogProps,
+    isActive,
     isReadOnly,
-    nodeId,
-    dialogData,
-    componentType = ComponentType.Document
+    nodeId
   }: OwnProps) => {
     const dispatch = useDispatch();
     const [
       { pageNumber, rowsPerPage, sortKeys, sortColumnIndex, sortAsc },
       setState
     ] = useState<CommentsTabContainerState>(initialState);
+    const [wasLoaded, setWasLoaded] = useState<boolean>(false);
 
     const { components, error, isLoading } = useSelector(
       (state: RootStateType) => state.componentsReducer
     );
     const metaFormDocument = useMetaFormDocument();
     const nodeType =
-      (dialogData as DialogDataProps)?.nodeType || metaFormDocument?.nodeType;
+      (dialogProps.data as DialogDataGenericData)?.nodeType ||
+      metaFormDocument?.nodeType;
 
     const sortedComponents = useMemo(() => {
       return components
@@ -112,8 +115,19 @@ const ComponentsTabContainer = React.memo(
       );
     };
 
+    channel.refreshData = fetchComponents;
+
     useEffect(() => {
-      fetchComponents();
+      if (isActive && !wasLoaded) {
+        fetchComponents();
+        setWasLoaded(true);
+      }
+    }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      if (isActive) {
+        fetchComponents();
+      }
     }, [nodeId, rowsPerPage, pageNumber, sortColumnIndex, sortAsc]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -322,14 +336,11 @@ const ComponentsTabContainer = React.memo(
     );
 
     const showActions = () => {
-      if (
-        isReadOnly ||
-        (dialogData as DialogDataProps).canUploadComponents === false
-      ) {
+      if (isReadOnly || dialogProps.canUploadComponents === false) {
         return false;
       }
 
-      const document = dialogData as GenericDocument;
+      const document = dialogProps.data as GenericDocument;
 
       const { isLocked, formValues } = metaFormDocument;
       const typedFormValues = formValues as SslProperties;
@@ -337,7 +348,8 @@ const ComponentsTabContainer = React.memo(
       const senderType =
         document?.properties?.ssl?.senderType || typedFormValues?.senderType;
       const documentType =
-        document?.properties?.ssl?.documentType || typedFormValues.documentType;
+        document?.properties?.ssl?.documentType ||
+        typedFormValues?.documentType;
       const documentIsLocked = document?.isLocked || isLocked;
 
       return (
@@ -364,9 +376,11 @@ const ComponentsTabContainer = React.memo(
     const handleConvertToOutputFormat = (cmp: File[]) => {
       dispatch(
         dialogOpenAction({
-          dialogData: {
-            componentId: cmp[0].id,
-            id: nodeId,
+          dialogProps: {
+            data: {
+              componentId: cmp[0].id,
+              id: nodeId
+            },
             onSuccess: fetchComponents
           },
           dialogType: DialogType.ConvertToOutput
@@ -377,10 +391,10 @@ const ComponentsTabContainer = React.memo(
     const handleCanRenameComponent = showActions;
 
     const handleCanConvertToOutputFormat = (component: File) => {
-      const document = dialogData as GenericDocument;
+      const document = dialogProps.data as GenericDocument;
       return (
-        (dialogData as DialogDataProps)?.disableConverIcon !== true &&
-        !document.isLocked &&
+        dialogProps.disableConverIcon !== true &&
+        !document?.isLocked &&
         component?.fileIsInOutputFormat !== "yes" &&
         component?.fileIsInOutputFormat !== "impossible" &&
         !isReadOnly
@@ -462,7 +476,7 @@ const ComponentsTabContainer = React.memo(
         handleSwapComponentContent={handleSwapComponentContent}
         handleUploadComponent={handleUploadComponent}
         isLoading={isLoading}
-        isReadonly={isReadOnly || !!(dialogData as DialogDataProps)?.isReadonly}
+        isReadonly={isReadOnly || !!dialogProps.isReadonly}
         items={sortedComponents}
         pageNumber={pageNumber}
         refreshTable={fetchComponents}

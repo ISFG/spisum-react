@@ -1,3 +1,5 @@
+import { ErrorType } from "../../../types";
+
 export enum NotificationSeverity {
   Error = "error",
   Info = "info",
@@ -34,6 +36,8 @@ export interface NotificationType {
   severity?: NotificationSeverity;
   variant?: NotificationVariant;
 }
+
+export type NotificationFunctionType = (payload: ErrorType) => NotificationType;
 
 export interface NotificationWithIdType extends NotificationType {
   id: string;

@@ -14,7 +14,7 @@ export function* watchLostDestroyedDialogAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.LostDestroyed
       })
     );

@@ -68,7 +68,7 @@ export function* watchDocumentDetailAction() {
   }: ActionType<typeof createAnalogDocument>) {
     yield put(
       dialogOpenAction({
-        dialogData: {
+        dialogProps: {
           onClose: payload.onClose,
           saveOnOpen: true,
           useAutoSave: true

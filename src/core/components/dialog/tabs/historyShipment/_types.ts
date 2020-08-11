@@ -3,10 +3,10 @@ import { ShipmentHistorySuccessResponseType } from "../../../../api/shipment/_ty
 
 // used for mapping in DataTable
 export type ShipmentHistoryTableType = {
-  createdAt: Date;
-  createdBy: string;
+  occuredAt: Date;
+  userId: string;
   description: string;
-  type: string;
+  eventType: string;
   id: string;
   pid?: string;
 };

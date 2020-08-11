@@ -4,7 +4,7 @@ import {
   RadioGroup,
   TextField
 } from "@material-ui/core";
-import { Autocomplete, RenderInputParams } from "@material-ui/lab";
+import { Autocomplete, AutocompleteRenderInputParams } from "@material-ui/lab";
 import { useStyles } from "core/components/dialog/Dialog.styles";
 import { Form, useField, useFormikContext } from "formik";
 import React, { useState } from "react";
@@ -72,7 +72,9 @@ const Component = ({
     setInputValue(value);
   };
 
-  const renderAutocompleteInput = (inputProps: RenderInputParams) => {
+  const renderAutocompleteInput = (
+    inputProps: AutocompleteRenderInputParams
+  ) => {
     return (
       <TextField
         {...inputProps}
@@ -121,6 +123,8 @@ const Component = ({
         <Autocomplete
           inputValue={inputValue}
           loading={isLoading}
+          loadingText={t(translationPath(lang.general.loading))}
+          noOptionsText={t(translationPath(lang.general.noOptionsText))}
           onChange={onAutoCompleteValueChange}
           onInputChange={onInputValueChange}
           options={options}

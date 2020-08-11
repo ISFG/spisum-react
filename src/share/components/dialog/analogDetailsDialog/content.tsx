@@ -21,10 +21,11 @@ import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import { handoverDocument } from "../documentHandoverDialog/_actions";
+import { HandoverDocumentPayloadType } from "../documentHandoverDialog/_types";
 import MetaDataTab from "./MetadataFormTab";
 
 export const analogDetailsDialog: DialogContentType = createDocumentDialog({
-  actions: [
+  actions: () => [
     primaryAction(
       t(translationPath(lang.dialog.form.toRegister)),
       ({ dispatch, channels, onClose, buttonState }) => {
@@ -87,10 +88,14 @@ export const analogDetailsDialog: DialogContentType = createDocumentDialog({
 
           dispatch(
             handoverDocument({
-              id: channels?.Metadata?.state?.id
-            } as GenericDocument)
+              data: {
+                id: channels?.Metadata?.state?.id
+              },
+              onClose: () => {
+                dispatch(documentViewAction__Refresh(true));
+              }
+            } as HandoverDocumentPayloadType)
           );
-          dispatch(documentViewAction__Refresh(true));
           onClose();
         };
 
@@ -136,9 +141,9 @@ export const analogDetailsDialog: DialogContentType = createDocumentDialog({
     },
     {
       content: SettleTab,
-      filter: ({ dialogData }) => {
+      filter: ({ dialogProps }) => {
         const { state } =
-          (dialogData as GenericDocument)?.properties?.ssl || {};
+          (dialogProps.data as GenericDocument)?.properties?.ssl || {};
 
         return SettleTab.filter(state);
       },

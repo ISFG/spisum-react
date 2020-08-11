@@ -34,6 +34,7 @@ export type NodeSecondaryChildrenRequestType = {
 };
 export type ShipmentSecondaryChildrenRequestType = {
   documentId: string;
+  include?: string[];
   nodeId: string;
   where?: string; // example: (nodeType='ssl:document')
 };

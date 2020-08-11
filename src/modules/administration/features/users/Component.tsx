@@ -1,21 +1,18 @@
 import { AddCircleOutline, Block, Edit } from "@material-ui/icons";
-import MenuLayout from "core/components/layout/MenuLayout";
-import React from "react";
-import { useDispatch } from "react-redux";
 import {
   openCreateUserDialogAction,
   openEditUserDialogAction
-} from "../../../../core/api/user/_actions";
-import { ApiURL } from "../../../../core/apiURL";
-import {
-  ControlsBarType,
-  DataColumn
-} from "../../../../core/components/dataTable/_types";
-import { dialogOpenAction } from "../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../core/components/dialog/_types";
-import DocumentView from "../../../../core/components/documentView";
-import { classPath, translationPath } from "../../../../share/utils/getPath";
-import { lang, t } from "../../../../translation/i18n";
+} from "core/api/user/_actions";
+import { ApiURL } from "core/apiURL";
+import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
+import DocumentView from "core/components/documentView";
+import MenuLayout from "core/components/layout/MenuLayout";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { classPath, translationPath } from "share/utils/getPath";
+import { lang, t } from "translation/i18n";
 import { DisabledUsers, User, usersProxy } from "./_types";
 
 const columns: DataColumn<User>[] = [
@@ -77,7 +74,9 @@ const Component = () => {
           action: (selected) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: {
+                  data: selected[0]
+                },
                 dialogType: DialogType.DeactivateUser
               })
             );
@@ -92,11 +91,15 @@ const Component = () => {
     }
   };
 
-  const isRowDisabled = ({ id }: User) => {
+  const isRowDisabled = ({ id, enabled }: User) => {
     return (
       id === DisabledUsers.Admin ||
+      id === DisabledUsers.Databox ||
+      id === DisabledUsers.Emailbox ||
       id === DisabledUsers.Guest ||
-      id === DisabledUsers.Spisum
+      id === DisabledUsers.SAdmin ||
+      id === DisabledUsers.Spisum ||
+      !enabled
     );
   };
 

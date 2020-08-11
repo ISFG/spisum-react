@@ -11,6 +11,7 @@ import { StyledFieldWide, useStyles } from "../dialog/Dialog.styles";
 import { RadioTypes, SenderFieldsTypesProxy } from "./_types";
 
 interface SenderFormProps {
+  disabledFields?: string[];
   readonly?: boolean;
 }
 
@@ -25,6 +26,7 @@ const senderFields = [
 
 interface RadioWrapperProps {
   readonly?: boolean[] | boolean;
+  disabledFields?: string[];
   initialValues: SslProperties;
   setFieldValue: FormikHelpers<SslProperties>["setFieldValue"];
   hidden?: {
@@ -37,6 +39,7 @@ interface RadioWrapperProps {
 export const SenderRadioWrapper = ({
   readonly,
   setFieldValue,
+  disabledFields,
   initialValues,
   hidden
 }: RadioWrapperProps) => {
@@ -105,21 +108,32 @@ export const SenderRadioWrapper = ({
         )}
       </Field>
       {senderState === RadioTypes.individual ? (
-        <IndividualSenderForm readonly={ro_individual} />
+        <IndividualSenderForm
+          disabledFields={disabledFields}
+          readonly={ro_individual}
+        />
       ) : senderState === RadioTypes.legal ? (
-        <LegalSenderForm readonly={ro_legal} />
+        <LegalSenderForm disabledFields={disabledFields} readonly={ro_legal} />
       ) : null}
     </>
   );
 };
 
-export const IndividualSenderForm = ({ readonly }: SenderFormProps) => {
+export const IndividualSenderForm = ({
+  disabledFields,
+  readonly
+}: SenderFormProps) => {
   return (
     <>
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender_name"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_name).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_name).path}
         type="text"
         label={t(translationPath(lang.general.nameSurname))}
@@ -127,7 +141,12 @@ export const IndividualSenderForm = ({ readonly }: SenderFormProps) => {
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender_address"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_address).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_address).path}
         type="text"
         label={t(translationPath(lang.general.address))}
@@ -135,7 +154,12 @@ export const IndividualSenderForm = ({ readonly }: SenderFormProps) => {
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender_contact"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_contact).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_contact).path}
         type="text"
         label={t(translationPath(lang.general.contact))}
@@ -144,13 +168,21 @@ export const IndividualSenderForm = ({ readonly }: SenderFormProps) => {
   );
 };
 
-export const LegalSenderForm = ({ readonly }: SenderFormProps) => {
+export const LegalSenderForm = ({
+  disabledFields,
+  readonly
+}: SenderFormProps) => {
   return (
     <>
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-org-name"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_orgName).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_orgName).path}
         type="text"
         label={t(translationPath(lang.general.orgName))}
@@ -158,7 +190,12 @@ export const LegalSenderForm = ({ readonly }: SenderFormProps) => {
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender-address"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_address).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_address).path}
         type="text"
         label={t(translationPath(lang.general.orgAddress))}
@@ -166,7 +203,12 @@ export const LegalSenderForm = ({ readonly }: SenderFormProps) => {
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender-sender-org-unit"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_orgUnit).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_orgUnit).path}
         type="text"
         label={t(translationPath(lang.general.orgUnit))}
@@ -174,7 +216,12 @@ export const LegalSenderForm = ({ readonly }: SenderFormProps) => {
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender-name"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_name).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_name).path}
         type="text"
         label={t(translationPath(lang.general.nameSurname))}
@@ -182,7 +229,12 @@ export const LegalSenderForm = ({ readonly }: SenderFormProps) => {
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender-job"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_job).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_job).path}
         type="text"
         label={t(translationPath(lang.general.senderJob))}
@@ -190,7 +242,12 @@ export const LegalSenderForm = ({ readonly }: SenderFormProps) => {
       <StyledFieldWide
         component={TextField}
         data-test-id="meta-input-sender-contact"
-        disabled={readonly}
+        disabled={
+          readonly ||
+          disabledFields?.includes(
+            lastPathMember(sslPropsProxy.sender_contact).path
+          )
+        }
         name={lastPathMember(sslPropsProxy.sender_contact).path}
         type="text"
         label={t(translationPath(lang.general.contact))}

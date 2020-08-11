@@ -83,6 +83,7 @@ export type Lang = Readonly<{
       edit: string;
       notReadable: string;
       notRegister: string;
+      refresh: string;
       register: string;
       registerAndRefer: string;
       save: string;
@@ -118,6 +119,7 @@ export type Lang = Readonly<{
       refreshSucceeded: string;
       registered: string;
       registeredAndReferred: string;
+      settleOutputReadableType: string;
       somethingFailed: string;
       cancelFailed: string;
       cancelSucceeded: string;
@@ -175,6 +177,7 @@ export type Lang = Readonly<{
       openFile: string;
       promoteConceptToDocument: string;
       renameComponent: string;
+      repositoryAndShreddingPlan: string;
       resendShipment: string;
       returnDocumentForRework: string;
       sendShipments: string;
@@ -198,7 +201,6 @@ export type Lang = Readonly<{
       minLen: string;
       newPasswordsAreNotEqual: string;
       newPasswordCannotBeTheSame: string;
-      noOptions: string;
       numberOnly: string;
       passwordsAreNotEqual: string;
       timePastOnly: string;
@@ -413,6 +415,7 @@ export type Lang = Readonly<{
     editStorageLocation: string;
     editUser: string;
     electronicSeal: string;
+    electronicSignatureVisualisation: string;
     email: string;
     emailAddress: string;
     emailAddressee: string;
@@ -435,6 +438,7 @@ export type Lang = Readonly<{
     forSignatureDate: string;
     foundConfirmation: string;
     foundingDate: string;
+    from: string;
     giveBack: string;
     giveNext: string;
     group: string;
@@ -456,13 +460,14 @@ export type Lang = Readonly<{
     letter: string;
     listCount: string;
     listCountAttachments: string;
+    loading: string;
     lock: string;
     lostDate: string;
     lostReason: string;
     mainGroup: string;
-    mainOrganizationalUnit: string;
     manageShipments: string;
     messageBody: string;
+    moreThan: string;
     municipality: string;
     name: string;
     nameOfRetentionProposal: string;
@@ -472,7 +477,9 @@ export type Lang = Readonly<{
     newPassword: string;
     newPassword2: string;
     nextOwner: string;
+    nextPage: string;
     no: string;
+    noOptionsText: string;
     note: string;
     notRegister: string;
     notRegisterReason: string;
@@ -501,6 +508,7 @@ export type Lang = Readonly<{
     postItemTypeOther: string;
     postType: string;
     postTypeOther: string;
+    previousPage: string;
     print: string;
     printEnvelopes: string;
     printInventoryDocuments: string;
@@ -542,7 +550,6 @@ export type Lang = Readonly<{
     senderJob: string;
     senderLegalPerson: string;
     senderOwn: string;
-    senderRegistrationNumber: string;
     senderSSID: string;
     sendFromDatabox: string;
     sendFromEmail: string;

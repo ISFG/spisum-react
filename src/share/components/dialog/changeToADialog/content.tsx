@@ -2,26 +2,22 @@ import { callAsyncAction } from "core/action";
 import { documentChangeToAAction } from "core/api/document/_actions";
 import { fileChangeToAAction } from "core/api/file/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
-import {
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "core/components/dialog/_types";
+import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import CancelDialog from "../cancelDialog/CancelDialog";
 
 export const changeToADialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState }) => {
-        if (!dialogData) {
+      ({ dispatch, dialogProps, onClose, buttonState }) => {
+        if (!dialogProps.data) {
           return;
         }
         buttonState.setIsPending(true);
@@ -29,15 +25,15 @@ export const changeToADialog: DialogContentType = {
         const onSuccess = () => {
           onClose();
           dispatch(documentViewAction__Refresh(true));
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
         };
 
         const onError = () => {
           buttonState.setIsPending(false);
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
         };
 
-        const { nodeType } = dialogData as GenericDocument;
+        const { nodeType } = dialogProps.data as GenericDocument;
 
         const action =
           nodeType === SpisumNodeTypes.DocumentRM
@@ -50,7 +46,7 @@ export const changeToADialog: DialogContentType = {
           return;
         }
 
-        const id = (dialogData as GenericDocument)?.properties?.ssl?.ref;
+        const id = (dialogProps.data as GenericDocument)?.properties?.ssl?.ref;
 
         if (!id) {
           return;

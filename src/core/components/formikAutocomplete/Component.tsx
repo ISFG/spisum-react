@@ -1,8 +1,13 @@
 import { CircularProgress, TextField } from "@material-ui/core";
-import { FilterOptionsState } from "@material-ui/lab";
+import {
+  AutocompleteChangeDetails,
+  AutocompleteChangeReason,
+  FilterOptionsState
+} from "@material-ui/lab";
+import { GroupMember } from "core/api/models";
 import { FieldProps, FormikHelpers, useFormikContext } from "formik";
 import { fieldToTextField } from "formik-material-ui";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { FormValues } from "../MetaForm/_types";
@@ -65,7 +70,12 @@ const FormikAutocomplete = ({
     setTouched({ [field.name as string]: true });
   };
 
-  const handleOnChange = (e: Event, value: PossibleAutocompleteOptions) => {
+  const handleOnChange = (
+    e: ChangeEvent<{}>,
+    value: GroupMember | null,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<GroupMember> | undefined
+  ) => {
     if (!value) {
       setFieldValue(field.name as string, "");
       return;
@@ -98,7 +108,8 @@ const FormikAutocomplete = ({
       disabled={disabled || isSubmitting || (loading && disableOnLoad)}
       filterOptions={filterOptions || filterOptionsVoid}
       getOptionLabel={getOptionLabel}
-      noOptionsText={t(translationPath(lang.dialog.errors.noOptions))}
+      loadingText={t(translationPath(lang.general.loading))}
+      noOptionsText={t(translationPath(lang.general.noOptionsText))}
       onBlur={handleOnBlur}
       onChange={handleOnChange}
       openOnFocus={true}

@@ -1,4 +1,4 @@
-import { ErrorType } from "../../../../types";
+import { ErrorType } from "types";
 import { createSafeAsyncAction } from "../../../utils/typesafeActions";
 import { ReturnToRepositoryRequestType } from "./_types";
 

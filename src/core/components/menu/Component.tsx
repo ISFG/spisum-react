@@ -107,6 +107,7 @@ const MenuLayout = ({
     handleClose();
     dispatch(
       dialogOpenAction({
+        dialogProps: {},
         dialogType: DialogType.GroupChange
       })
     );
@@ -116,7 +117,18 @@ const MenuLayout = ({
     handleClose();
     dispatch(
       dialogOpenAction({
+        dialogProps: {},
         dialogType: DialogType.ChangePassword
+      })
+    );
+  };
+
+  const openRepositoryAndShreddingPlanDialog = () => {
+    handleClose();
+    dispatch(
+      dialogOpenAction({
+        dialogProps: {},
+        dialogType: DialogType.RepositoryAndShreddingPlan
       })
     );
   };
@@ -209,6 +221,11 @@ const MenuLayout = ({
                   {t(translationPath(lang.general.changeGroup))}
                 </MenuItem>
               )}
+              <MenuItem onClick={openRepositoryAndShreddingPlanDialog}>
+                {t(
+                  translationPath(lang.dialog.title.repositoryAndShreddingPlan)
+                )}
+              </MenuItem>
               <MenuItem onClick={changePassword}>
                 {t(translationPath(lang.dialog.title.changePassword))}
               </MenuItem>

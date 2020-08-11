@@ -3,17 +3,17 @@ import { DialogType } from "core/components/dialog/_types";
 import { put, takeLatest } from "redux-saga/effects";
 import { getType } from "typesafe-actions";
 import {
-  DailogOpenHandoverBackActionType,
-  dialogOpenHandoverBack
+  dialogOpenHandoverBack,
+  DialogOpenHandoverBackActionType
 } from "./_actions";
 
 export function* watchDialogOpenHandoverBackAction() {
   yield takeLatest(getType(dialogOpenHandoverBack), function* ({
     payload
-  }: DailogOpenHandoverBackActionType) {
+  }: DialogOpenHandoverBackActionType) {
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.HandoverDocumentBack
       })
     );

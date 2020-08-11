@@ -1,5 +1,4 @@
 import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 import clsx from "clsx";
 import {
   StyledFieldWide,
@@ -13,6 +12,7 @@ import { Select, TextField } from "formik-material-ui";
 import React from "react";
 import { lang, t } from "translation/i18n";
 import { lastPathMember, translationPath } from "../../../../../utils/getPath";
+import { StyledMenuItem } from "../../CreateShipment.styles";
 import {
   CreateShipmentFormValues,
   CreateShipmentFormValuesProxy
@@ -157,7 +157,6 @@ export const PostFormFields = ({ values, readonly }: OwnProps) => {
         name={lastPathMember(CreateShipmentFormValuesProxy.postItemType).path}
       >
         <InputLabel
-          required={true}
           htmlFor={
             lastPathMember(CreateShipmentFormValuesProxy.postItemType).path
           }
@@ -176,9 +175,11 @@ export const PostFormFields = ({ values, readonly }: OwnProps) => {
         >
           {PostItemType &&
             Object.keys(PostItemType)?.map((key) => (
-              <MenuItem key={key} value={PostItemType[key]}>
-                {t(translationPath(lang.enums.postItemType[key]))}
-              </MenuItem>
+              <StyledMenuItem key={key} value={PostItemType[key] || null}>
+                {(PostItemType[key] &&
+                  t(translationPath(lang.enums.postItemType[key]))) ||
+                  " "}
+              </StyledMenuItem>
             ))}
         </Field>
       </FormControlWithError>

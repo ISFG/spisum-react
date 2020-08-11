@@ -23,8 +23,7 @@ interface OwnProps {
 
 const findContentInMenuByUrl = (
   location: string,
-  itemsOfMenu: (MenuItemType | SubmenuItemType)[],
-  isInHidden: boolean = false
+  itemsOfMenu: (MenuItemType | SubmenuItemType)[]
 ): React.ReactElement | null => {
   for (const item of itemsOfMenu) {
     if (
@@ -32,18 +31,14 @@ const findContentInMenuByUrl = (
       item.url.toLowerCase().trimEnd("/") === location &&
       item.content
     ) {
-      return isInHidden ? null : item.content;
+      return item.content;
     }
     const contentInSubmenu =
       item.submenu &&
       item.submenu.length &&
-      findContentInMenuByUrl(
-        location,
-        item.submenu,
-        isInHidden || item.isHidden
-      );
+      findContentInMenuByUrl(location, item.submenu);
     if (contentInSubmenu) {
-      return isInHidden ? null : contentInSubmenu;
+      return contentInSubmenu;
     }
   }
   return null;

@@ -8,7 +8,7 @@ import { NodePreviewContainer } from "core/features/nodePreview/components/nodeP
 import React from "react";
 
 export const renderComponentPreview: RenderPreviewType = (
-  dialogData,
+  dialogProps,
   previewItem
 ) => {
   if (!isFile(previewItem)) {

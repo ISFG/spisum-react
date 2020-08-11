@@ -6,12 +6,12 @@ import { ConceptMetaForm } from "./ConceptMetaForm";
 
 export const MetaDataTab = ({
   channel,
-  dialogData,
+  dialogProps,
   onClose
 }: DialogContentPropsType) => (
   <MetaFormContainer<Concept>
     channel={channel}
-    dialogData={dialogData}
+    dialogProps={dialogProps}
     MetaForm={ConceptMetaForm}
     onClose={onClose}
   />

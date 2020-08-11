@@ -4,10 +4,10 @@ import { DialogType } from "core/components/dialog/_types";
 import { metaFormAction__Update } from "core/components/MetaForm/_actions";
 import { notificationAction } from "core/components/notifications/_actions";
 import { NotificationSeverity } from "core/components/notifications/_types";
+import { SpisumNodeTypes } from "enums";
 import { put, takeLatest } from "redux-saga/effects";
 import { lang, t } from "translation/i18n";
 import { getType } from "typesafe-actions";
-import { SpisumNodeTypes } from "../../../../enums";
 import { translationPath } from "../../../utils/getPath";
 import { handleResponse } from "../../../utils/typesafeActions";
 import { evidenceCreateConceptDialogOpen } from "./_actions";
@@ -16,8 +16,11 @@ export function* watchEvidenceCreateConceptDialogOpenAction() {
   yield takeLatest(getType(evidenceCreateConceptDialogOpen), function* () {
     yield put(
       dialogOpenAction({
-        dialogData: {
-          nodeType: SpisumNodeTypes.Concept
+        dialogProps: {
+          data: {
+            nodeType: SpisumNodeTypes.Concept
+          },
+          dontUseDataModifiedDialog: true
         },
         dialogType: DialogType.CreateConcept
       })
@@ -41,7 +44,11 @@ export function* watchEvidenceCreateConceptDialogOpenAction() {
 
     yield put(
       metaFormAction__Update({
-        documentId: successResponse.id
+        documentId: successResponse.id,
+        formValues: {
+          pid: successResponse?.pid,
+          subject: ""
+        }
       })
     );
   });

@@ -38,10 +38,6 @@ export const validationSchema = yup.object().shape({
   [lastPathMember(sslEmailPropsProxy.deliveryMode).path]: yup
     .string()
     .required(t(translationPath(lang._validations.required))),
-  [lastPathMember(sslEmailPropsProxy.senderRegistrationNumber)
-    .path]: yup
-    .string()
-    .max(100, t(translationPath(lang.dialog.errors.maxLen), { len: 100 })),
   [lastPathMember(sslEmailPropsProxy.settleToDate).path]: yup
     .string()
     .nullable()

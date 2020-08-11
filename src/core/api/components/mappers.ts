@@ -10,6 +10,7 @@ export const getComponentsResponseMapper = (
   mapListResponseToEntityList<NodeChildAssociation<SslComponent>, File>(
     apiResponse,
     (apiComponent) => ({
+      canBeSigned: apiComponent.properties?.ssl?.canBeSigned,
       fileIsInOutputFormat: apiComponent.properties?.ssl?.fileIsInOutputFormat,
       fileIsSigned: apiComponent.properties?.ssl?.fileIsSigned,
       id: apiComponent.id,
@@ -35,7 +36,7 @@ export const getShipmentComponentsResponseMapper = (
       id: apiComponent.id,
       isReadable: apiComponent.properties?.ssl?.fileIsReadable,
       metaType: apiComponent.properties?.ssl?.componentType as FileMetaType,
-      name: apiComponent.name,
+      name: apiComponent.properties?.ssl?.fileName || apiComponent.name,
       path: apiComponent.path?.name,
       size: apiComponent.content?.sizeInBytes
     })

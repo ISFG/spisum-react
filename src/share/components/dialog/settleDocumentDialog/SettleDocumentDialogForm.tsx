@@ -15,6 +15,7 @@ import { CodeList, SettleMethod } from "enums";
 import { Field, Form } from "formik";
 import { Select, TextField } from "formik-material-ui";
 import React from "react";
+import { EnumSelect } from "share/components/form/enumSelect/EnumSelect";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { useGetCodeList } from "share/utils/hooks/getCodeList";
 import { lang, t } from "translation/i18n";
@@ -26,44 +27,24 @@ export const SettleDocumentForm = React.memo(
   ({ values, resetForm }: FormState<SettleDocumentFormValues>) => {
     const classes = useStyles();
     const codeListValues = useGetCodeList(CodeList.customSettleMethod);
+    const handleChangeSettleMethod = (
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      resetForm();
+    };
 
     return (
       <Form className={classes.form}>
         <div className={clsx(classes.fullWidth, classes.form)}>
-          <FormControlWithError
+          <EnumSelect
             component={StyledFormControlThird}
+            enumType={SettleMethod}
+            translations={lang.enums.settleMethod}
+            label={t(translationPath(lang.general.settleMethod))}
             name={lastPathMember(sslPropsProxy.settleMethod).path}
-          >
-            <InputLabel required={true}>
-              {t(translationPath(lang.general.settleMethod))}
-            </InputLabel>
-            <Field
-              component={Select}
-              required={true}
-              name={lastPathMember(sslPropsProxy.settleMethod).path}
-              inputProps={{
-                onChange: () => {
-                  resetForm();
-                }
-              }}
-            >
-              <MenuItem value={SettleMethod.Document}>
-                {t(translationPath(lang.enums.settleMethod.document))}
-              </MenuItem>
-              <MenuItem value={SettleMethod.Forward}>
-                {t(translationPath(lang.enums.settleMethod.forward))}
-              </MenuItem>
-              <MenuItem value={SettleMethod.TakeIntoAccount}>
-                {t(translationPath(lang.enums.settleMethod.takeIntoAccount))}
-              </MenuItem>
-              <MenuItem value={SettleMethod.DocumentNote}>
-                {t(translationPath(lang.enums.settleMethod.documentNote))}
-              </MenuItem>
-              <MenuItem value={SettleMethod.Other}>
-                {t(translationPath(lang.enums.settleMethod.other))}
-              </MenuItem>
-            </Field>
-          </FormControlWithError>
+            onChange={handleChangeSettleMethod}
+          />
+
           <Datepicker
             disabled={true}
             style={{ width: "30%" }}

@@ -1,5 +1,5 @@
 import { DialogType } from "core/components/dialog/_types";
-import { DocumentType, SpisumNodeTypes } from "enums";
+import { DocumentType, SitePaths, SpisumNodeTypes } from "enums";
 import {
   createSafeAction,
   createSafeAsyncAction
@@ -12,6 +12,7 @@ export const documentRegisterAction = createSafeAction("@document/REGISTER")<{
   dialogType: DialogType;
   document: IncomeDocumentType;
   documentType?: DocumentType;
+  sitePath?: SitePaths;
   nodeType: SpisumNodeTypes;
   onSuccess?: VoidFunction;
 }>();

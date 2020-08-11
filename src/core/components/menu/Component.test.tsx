@@ -126,6 +126,7 @@ describe("Menu test", () => {
               groups: [],
               myGroups: [],
               remember: null,
+              signer: false,
               status: SessionStatus.AUTHORIZED
             }
           }

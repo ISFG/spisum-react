@@ -1,7 +1,7 @@
 import { fetchByCustomUrlAction } from "core/api/search/_actions";
+import { EntityList } from "core/entities";
+import { createProxy } from "share/utils/getPath";
 import { ActionType } from "typesafe-actions";
-import { EntityList } from "../../../../core/entities";
-import { createProxy } from "../../../../share/utils/getPath";
 
 export type UsersStateType = UsersSuccessResponseType & {
   isLoading: boolean;
@@ -29,7 +29,10 @@ export type UsersSuccessResponseType = EntityList<User>;
 
 export enum DisabledUsers {
   Admin = "admin",
+  Databox = "databox",
+  Emailbox = "emailbox",
   Guest = "guest",
+  SAdmin = "sAdmin",
   Spisum = "spisum"
 }
 

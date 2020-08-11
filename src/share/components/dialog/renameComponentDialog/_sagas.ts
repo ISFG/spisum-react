@@ -10,7 +10,7 @@ export function* watchRenameComponentAction() {
   }: ActionType<typeof renameComponentAction>) {
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: { data: payload },
         dialogType: DialogType.RenameComponent
       })
     );

@@ -1,7 +1,7 @@
+import { DocumentBaseRequestType } from "core/api/document/_types";
 import { SslShipment } from "core/api/models";
 import { ShipmentDocument } from "core/types";
 import { SendModeValues, SpisumNodeTypes } from "enums";
-import { DocumentBaseRequestType } from "../../../../core/api/document/_types";
 import { createProxy } from "../../../utils/getPath";
 import { MetaFormProps } from "../_types";
 

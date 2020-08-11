@@ -31,6 +31,7 @@ describe("ProtectedRoute test", () => {
               groups: [],
               myGroups: [],
               remember: null,
+              signer: false,
               status: SessionStatus.UNAUTHORIZED
             }
           }
@@ -72,6 +73,7 @@ describe("ProtectedRoute test", () => {
               groups: [],
               myGroups: [],
               remember: null,
+              signer: false,
               status
             }
           }

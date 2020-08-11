@@ -1,10 +1,10 @@
-import { DocumentViewType } from "core/components/documentView/_types";
+import { DialogDataProps } from "core/components/dialog/_types";
 import { createSafeAction } from "share/utils/typesafeActions";
 import { ActionType } from "typesafe-actions";
 
 export const evidenceCancelDialogOpen = createSafeAction(
   "@dialog/EVIDENCE_CANCEL"
-)<DocumentViewType>();
+)<DialogDataProps>();
 
 export type evidenceCancelDialogOpenActionTypes = ActionType<
   typeof evidenceCancelDialogOpen

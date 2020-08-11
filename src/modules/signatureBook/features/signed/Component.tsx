@@ -11,7 +11,7 @@ import { alfrescoQuery, getQueryPath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.signedDate).path],
   label: t(translationPath(lang.general.signedDate))
 };

@@ -1,5 +1,7 @@
 import { Block, Description, Mail } from "@material-ui/icons";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { SessionType } from "core/features/login/_types";
@@ -12,18 +14,16 @@ import { SitePaths, SpisumNodeTypes } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
+import { shipmentDetailDialogOpen } from "share/components/dialog/shipmentDetailDialog/_action";
 import { getHtmlMultilineValue } from "share/utils/formatter";
 import { classPath, translationPath } from "share/utils/getPath";
 import { alfrescoQuery, getQueryPath } from "share/utils/query";
 import { isUserInLeadership } from "share/utils/user";
 import { lang, t, withTranslation } from "translation/i18n";
-import { dialogOpenAction } from "../../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../../core/components/dialog/_types";
-import { shipmentDetailDialogOpen } from "../../../../../share/components/dialog/shipmentDetailDialog/_action";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
-  keys: [classPath(genericDocumentProxy.properties!.ssl!.dispatchDate).path],
+  isDateTime: true,
+  keys: [classPath(genericDocumentProxy.properties!.ssl!.toDispatchDate).path],
   label: t(translationPath(lang.general.toDispatchDate))
 };
 
@@ -104,14 +104,14 @@ const Component = () => {
   const activeGroup = useSelector(
     (state: RootStateType) => state.loginReducer.session.activeGroup
   );
-  const folderId = useSelector(
+  const path = useSelector(
     (state: RootStateType) =>
       getQueryPath(
         state.loginReducer.global.paths,
         null,
         SitePaths.Dispatch,
         SitePaths.Returned
-      )?.id || ""
+      )?.path || ""
   );
 
   const openShipmentDetail = (row: ShipmentDocument) => {
@@ -137,7 +137,7 @@ const Component = () => {
           action: (selected: ShipmentDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: { id: selected[0].id },
+                dialogProps: { data: { id: selected[0].id } },
                 dialogType: DialogType.ResendShipment
               })
             );
@@ -149,7 +149,7 @@ const Component = () => {
           action: (selected: ShipmentDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: { id: selected[0].id },
+                dialogProps: { data: { id: selected[0].id } },
                 dialogType: DialogType.CancelShipment
               })
             );
@@ -172,7 +172,7 @@ const Component = () => {
         search={{
           query: {
             query: alfrescoQuery({
-              ancestors: [folderId],
+              paths: [path],
               type: [
                 SpisumNodeTypes.Databox,
                 SpisumNodeTypes.ShipmentEmail,

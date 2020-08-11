@@ -138,13 +138,7 @@ export type DocumentForSignatureActionType = {
 
 export type DocumentFromSignatureActionType = {
   nodeId: string;
-};
-
-export type DocumentWithSaveButtonsRequestType = GenericDocument & {
-  canUploadComponents?: boolean;
-  hideShipmentsTab?: boolean;
-  isReadonly?: boolean;
-  onClose?: VoidFunction;
+  visual: boolean;
 };
 
 export type DocumentChangeFileMarkRequestType = {

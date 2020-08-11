@@ -14,6 +14,7 @@ import { changeToADialog } from "./changeToADialog/content";
 import { changeToSDialog } from "./changeToSDialog/content";
 import { closeFileDialog } from "./closeFileDialog/content";
 import { conceptDetailsDialog } from "./conceptDetailsDialog/content";
+import { convertToOutputFormatDialog } from "./convertToOutputDialog/content";
 import { evidenceCreateConceptDialog } from "./createConceptDialog/content";
 import { createNewDocumentFileDialog } from "./createNewDocumentFileDialog/content";
 import { CreateOrganizationUnitDialog } from "./createOrganizationUnitDialog/content";
@@ -24,6 +25,7 @@ import { databoxDetailsDialog } from "./databoxDetailsDialog/content";
 import { dataModifiedDialog } from "./dataModifiedDialog/content";
 import { deactivateUserDialog } from "./deactivateUserDialog/content";
 import { declineHandoverDialog } from "./declineHandoverDialog/content";
+import { deleteOrganizationUnitDialog } from "./deleteOrganizationUnitDialog/content";
 import { dispatchPostShipmentDialog } from "./dispatchPostShipmentDialog/content";
 import { dispatchPublishShipmentDialog } from "./dispatchPublishShipmentDialog/content";
 import { dontRegisterDocumentDialog } from "./dontRegisterDocument/content";
@@ -43,6 +45,7 @@ import { lostDestroyedDialog } from "./lostDestroyedDialog/content";
 import { promoteConceptToDocumentDialog } from "./promoteConceptToDocumentDialog/content";
 import { registerDataboxDialog } from "./registerDataboxDialog/content";
 import { registerEmailDialog } from "./registerEmailDialog/content";
+import { repositoryAndShreddingPlanDialog } from "./repositoryAndShreddingPlanDialog/content";
 import { resendShipmentDialog } from "./resendShipmentDialog/content";
 import { returnForReworkDialog } from "./returnForRework/content";
 import { returnShipmentDialog } from "./returnShipment/content";
@@ -58,8 +61,6 @@ import { technicalDataCarriesDetailsDialog } from "./technicalDataCarriesDetails
 import { technicalDataCarriesDetailsWithSaveButtonsDialog } from "./technicalDataCarriesDetailsDialogWithSaveButtons/content";
 import { technicalDataCarriesReadonlyDetailsDialog } from "./technicalDataCarriesDetailsReadonly/content";
 import { UpdateOrganizationUnitDialog } from "./updateOrganizationUnitDialog/content";
-import { deleteOrganizationUnitDialog } from "./deleteOrganizationUnitDialog/content";
-import { convertToOutputFormatDialog } from "./convertToOutputDialog/content";
 
 export const dialogs = [
   analogDetailsDialog,
@@ -109,6 +110,7 @@ export const dialogs = [
   recoverDialog,
   registerDataboxDialog,
   registerEmailDialog,
+  repositoryAndShreddingPlanDialog,
   resendShipmentDialog,
   returnForReworkDialog,
   returnShipmentDialog,

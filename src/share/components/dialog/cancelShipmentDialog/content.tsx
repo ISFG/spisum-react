@@ -3,21 +3,21 @@ import { nodeCancelShipmentAction } from "core/api/node/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import CancelDialog from "../cancelDialog/CancelDialog";
 
 export const cancelShipmentDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState }) => {
-        if (!dialogData) {
+      ({ dispatch, dialogProps, onClose, buttonState }) => {
+        if (!dialogProps.data) {
           return;
         }
         buttonState.setIsPending(true);
@@ -28,7 +28,7 @@ export const cancelShipmentDialog: DialogContentType = {
             onError: onClose,
             onSuccess: onClose,
             payload: {
-              shipmentId: [(dialogData as DialogDataProps)?.id]
+              shipmentId: [(dialogProps.data as DialogDataGenericData)?.id]
             }
           })
         );

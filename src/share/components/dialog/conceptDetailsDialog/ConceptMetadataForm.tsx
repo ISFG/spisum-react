@@ -64,6 +64,7 @@ const ConceptForm = ({
           component={TextField}
           data-test-id="meta-input-subject"
           name={lastPathMember(conceptProxy.properties?.ssl?.subject).path}
+          required={false}
           type="text"
           label={t(translationPath(lang.general.subject))}
         />

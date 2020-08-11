@@ -1,13 +1,77 @@
-import { put, takeEvery } from "redux-saga/effects";
+import { SpisumNodeTypes } from "enums";
+import { call, put, takeEvery } from "redux-saga/effects";
+import { convertResponse } from "share/utils/convert";
+import { fetchSaga } from "share/utils/fetch";
 import { handleResponse } from "share/utils/typesafeActions";
+import { traverseNodeType } from "share/utils/utils";
+import { lang, t } from "translation/i18n";
 import { ActionType, getType } from "typesafe-actions";
 import { translationPath } from "../share/utils/getPath";
-import { lang, t } from "../translation/i18n";
-import { callAsyncAction } from "./action";
+import { callAsyncAction, fetchDocument, rehydrateAction } from "./action";
+import { ApiURL } from "./apiURL";
 import { notificationAction } from "./components/notifications/_actions";
 import { NotificationSeverity } from "./components/notifications/_types";
+import { getService } from "./features/dependencyInjection";
+import {
+  loginAction,
+  loginSetSessionTokenAction
+} from "./features/login/_actions";
+import { logoutAction } from "./features/logout/_actions";
+import { HttpClient } from "./services/HttpClient";
+
+const getUrlByNodeType = (nodeType: SpisumNodeTypes) => {
+  const resolvedNodeType = traverseNodeType(nodeType);
+
+  switch (resolvedNodeType) {
+    case SpisumNodeTypes.Document: {
+      return ApiURL.DOCUMENT;
+    }
+    case SpisumNodeTypes.File: {
+      return ApiURL.FILE;
+    }
+    case SpisumNodeTypes.Concept: {
+      return ApiURL.CONCEPT;
+    }
+    default: {
+      return ApiURL.DOCUMENT;
+    }
+  }
+};
 
 export function* watchCoreActions() {
+  yield takeEvery(
+    getType(loginSetSessionTokenAction),
+    ({ payload }: ActionType<typeof loginSetSessionTokenAction>) => {
+      const httpClient = getService<HttpClient>(HttpClient);
+
+      httpClient.setAuthToken(payload.token);
+    }
+  );
+
+  yield takeEvery(getType(loginAction.request), () => {
+    const httpClient = getService<HttpClient>(HttpClient);
+
+    httpClient.setAuthToken(undefined);
+  });
+
+  yield takeEvery(getType(logoutAction.success), () => {
+    const httpClient = getService<HttpClient>(HttpClient);
+
+    httpClient.setAuthToken(undefined);
+  });
+
+  yield takeEvery(
+    getType(rehydrateAction),
+    ({ payload }: ActionType<typeof rehydrateAction>) => {
+      if (!payload) {
+        return;
+      }
+      const httpClient = getService<HttpClient>(HttpClient);
+
+      httpClient.setAuthToken(payload.loginReducer?.session?.token);
+    }
+  );
+
   yield takeEvery(getType(callAsyncAction), function* ({
     payload
   }: ActionType<typeof callAsyncAction>) {
@@ -42,7 +106,11 @@ export function* watchCoreActions() {
 
     if (!success) {
       if (onErrorNotification) {
-        yield put(notificationAction(onErrorNotification));
+        const errorNotification =
+          typeof onErrorNotification === "function"
+            ? onErrorNotification(errorResponse)
+            : onErrorNotification;
+        yield put(notificationAction(errorNotification));
       }
       if (typeof onError === "function") {
         onError(errorResponse);
@@ -55,5 +123,31 @@ export function* watchCoreActions() {
         onSuccess(successResponse);
       }
     }
+  });
+
+  yield takeEvery(getType(fetchDocument.request), function* ({
+    payload
+  }: ActionType<typeof fetchDocument.request>) {
+    const { id, nodeType } = payload;
+
+    const url = getUrlByNodeType(nodeType);
+
+    const { errorResponse, response, success } = yield call(
+      fetchSaga,
+      url,
+      "GET",
+      {
+        urlWildCards: {
+          nodeId: id
+        }
+      }
+    );
+
+    if (!success) {
+      yield put(fetchDocument.failure(errorResponse));
+      return;
+    }
+
+    yield put(fetchDocument.success(convertResponse(response)));
   });
 }

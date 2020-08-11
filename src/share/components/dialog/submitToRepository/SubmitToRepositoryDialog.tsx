@@ -7,27 +7,29 @@ import {
   useStyles
 } from "core/components/dialog/Dialog.styles";
 import { useSyncFormValidityWithDialog } from "core/components/dialog/hooks/useSyncFormValidityWithDialog";
-import { DialogContentPropsType } from "core/components/dialog/_types";
+import {
+  DialogContentPropsType,
+  DialogDataGenericData
+} from "core/components/dialog/_types";
 import FormControlWithError from "core/components/formControlWithError";
+import { FormState } from "core/components/reactiveFormik/_types";
 import { Field, Form, Formik } from "formik";
 import React, { useEffect } from "react";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { FormState } from "../../../../core/components/reactiveFormik/_types";
 import {
   groupChangeFormValuesProxy,
-  SubmitToRepositoryDialogType,
   SubmitToRepositoryFormValuesType
 } from "./_types";
 
 const SubmitToDialogContent = ({
   channel,
-  dialogData
+  dialogProps
 }: DialogContentPropsType) => {
   const classes = useStyles();
-  const { groupList, selected } = dialogData as SubmitToRepositoryDialogType;
-  const count = selected.length;
-  const isGroupList = groupList.length > 1;
+  const { groupList, selected } = dialogProps.data as DialogDataGenericData;
+  const count = selected?.length;
+  const isGroupList = groupList!.length > 1;
   useEffect(() => {
     channel.setIsSaved(true);
   }, [channel]);
@@ -56,7 +58,7 @@ const SubmitToDialogContent = ({
         </InputLabel>
         <Formik<SubmitToRepositoryFormValuesType>
           initialValues={{
-            activeGroup: groupList[0].id
+            activeGroup: groupList![0].id
           }}
           innerRef={setFormRef}
           onSubmit={onSubmit}
@@ -97,7 +99,7 @@ const SubmitToDialogContent = ({
                         .path
                     }}
                   >
-                    {groupList.map((group: GroupMember) => {
+                    {groupList?.map((group: GroupMember) => {
                       return (
                         <MenuItem key={group.id} value={group.id}>
                           {group.displayName}

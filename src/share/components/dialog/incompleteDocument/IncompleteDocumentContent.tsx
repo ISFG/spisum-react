@@ -13,18 +13,18 @@ import { validate } from "./_validations";
 
 export const IncompleteDocumentContent: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const classes = useStyles();
   const setFormRef = useSyncFormValidityWithDialog(channel);
+  const document = dialogProps.data as Node<SslEmail>;
 
   const onSubmit = () => {};
 
   const initialValues: IncompleteDocumentFormValues = {
     body: "",
-    recipient:
-      (dialogData as Node<SslEmail>).properties?.ssl?.emailSender || "",
-    subject: (dialogData as Node<SslEmail>).properties?.ssl?.emailSubject || ""
+    recipient: document.properties?.ssl?.emailSender || "",
+    subject: document.properties?.ssl?.emailSubject || ""
   };
 
   return (

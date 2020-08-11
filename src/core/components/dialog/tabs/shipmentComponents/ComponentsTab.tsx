@@ -1,17 +1,17 @@
+import clsx from "clsx";
 import DataTable from "core/components/dataTable";
 import { DataColumn, ValueType } from "core/components/dataTable/_types";
 import { useStyles } from "core/components/dialog/Dialog.styles";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useStyles as useShipmentStyles } from "share/components/dialog/createShipmentDialog/CreateShipment.styles";
+import { translationPath } from "share/utils/getPath";
+import { lang, t } from "translation/i18n";
 import { File } from "../../../../entities";
+import { sumFileSizes } from "../../../../helpers/file";
 import { generateColumns } from "./columns";
 import { componentValidation, findMainFile } from "./methods";
 import { SelectedComponentsFnType } from "./_types";
-import clsx from "clsx";
-import { lang, t } from "../../../../../translation/i18n";
-import { translationPath } from "../../../../../share/utils/getPath";
-import { useStyles as useShipmentStyles } from "../../../../../share/components/dialog/createShipmentDialog/CreateShipment.styles";
-import { sumFileSizes } from "../../../../helpers/file";
 
 const convertToKB = (value: number | undefined) => {
   if (value) {

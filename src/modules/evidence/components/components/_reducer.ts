@@ -1,3 +1,4 @@
+import { componentUpdateAction } from "core/api/components/_actions";
 import {
   componentCreateAction,
   componentDeleteAction,
@@ -7,7 +8,6 @@ import {
 import { dialogAction__Clear } from "core/components/dialog/_actions";
 import { File } from "core/entities";
 import { getType } from "typesafe-actions";
-import { componentUpdateAction } from "../../../../core/api/components/_actions";
 import { ComponentsTabStateType } from "./_types";
 
 const initialState: ComponentsTabStateType = {

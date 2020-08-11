@@ -1,10 +1,10 @@
 import { createSafeAction } from "share/utils/typesafeActions";
 import { ActionType } from "typesafe-actions";
-import { ChannelPreviewItemType, DialogDataType, DialogType } from "./_types";
+import { ChannelPreviewItemType, DialogDataProps, DialogType } from "./_types";
 
 export const dialogOpenAction = createSafeAction("@dialog/OPEN")<{
   dialogType: DialogType;
-  dialogData?: DialogDataType;
+  dialogProps: DialogDataProps;
   refreshTable?: VoidFunction;
 }>();
 

@@ -5,29 +5,28 @@ import {
   documentUpdateActionType
 } from "core/api/document/_actions";
 import { SslDatabox } from "core/api/models";
+import {
+  primaryAction,
+  secondaryAction
+} from "core/components/dialog/lib/actionsFactory";
 import { CommentsTab } from "core/components/dialog/tabs/comments";
 import { ComponentsTab } from "core/components/dialog/tabs/components";
-import {
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "core/components/dialog/_types";
+import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
-import { DataboxDocument } from "core/types";
+import NamedTitle from "core/components/namedTitle";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import { handoverDocument } from "../documentHandoverDialog/_actions";
+import { HandoverDocumentPayloadType } from "../documentHandoverDialog/_types";
 import { MetadataFormTab } from "./MetadataFormTab";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const registerDataboxDialog: DialogContentType = createDocumentDialog({
-  actions: [
-    {
-      color: "secondary",
-      name: t(translationPath(lang.dialog.form.toRegister)),
-      onClick: ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+  actions: () => [
+    primaryAction(
+      t(translationPath(lang.dialog.form.toRegister)),
+      ({ dispatch, channels, dialogProps, onClose, buttonState }) => {
         const formValues = channels?.Metadata?.state?.formValues;
         if (!formValues) return;
 
@@ -39,12 +38,12 @@ export const registerDataboxDialog: DialogContentType = createDocumentDialog({
           }
 
           dispatch(documentViewAction__Refresh(true));
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
           onClose();
         };
 
         const onError = () => {
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
           buttonState.setIsPending(false);
         };
 
@@ -68,11 +67,10 @@ export const registerDataboxDialog: DialogContentType = createDocumentDialog({
           })
         );
       }
-    },
-    {
-      color: "secondary",
-      name: t(translationPath(lang.dialog.form.toRegisterAndRefer)),
-      onClick: ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+    ),
+    secondaryAction(
+      t(translationPath(lang.dialog.form.toRegisterAndRefer)),
+      ({ dispatch, channels, dialogProps, onClose, buttonState }) => {
         const formValues = channels?.Metadata?.state?.formValues;
         if (!formValues) return;
 
@@ -85,15 +83,20 @@ export const registerDataboxDialog: DialogContentType = createDocumentDialog({
 
           dispatch(
             handoverDocument({
-              id: channels?.Metadata?.state?.id
-            } as DataboxDocument)
+              data: {
+                id: channels?.Metadata?.state?.id
+              },
+              onClose: () => {
+                dispatch(documentViewAction__Refresh(true));
+              }
+            } as HandoverDocumentPayloadType)
           );
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
           onClose();
         };
 
         const onError = () => {
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
           buttonState.setIsPending(false);
         };
 
@@ -116,9 +119,8 @@ export const registerDataboxDialog: DialogContentType = createDocumentDialog({
             }
           })
         );
-      },
-      type: "contained"
-    }
+      }
+    )
   ],
   tabs: [
     {

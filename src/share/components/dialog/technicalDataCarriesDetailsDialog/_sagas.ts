@@ -33,7 +33,6 @@ export const defaultTechnicalCarriesValues = (): SslAnalogWithOwner => {
     retentionMode: "",
     retentionPeriod: null,
     sender: "",
-    senderRegistrationNumber: "",
     senderType: "individual",
     sender_address: "",
     sender_contact: "",
@@ -54,7 +53,7 @@ export function* watchTechnicalDataCarriesDocumentAction() {
   }: ActionType<typeof createTechnicalDataCarriesDocument>) {
     yield put(
       dialogOpenAction({
-        dialogData: {
+        dialogProps: {
           onClose: payload.onClose,
           saveOnOpen: true,
           useAutoSave: true

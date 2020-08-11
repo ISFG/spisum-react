@@ -13,14 +13,14 @@ import { FormState } from "core/components/reactiveFormik/_types";
 import { SenderRadioWrapper } from "core/components/senderForm/Component";
 import TimePicker from "core/components/timepicker";
 import { sslPropsProxy } from "core/types";
-import { DeliveryMode, DocumentType } from "enums";
+import { DateTimeFormats, DeliveryMode, DocumentType } from "enums";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-material-ui";
 import React from "react";
 import { withTranslation } from "react-i18next";
+import { SslDeliveryMode } from "share/components/form/fields/SSLDeliveryMode";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation } from "translation/i18n";
-import { SSLDeliveryMode } from "../../form/fields/SSLDeliveryMode";
 import { validate } from "./_validations";
 
 const Component = ({
@@ -50,18 +50,20 @@ const Component = ({
               required={true}
             />
             <TimePicker
+              format={DateTimeFormats.HoursMinutesSeconds}
               data-test-id="carries-meta-input-deliveryTime"
               disabled={readonly}
               name={lastPathMember(sslPropsProxy.deliveryTime).path}
               label={t(translationPath(lang.general.deliveryTime))}
             />
-            <SSLDeliveryMode
-              disabled={readonly}
-              enabledModes={[
+            <SslDeliveryMode
+              allowedModes={[
                 DeliveryMode.Currier,
                 DeliveryMode.Personally,
                 DeliveryMode.Post
               ]}
+              disabled={readonly}
+              required={true}
             />
             <StyledField
               component={TextField}

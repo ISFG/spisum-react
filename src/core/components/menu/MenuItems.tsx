@@ -82,7 +82,6 @@ const MenuItems = (props: OwnProps & RouteComponentProps) => {
   }
 
   const createItem = (item: MenuItemType | SubmenuItemType, index: number) => {
-    if (item.isHidden) return;
     const hasSubmenu = !!(item.submenu && item.submenu.length);
 
     const isActive = item.url === location.pathname;

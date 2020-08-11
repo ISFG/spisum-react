@@ -1,32 +1,38 @@
+import { callAsyncAction } from "core/action";
+import { updateFileAction } from "core/api/file/_actions";
+import { SslProperties } from "core/api/models";
+import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
+import { CommentsTab } from "core/components/dialog/tabs/comments";
+import { HistoryTab } from "core/components/dialog/tabs/history";
+import { ProcessingOrClosingTab } from "core/components/dialog/tabs/processingOrClosing/ProcessingOrClosingTab";
+import { SaveAndDiscardTab } from "core/components/dialog/tabs/saveAndDiscard/SaveAndDiscardTab";
 import { ShipmentTab } from "core/components/dialog/tabs/shipment";
 import { TableOfContentsTab } from "core/components/dialog/tabs/tableOfContents";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
+import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
+import { GenericDocument } from "core/types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { callAsyncAction } from "../../../../core/action";
-import { updateFileAction } from "../../../../core/api/file/_actions";
-import { SslProperties } from "../../../../core/api/models";
-import { secondaryAction } from "../../../../core/components/dialog/lib/actionsFactory";
-import { CommentsTab } from "../../../../core/components/dialog/tabs/comments";
-import { HistoryTab } from "../../../../core/components/dialog/tabs/history";
-import { ProcessingOrClosingTab } from "../../../../core/components/dialog/tabs/processingOrClosing/ProcessingOrClosingTab";
-import { SaveAndDiscardTab } from "../../../../core/components/dialog/tabs/saveAndDiscard/SaveAndDiscardTab";
-import { documentViewAction__Refresh } from "../../../../core/components/documentView/_actions";
-import NamedTitle from "../../../../core/components/namedTitle";
-import { GenericDocument } from "../../../../core/types";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import MetadataFormTab from "./MetadataFormTab";
 
 export const fileDetailsDialog: DialogContentType = createDocumentDialog({
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.form.edit)),
-      ({ dispatch, dialogData, onClose, channels, buttonState }) => {
+      ({
+        dispatch,
+        dialogProps,
+        onClose,
+        channels,
+        buttonState
+      }) => {
         const formValues = channels?.Metadata?.state?.formValues;
         if (!formValues) {
           return;
@@ -55,7 +61,7 @@ export const fileDetailsDialog: DialogContentType = createDocumentDialog({
             onError,
             onSuccess,
             payload: {
-              nodeId: (dialogData as DialogDataProps)?.id,
+              nodeId: (dialogProps.data as DialogDataGenericData)?.id,
               properties: formValues as SslProperties
             }
           })
@@ -74,9 +80,9 @@ export const fileDetailsDialog: DialogContentType = createDocumentDialog({
     },
     {
       content: ProcessingOrClosingTab,
-      filter: ({ dialogData }) => {
+      filter: ({ dialogProps }) => {
         const { state } =
-          (dialogData as GenericDocument)?.properties?.ssl || {};
+          (dialogProps.data as GenericDocument)?.properties?.ssl || {};
         return ProcessingOrClosingTab.filter(state);
       },
       label: t(translationPath(lang.dialog.tabs.processOrClose))
@@ -87,9 +93,9 @@ export const fileDetailsDialog: DialogContentType = createDocumentDialog({
     },
     {
       content: SaveAndDiscardTab,
-      filter: ({ dialogData }) => {
+      filter: ({ dialogProps }) => {
         const { state } =
-          (dialogData as GenericDocument)?.properties?.ssl || {};
+          (dialogProps.data as GenericDocument)?.properties?.ssl || {};
 
         return SaveAndDiscardTab.filter(state);
       },

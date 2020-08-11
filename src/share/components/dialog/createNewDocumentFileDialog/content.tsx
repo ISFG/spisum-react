@@ -3,19 +3,25 @@ import { addFileAction, createFileAction } from "core/api/file/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import { CreateNewDocumentFileDialogContent } from "./CreateNewDocumentFileDialog";
 import { CreateNewDocumentFileFormValues, FileOption } from "./_types";
 
 export const createNewDocumentFileDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.form.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
         const formValues = channels.contentTab?.state
           ?.formValues as CreateNewDocumentFileFormValues;
 
@@ -42,7 +48,7 @@ export const createNewDocumentFileDialog: DialogContentType = {
               onError,
               onSuccess,
               payload: {
-                documentId: (dialogData as GenericDocument)?.id
+                documentId: (dialogProps.data as GenericDocument)?.id
               }
             })
           );
@@ -53,7 +59,7 @@ export const createNewDocumentFileDialog: DialogContentType = {
               onError,
               onSuccess,
               payload: {
-                documentIds: [(dialogData as GenericDocument)?.id],
+                documentIds: [(dialogProps.data as GenericDocument)?.id],
                 nodeId: formValues.nodeId
               }
             })

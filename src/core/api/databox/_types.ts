@@ -1,6 +1,7 @@
 import { FetchStateType } from "types";
 
 export interface DataboxAccount {
+  id: string;
   name: string;
   username: string;
 }

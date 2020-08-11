@@ -1,6 +1,5 @@
 import InputAdornment from "@material-ui/core/InputAdornment";
 import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 import clsx from "clsx";
 import {
   StyledField,
@@ -8,16 +7,17 @@ import {
   StyledFormControl,
   useStyles
 } from "core/components/dialog/Dialog.styles";
+import FormControlWithError from "core/components/formControlWithError";
 import { FormState } from "core/components/reactiveFormik/_types";
 import { shipmentDocumentProxy } from "core/types";
+import { PostItemType, PostType } from "enums";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-material-ui";
 import React from "react";
 import { withTranslation } from "react-i18next";
+import { StyledMenuItem } from "share/components/dialog/createShipmentDialog/CreateShipment.styles";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation } from "translation/i18n";
-import FormControlWithError from "../../../../../../core/components/formControlWithError";
-import { PostItemType, PostType } from "../../../../../../enums";
 import { PostPriceField } from "../../../createShipmentDialog/forms/postForm/PostPriceField";
 import { PostTypeField } from "../../../createShipmentDialog/forms/postForm/PostTypeField";
 import { CreateShipmentFormValuesProxy } from "../../../createShipmentDialog/_types";
@@ -228,7 +228,6 @@ const Component = ({
                 }
               >
                 <InputLabel
-                  required={true}
                   htmlFor={
                     lastPathMember(
                       shipmentDocumentProxy.properties?.ssl?.postItemType
@@ -255,9 +254,14 @@ const Component = ({
                 >
                   {PostItemType &&
                     Object.keys(PostItemType)?.map((key) => (
-                      <MenuItem key={key} value={PostItemType[key]}>
-                        {t(translationPath(lang.enums.postItemType[key]))}
-                      </MenuItem>
+                      <StyledMenuItem
+                        key={key}
+                        value={PostItemType[key] || null}
+                      >
+                        {(PostItemType[key] &&
+                          t(translationPath(lang.enums.postItemType[key]))) ||
+                          " "}
+                      </StyledMenuItem>
                     ))}
                 </Field>
               </FormControlWithError>

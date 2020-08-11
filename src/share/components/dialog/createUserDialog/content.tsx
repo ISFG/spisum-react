@@ -1,34 +1,36 @@
 import { callAsyncAction } from "core/action";
+import { createUserAction } from "core/api/user/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
-import {
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "core/components/dialog/_types";
+import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
+import { NotificationSeverity } from "core/components/notifications/_types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { createUserAction } from "../../../../core/api/user/_actions";
-import NamedTitle from "../../../../core/components/namedTitle";
-import { NotificationSeverity } from "../../../../core/components/notifications/_types";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import { MetaDataTab } from "./MetaDataContent";
 
 export const createUserDialog: DialogContentType = createDocumentDialog({
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.form.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
         const onSuccess = () => {
           onClose();
           dispatch(documentViewAction__Refresh(true));
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
         };
 
         const onError = () => {
           buttonState.setIsPending(false);
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
         };
 
         buttonState.setIsPending(true);

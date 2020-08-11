@@ -17,7 +17,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import Router from "router";
 import "share/utils/extensions";
-import { createAppStore } from "store";
+import { getStore } from "store";
 import { muiTheme, theme } from "styles";
 import "translation/i18n";
 import { boot } from "./boot";
@@ -35,7 +35,7 @@ const rootEl = document.getElementById("root") as HTMLElement;
 const render = (Component: React.ComponentType) => {
   boot();
 
-  const appStore = createAppStore();
+  const appStore = getStore();
 
   return ReactDOM.render(
     <Provider store={appStore.store}>

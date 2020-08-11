@@ -1,4 +1,5 @@
 import { FileMetaType } from "core/entities/file/File";
+import { GenericDocument } from "core/types";
 import { Associations, SendModeValues, SpisumNodeTypes } from "enums";
 
 export type Node<T = {}> = {
@@ -93,10 +94,11 @@ export type NodeVersion = Pick<
 >;
 
 export type ShipmentHistory = {
-  createdAt: Date;
-  createdByUser: UserInfo;
+  occuredAt: Date;
+  userId: string;
   description: string;
-  type: string;
+  eventType: string;
+  id: string;
 };
 // In Alfresco schema all fields are mandatory, but it doesn't make sense
 export type Comment = {
@@ -171,6 +173,7 @@ export type SslProperties = {
   attachmentsType?: string;
   borrowDate?: string | Date | null;
   borrower?: string; // check mandatory
+  canBeSigned?: boolean;
   cancelDate?: Date;
   cancelReason?: string;
   closureDate?: Date | null;
@@ -179,6 +182,7 @@ export type SslProperties = {
   createdDate?: Date | null;
   currentOwner?: string;
   customAuditCode?: string; // check mandatory
+  databoxRecipientUid?: string;
   dateFrom?: Date;
   dateOfEvidence?: Date;
   dateTo?: Date | null;
@@ -204,6 +208,7 @@ export type SslProperties = {
   internalState?: string;
   isSign?: boolean;
   isSealed?: boolean;
+  itemId?: string;
   listCount?: number | string;
   listCountAttachments?: number;
   location?: string;
@@ -230,7 +235,6 @@ export type SslProperties = {
   sendMode?: string;
   sender?: string;
   senderIdent?: string;
-  senderRegistrationNumber?: string;
   senderSSID?: string;
   senderType?: string;
   sender_address?: string;
@@ -420,4 +424,8 @@ export type ErrorResponseType = {
     descriptionURL: string;
     logId?: string;
   };
+};
+
+export type NodeSuccessResponseType = {
+  entry: GenericDocument;
 };

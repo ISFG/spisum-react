@@ -15,7 +15,7 @@ import { isUserInLeadership } from "share/utils/user";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.returnedForReworkDate).path
   ],
@@ -41,7 +41,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
         x?.properties?.ssl?.senderType === "own"
           ? x?.createdAt
           : x?.properties?.ssl?.deliveryDate,
-      isDate: true,
+      isDateTime: true,
       keys: [
         classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
         classPath(genericDocumentProxy.createdAt).path
@@ -102,7 +102,7 @@ const Component = () => {
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
-    dispatch(openDocumentWithSaveButtonsAction(row));
+    dispatch(openDocumentWithSaveButtonsAction({ data: row }));
   };
 
   const controls: ControlsBarType<GenericDocument> = {

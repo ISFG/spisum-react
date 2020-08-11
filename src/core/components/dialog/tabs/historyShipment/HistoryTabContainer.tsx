@@ -1,14 +1,14 @@
 import { ShipmentHistory } from "core/api/models";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { shipmentHistoryAction } from "../../../../api/shipment/_action";
-import { DialogContentPropsType } from "../../_types";
+import { DialogTabContentPropsType } from "../../_types";
 import HistoryTab from "./HistoryTab";
 import { historyShipmentTab__Clear } from "./_actions";
 import { ShipmentHistoryTableType } from "./_types";
 
-type HistoryTabContainerProps = DialogContentPropsType & {
+type HistoryTabContainerProps = DialogTabContentPropsType & {
   nodeId: string;
   pid: string;
 };
@@ -20,7 +20,7 @@ interface HistoryTabContainerState {
 
 const initialState: HistoryTabContainerState = {
   pageNumber: 0,
-  rowsPerPage: 25
+  rowsPerPage: 50
 };
 
 const entryMapper = (
@@ -30,16 +30,21 @@ const entryMapper = (
   pid: string
 ): ShipmentHistoryTableType => {
   return {
-    createdAt: item?.entry?.createdAt,
-    createdBy: item?.entry?.createdByUser?.displayName,
     description: item?.entry?.description,
-    id: `${item?.entry?.createdAt}-${item?.entry?.description}`, // there isn't better id for each entry
+    eventType: item?.entry?.eventType,
+    id: item?.entry?.id,
+    occuredAt: item?.entry?.occuredAt,
     pid,
-    type: item?.entry?.type
+    userId: item?.entry?.userId
   };
 };
 
-const HistoryTabContainer = ({ nodeId, pid }: HistoryTabContainerProps) => {
+const HistoryTabContainer = ({
+  channel,
+  isActive,
+  nodeId,
+  pid
+}: HistoryTabContainerProps) => {
   const [{ pageNumber, rowsPerPage }, setState] = useState<
     HistoryTabContainerState
   >(initialState);
@@ -47,10 +52,9 @@ const HistoryTabContainer = ({ nodeId, pid }: HistoryTabContainerProps) => {
   const { entries, totalItems, isLoading, error } = useSelector(
     (state: RootStateType) => {
       return {
-        entries:
-          state.historyShipmentReducer.list.entries?.map((entry) =>
-            entryMapper(entry, pid)
-          ) || [],
+        entries: state.historyShipmentReducer.list.entries?.map((entry) =>
+          entryMapper(entry, pid)
+        ),
         error: state.historyShipmentReducer.error,
         isLoading: state.historyShipmentReducer.isLoading,
         totalItems:
@@ -59,17 +63,30 @@ const HistoryTabContainer = ({ nodeId, pid }: HistoryTabContainerProps) => {
     }
   );
   const dispatch = useDispatch();
-  const loadData = () =>
-    dispatch(
-      shipmentHistoryAction.request({
-        maxItems: rowsPerPage,
-        nodeId,
-        skipCount: pageNumber * rowsPerPage
-      })
-    );
+  const loadData = useCallback(
+    () =>
+      dispatch(
+        shipmentHistoryAction.request({
+          maxItems: rowsPerPage,
+          nodeId,
+          skipCount: pageNumber * rowsPerPage
+        })
+      ),
+    [pageNumber, rowsPerPage] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  channel.refreshData = loadData;
 
   useEffect(() => {
-    loadData();
+    if (isActive && entries === undefined) {
+      loadData();
+    }
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isActive) {
+      loadData();
+    }
   }, [pageNumber, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(
@@ -103,7 +120,7 @@ const HistoryTabContainer = ({ nodeId, pid }: HistoryTabContainerProps) => {
   }
   return (
     <HistoryTab
-      items={entries}
+      items={entries || []}
       totalItems={totalItems}
       pageNumber={pageNumber}
       refreshTable={loadData}

@@ -25,58 +25,10 @@ const NotRegisteredTranslationMap = {
 };
 
 const defaultColumn: DataColumn<EmailDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(emailDocumentProxy.properties!.ssl!.emailDeliveryDate).path],
   label: t(translationPath(lang.general.delivery))
 };
-
-const columns: DataColumn<EmailDocument>[] = [
-  {
-    keys: [classPath(emailDocumentProxy.properties!.ssl!.emailSubject).path],
-    label: t(translationPath(lang.general.subject))
-  },
-  {
-    getValue: (item) =>
-      `${item.properties?.ssl?.emailSender}${
-        !isEmptyString(item.properties?.ssl?.emailSenderName)
-          ? ` (${item.properties?.ssl?.emailSenderName})`
-          : ""
-      }`,
-    keys: [
-      classPath(emailDocumentProxy.properties!.ssl!.emailSender).path,
-      classPath(emailDocumentProxy.properties!.ssl!.emailSenderName).path
-    ],
-    label: t(translationPath(lang.general.sender))
-  },
-  defaultColumn,
-  {
-    keys: [
-      classPath(emailDocumentProxy.properties!.ssl!.emailAttachmentsCount).path
-    ],
-    label: t(translationPath(lang.general.attachmentsCount))
-  },
-  {
-    getValue: (item) => {
-      if (!item.properties?.ssl?.emailNotRegisteredReason) {
-        return "";
-      }
-
-      const translation =
-        NotRegisteredTranslationMap[
-          item.properties?.ssl?.emailNotRegisteredReason
-        ];
-
-      return translation
-        ? `${t(translationPath(translation))}`
-        : item.properties?.ssl?.emailNotRegisteredReason;
-    },
-    keys: [
-      classPath(emailDocumentProxy.properties!.ssl!.emailNotRegisteredReason)
-        .path
-    ],
-    label: t(translationPath(lang.general.notRegisterReason))
-  }
-];
 
 const Component = () => {
   const dispatch = useDispatch<
@@ -84,6 +36,68 @@ const Component = () => {
       ActionType<typeof dialogOpenEmailDetails | typeof documentRegisterAction>
     >
   >();
+
+  const emailAccounts = useSelector(
+    (state: RootStateType) => state.emailReducer.emailAccounts
+  );
+
+  const columns: DataColumn<EmailDocument>[] = [
+    {
+      keys: [classPath(emailDocumentProxy.properties!.ssl!.emailSubject).path],
+      label: t(translationPath(lang.general.subject))
+    },
+    {
+      getValue: (item) =>
+        `${item.properties?.ssl?.emailSender}${
+          !isEmptyString(item.properties?.ssl?.emailSenderName)
+            ? ` (${item.properties?.ssl?.emailSenderName})`
+            : ""
+        }`,
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.emailSender).path,
+        classPath(emailDocumentProxy.properties!.ssl!.emailSenderName).path
+      ],
+      label: t(translationPath(lang.general.sender))
+    },
+    defaultColumn,
+    {
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.emailAttachmentsCount)
+          .path
+      ],
+      label: t(translationPath(lang.general.attachmentsCount))
+    },
+    {
+      getValue: (item) => {
+        if (!item.properties?.ssl?.emailNotRegisteredReason) {
+          return "";
+        }
+
+        const translation =
+          NotRegisteredTranslationMap[
+            item.properties?.ssl?.emailNotRegisteredReason
+          ];
+
+        return translation
+          ? `${t(translationPath(translation))}`
+          : item.properties?.ssl?.emailNotRegisteredReason;
+      },
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.emailNotRegisteredReason)
+          .path
+      ],
+      label: t(translationPath(lang.general.notRegisterReason))
+    }
+  ];
+
+  if (emailAccounts?.length > 1) {
+    columns.push({
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.emailRecipient).path
+      ],
+      label: t(translationPath(lang.general.recipient))
+    });
+  }
 
   const paths = useSelector(
     (state: RootStateType) => state.loginReducer.global.paths
@@ -98,7 +112,7 @@ const Component = () => {
   );
 
   const dispatchOpenDialog: (row: EmailDocument) => void = (row) => {
-    dispatch(dialogOpenEmailDetails(row));
+    dispatch(dialogOpenEmailDetails({ data: row }));
   };
 
   const controls: ControlsBarType<EmailDocument> = {

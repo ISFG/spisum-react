@@ -1,15 +1,15 @@
 import { AddCircleOutline, Delete, Edit } from "@material-ui/icons";
+import { ApiURL } from "core/apiURL";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
+import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { SpisumGroups } from "enums";
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { ApiURL } from "../../../../core/apiURL";
-import { dialogOpenAction } from "../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../core/components/dialog/_types";
-import DocumentView from "../../../../core/components/documentView";
 import { fallbackColumns, getColumns } from "./columns";
 import { Member } from "./_types";
 
@@ -23,6 +23,7 @@ const Component = () => {
           action: () => {
             dispatch(
               dialogOpenAction({
+                dialogProps: {},
                 dialogType: DialogType.CreateOrganizationUnit
               })
             );
@@ -38,7 +39,9 @@ const Component = () => {
           action: (selected: Member[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: {
+                  data: selected[0]
+                },
                 dialogType: DialogType.UpdateOrganizationUnit
               })
             );
@@ -50,7 +53,9 @@ const Component = () => {
           action: (selected: Member[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: {
+                  data: selected[0]
+                },
                 dialogType: DialogType.DeleteOrganizationUnit
               })
             );

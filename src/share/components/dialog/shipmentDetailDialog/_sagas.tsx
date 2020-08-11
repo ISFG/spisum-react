@@ -69,9 +69,11 @@ export function* watchShipmentDetailDialogAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: {
-          ...selected,
-          documentId,
+        dialogProps: {
+          data: {
+            ...selected,
+            documentId
+          },
           isComponentReadonly: componentReadonly,
           isReadonly: !!readonly,
           onClose

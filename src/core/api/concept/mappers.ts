@@ -10,6 +10,7 @@ export const mapDocumentToConcept = (document: GenericDocument): Concept => ({
     createdAt: document.createdAt,
     owner: document.properties!.cm!.owner
   },
+  pid: document.properties!.ssl!.pid,
   subject: document.properties!.ssl!.subject
 });
 

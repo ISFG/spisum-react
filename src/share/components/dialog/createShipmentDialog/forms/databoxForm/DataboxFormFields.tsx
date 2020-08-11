@@ -61,8 +61,8 @@ export const DataboxFormFields = ({ readonly }: OwnProps) => {
         >
           {databoxAccounts?.map((account: DataboxAccount, index: number) => {
             return (
-              <MenuItem key={index} value={account.username}>
-                {account.username} - {account.name}
+              <MenuItem key={index} value={account.id}>
+                {account.id} - {account.name}
               </MenuItem>
             );
           })}

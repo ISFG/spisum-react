@@ -1,4 +1,6 @@
 import { GetApp } from "@material-ui/icons";
+import { callAsyncAction } from "core/action";
+import { getImprintAction } from "core/api/imprint/_actions";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
@@ -6,8 +8,6 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { classPath, translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { callAsyncAction } from "../../../../core/action";
-import { getImprintAction } from "../../../../core/api/imprint/_actions";
 import { DailyImprint, dailyImprintProxy } from "./_types";
 
 const Component = () => {
@@ -22,7 +22,7 @@ const Component = () => {
       label: t(translationPath(lang.general.name))
     },
     {
-      isDate: true,
+      isDateTime: true,
       keys: [classPath(dailyImprintProxy.createdAt).path],
       label: t(translationPath(lang.general.creationDate))
     }

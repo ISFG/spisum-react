@@ -11,14 +11,15 @@ import { SitePaths, SpisumNodeTypes } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
+import { shipmentDetailDialogOpen } from "share/components/dialog/shipmentDetailDialog/_action";
 import { getHtmlMultilineValue } from "share/utils/formatter";
 import { classPath, translationPath } from "share/utils/getPath";
+import { getNameTypeMap } from "share/utils/mapper";
 import { getRelativePath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
-import { shipmentDetailDialogOpen } from "../../../../share/components/dialog/shipmentDetailDialog/_action";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.dispatchedDate).path],
   label: t(translationPath(lang.general.dispatchedDate))
 };
@@ -67,11 +68,12 @@ export const columns: DataColumn<GenericDocument>[] = [
     label: t(translationPath(lang.general.addressee))
   },
   {
-    keys: [classPath(genericDocumentProxy.properties!.ssl!.deliveryMode).path],
-    label: t(translationPath(lang.documentMetaForm.deliveryMode))
+    getValue: (item) => getNameTypeMap(item.nodeType),
+    keys: [classPath(genericDocumentProxy.nodeType).path],
+    label: t(translationPath(lang.general.sendMode))
   },
   {
-    isDate: true,
+    isDateTime: true,
     keys: [
       classPath(genericDocumentProxy.properties!.ssl!.toDispatchDate).path
     ],

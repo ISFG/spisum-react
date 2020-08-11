@@ -8,6 +8,6 @@ export enum PreviewState {
 
 export type StateType = {
   files: {
-    [key: string]: { file?: File; state: PreviewState };
+    [key: string]: { file?: File; state: PreviewState } | undefined;
   };
 };

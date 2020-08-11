@@ -1,6 +1,8 @@
 import { AssignmentReturn, Description } from "@material-ui/icons";
 import { openDocumentWithSaveButtonsAction } from "core/api/document/_actions";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { SessionType } from "core/features/login/_types";
@@ -13,8 +15,6 @@ import { classPath, translationPath } from "share/utils/getPath";
 import { alfrescoQuery, getQueryPath } from "share/utils/query";
 import { isUserInLeadership } from "share/utils/user";
 import { lang, t, withTranslation } from "translation/i18n";
-import { dialogOpenAction } from "../../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../../core/components/dialog/_types";
 
 const defaultColumn: DataColumn<GenericDocument> = {
   getValue: (x) =>
@@ -23,7 +23,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
       : x?.properties?.ssl?.senderType === "own"
       ? x?.createdAt
       : x?.properties?.ssl?.deliveryDate,
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
     classPath(genericDocumentProxy.createdAt).path,
@@ -40,9 +40,9 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
     },
     {
       getValue: (item) =>
-        item.nodeType === SpisumNodeTypes.Document
-          ? item.properties?.ssl?.ssid
-          : item.properties?.ssl?.fileIdentificator,
+        item.nodeType === SpisumNodeTypes.File
+          ? item.properties?.ssl?.fileIdentificator
+          : item.properties?.ssl?.ssid,
       keys: [
         classPath(genericDocumentProxy.properties!.ssl!.ssid).path,
         classPath(genericDocumentProxy.properties!.ssl!.fileIdentificator).path
@@ -71,9 +71,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
       label: t(translationPath(lang.general.retentionMode))
     },
     {
-      keys: [
-        classPath(genericDocumentProxy.properties!.ssl!.repositoryName).path
-      ],
+      keys: [classPath(genericDocumentProxy.properties!.ssl!.group).path],
       label: t(translationPath(lang.general.repositoryName))
     }
   ];
@@ -94,23 +92,12 @@ const Component = () => {
     (state: RootStateType) => state.loginReducer.session
   );
   const activeGroup = session.activeGroup;
-  const documentsPath = useSelector(
+  const path = useSelector(
     (state: RootStateType) =>
       getQueryPath(
         state.loginReducer.global.paths,
         null,
         SitePaths.Repository,
-        SitePaths.Documents,
-        SitePaths.Rented
-      )?.path || ""
-  );
-  const filesPath = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        null,
-        SitePaths.Repository,
-        SitePaths.Files,
         SitePaths.Rented
       )?.path || ""
   );
@@ -118,8 +105,9 @@ const Component = () => {
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     dispatch(
       openDocumentWithSaveButtonsAction({
-        ...row,
         canUploadComponents: false,
+        data: row,
+        hideManageShipmentsIcon: true,
         isReadonly: true
       })
     );
@@ -138,11 +126,12 @@ const Component = () => {
           action: (selected) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ReturnToRepository
               })
             );
           },
+          filter: (x) => x.properties?.ssl?.form === "digital",
           icon: <AssignmentReturn />,
           title: t(translationPath(lang.general.return))
         }
@@ -162,7 +151,7 @@ const Component = () => {
         search={{
           query: {
             query: alfrescoQuery({
-              paths: [documentsPath, filesPath],
+              paths: [path],
               type: [SpisumNodeTypes.Document, SpisumNodeTypes.File],
               where: `${SpisumNames.BorrowGroup}:'${activeGroup}' AND ${SpisumNames.IsInFile}:false`
             })

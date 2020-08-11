@@ -27,42 +27,63 @@ import {
 } from "../../../_actions";
 
 const defaultColumn: DataColumn<DataboxDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(dataBoxDocumentProxy.properties!.ssl!.databoxDeliveryDate).path
   ],
   label: t(translationPath(lang.general.delivery))
 };
 
-const columns: DataColumn<DataboxDocument>[] = [
-  {
-    keys: [
-      classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSubject).path
-    ],
-    label: t(translationPath(lang.general.subject))
-  },
-  {
-    keys: [
-      classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSenderName).path
-    ],
-    label: t(translationPath(lang.general.sender))
-  },
-  defaultColumn,
-  {
-    keys: [
-      classPath(dataBoxDocumentProxy.properties!.ssl!.databoxAttachmentsCount)
-        .path
-    ],
-    label: t(translationPath(lang.general.attachmentsCount))
-  }
-];
-
 const Component = () => {
   const dispatch = useDispatch();
   const [refreshPending, setRefreshPending] = useState<boolean>(false);
 
+  const databoxAccounts = useSelector(
+    (state: RootStateType) => state.databoxReducer.databoxAccounts
+  );
+
+  const columns: DataColumn<DataboxDocument>[] = [
+    {
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSubject).path
+      ],
+      label: t(translationPath(lang.general.subject))
+    },
+    {
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSenderName).path
+      ],
+      label: t(translationPath(lang.general.sender))
+    },
+    defaultColumn,
+    {
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxAttachmentsCount)
+          .path
+      ],
+      label: t(translationPath(lang.general.attachmentsCount))
+    }
+  ];
+
+  if (databoxAccounts?.length > 1) {
+    columns.push({
+      getValue: (x) => {
+        return (
+          databoxAccounts.find(
+            (y) => y.username === x.properties?.ssl?.databoxRecipientUid
+          )?.name || x.properties?.ssl?.databoxRecipientUid
+        );
+      },
+      keys: [
+        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxRecipientUid)
+          .path
+      ],
+      label: t(translationPath(lang.general.recipient))
+    });
+  }
+
   const dispatchOpenDialog: (row: DataboxDocument) => void = (row) => {
-    dispatch(dialogOpenDataboxDetails(row));
+    dispatch(dialogOpenDataboxDetails({ data: row }));
   };
 
   const onSuccess = (payload: RefreshStatusPayload) => {
@@ -133,7 +154,8 @@ const Component = () => {
                 dialogType: DialogType.RegisterDatabox,
                 document: selected[0],
                 documentType: DocumentType.Digital,
-                nodeType: SpisumNodeTypes.Databox
+                nodeType: SpisumNodeTypes.Databox,
+                sitePath: SitePaths.Unprocessed
               })
             );
           },
@@ -144,7 +166,7 @@ const Component = () => {
           action: (selected: DataboxDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.DontRegisterDocument
               })
             );

@@ -16,8 +16,8 @@ export const columns: DataColumn<ShipmentHistoryTableType>[] = [
     label: t(translationPath(lang.general.identifier))
   },
   {
-    isDate: true,
-    keys: [classPath(shipmentHistoryTableTypeProxy.createdAt).path],
+    isDateTime: true,
+    keys: [classPath(shipmentHistoryTableTypeProxy.occuredAt).path],
     label: t(translationPath(lang.general.creationDate))
   },
   {
@@ -25,11 +25,11 @@ export const columns: DataColumn<ShipmentHistoryTableType>[] = [
     label: t(translationPath(lang.general.narration))
   },
   {
-    keys: [classPath(shipmentHistoryTableTypeProxy.createdBy).path],
+    keys: [classPath(shipmentHistoryTableTypeProxy.userId).path],
     label: t(translationPath(lang.general.authorOfTheChange))
   },
   {
-    keys: [classPath(shipmentHistoryTableTypeProxy.type).path],
+    keys: [classPath(shipmentHistoryTableTypeProxy.eventType).path],
     label: t(translationPath(lang.general.eventType))
   }
 ];

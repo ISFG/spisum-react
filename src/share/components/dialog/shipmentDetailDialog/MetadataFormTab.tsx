@@ -1,8 +1,8 @@
 import { DialogContentPropsType } from "core/components/dialog/_types";
 import MetaFormContainer from "core/components/MetaForm";
+import { ShipmentDocument } from "core/types";
+import { SpisumNodeTypes } from "enums";
 import React from "react";
-import { ShipmentDocument } from "../../../../core/types";
-import { SpisumNodeTypes } from "../../../../enums";
 import { ShipmentDataboxForm } from "./forms/databoxForm/ShipmentDataboxForm";
 import { ShipmentEmailForm } from "./forms/emailForm/ShipmentEmailForm";
 import { ShipmentPersonalForm } from "./forms/personalFrom/ShipmentPersonalForm";
@@ -20,16 +20,16 @@ export const shipmentDetailFormList = {
 
 const MetaDataTab = ({
   channel,
-  dialogData,
+  dialogProps,
   onClose
 }: DialogContentPropsType) => {
   const form =
-    shipmentDetailFormList[(dialogData as ShipmentDocument)?.nodeType];
+    shipmentDetailFormList[(dialogProps.data as ShipmentDocument)?.nodeType];
 
   return (
     <MetaFormContainer<ShipmentFormValues>
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       MetaForm={form}
       onClose={onClose}
     />

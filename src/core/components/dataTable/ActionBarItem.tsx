@@ -32,6 +32,7 @@ export const ActionBarItem = <T,>({
 
   const validItemProps = item.action
     ? {
+        fill: "#131D1E !important",
         onClick: handleClick
       }
     : {};
@@ -61,7 +62,13 @@ export const ActionBarItem = <T,>({
       {(popped &&
         (title ? (
           <Tooltip
-            title={title + ((isNotValidText && ` - ${isNotValidText}`) || "")}
+            title={
+              title +
+              ((isNotValidText &&
+                !!isNotValidText.trim() &&
+                ` - ${isNotValidText}`) ||
+                "")
+            }
             placement="top"
           >
             {icon}

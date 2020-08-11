@@ -1,4 +1,5 @@
 import {
+  StyledField,
   StyledFieldWide,
   useStyles
 } from "core/components/dialog/Dialog.styles";
@@ -18,22 +19,27 @@ export const ConceptMetaForm = React.memo(
 
     return (
       <Formik<Concept>
-        initialValues={
-          initialValues || {
-            subject: ""
-          }
-        }
+        initialValues={initialValues}
         validate={validate}
         innerRef={formRef || handle}
         onSubmit={handle}
       >
         <Form className={classes.form}>
+          <StyledField
+            component={TextField}
+            data-test-id="concept-input-pid"
+            disabled={true}
+            name={lastPathMember(conceptProxy.pid).path}
+            type="text"
+            required={true}
+            label={t(translationPath(lang.general.identifier))}
+          />
           <StyledFieldWide
             component={TextField}
-            data-test-id="meta-input-subject"
+            data-test-id="concept-input-subject"
             disabled={readonly}
             name={lastPathMember(conceptProxy.subject).path}
-            required={true}
+            required={false}
             type="text"
             label={t(translationPath(lang.documentMetaForm.subject))}
           />

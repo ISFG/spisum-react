@@ -1,24 +1,22 @@
 import { Button } from "@material-ui/core";
 import MuiTooltip from "@material-ui/core/Tooltip";
 import clsx from "clsx";
+import { OwnProps as ErrorBoundaryProps } from "core/components/errorBoundary/ErrorBoundary";
 import React from "react";
-import { translationPath } from "../../../../share/utils/getPath";
-import { lang, t } from "../../../../translation/i18n";
+import { translationPath } from "share/utils/getPath";
+import { lang, t } from "translation/i18n";
 import {
   StyledCancelIcon,
   StyledDialogTitle,
   useStyles
 } from "../../dialog/Dialog.styles";
-import { ErrorBoundaryContainer, ErrorPic } from "../ErrorBoundary.styles";
-import { useStyles as useBoundariesStyles } from "../ErrorBoundary.styles";
+import {
+  ErrorBoundaryContainer,
+  ErrorPic,
+  useStyles as useBoundariesStyles
+} from "../ErrorBoundary.styles";
 
-export interface OwnProps {
-  reloadTab?: VoidFunction;
-  clearErrorState: VoidFunction;
-  handleClose?: VoidFunction;
-}
-
-export const DialogTabError = (props: OwnProps) => {
+export const DialogTabError = (props: ErrorBoundaryProps) => {
   const classes = useStyles();
   const { reloadTab, clearErrorState } = props;
   const refreshCurrentTab = () => {
@@ -45,7 +43,7 @@ export const DialogTabError = (props: OwnProps) => {
   );
 };
 
-export const DialogError = (props: OwnProps) => {
+export const DialogError = (props: ErrorBoundaryProps) => {
   const classes = useStyles();
   const errorBoundaryClasses = useBoundariesStyles();
   const { clearErrorState, handleClose } = props;

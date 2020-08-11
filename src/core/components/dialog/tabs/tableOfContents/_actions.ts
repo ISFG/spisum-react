@@ -1,8 +1,8 @@
 import { NodeHistoryActionType } from "core/api/node/_actions";
+import { createSafeAction } from "share/utils/typesafeActions";
 import { ActionType } from "typesafe-actions";
-import { createSafeAction } from "../../../../../share/utils/typesafeActions";
-import { GenericDocument } from "../../../../types";
 import { dialogAction__Clear } from "../../_actions";
+import { DialogDataProps } from "../../_types";
 
 export type HistoryTabActionTypes =
   | NodeHistoryActionType
@@ -10,4 +10,4 @@ export type HistoryTabActionTypes =
 
 export const openFileDetailsAction = createSafeAction(
   "@file/OPEN_FILE_DETAILS_ACTION"
-)<GenericDocument & { readonly?: boolean }>();
+)<DialogDataProps>();

@@ -1,8 +1,8 @@
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import SignAndTimestampDialog from "./SignAndTimestampDialog";
 
 export const signAndTimestampDialog: DialogContentType = {
@@ -15,4 +15,3 @@ export const signAndTimestampDialog: DialogContentType = {
   ),
   type: DialogType.SignAndTimestamp
 };
-

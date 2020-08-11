@@ -1,9 +1,9 @@
-import { DialogContentPropsType } from "core/components/dialog/_types";
+import { DialogTabContentPropsType } from "core/components/dialog/_types";
 import React from "react";
-import ShipmentComponentsTabContainer from "./ShipmentComponentsTabContainer";
 import { useDocumentId } from "../../hooks/useDocumentId";
+import ShipmentComponentsTabContainer from "./ShipmentComponentsTabContainer";
 
-export const ComponentsShipmentTab = (props: DialogContentPropsType) => {
+export const ComponentsShipmentTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {
@@ -13,7 +13,7 @@ export const ComponentsShipmentTab = (props: DialogContentPropsType) => {
   return <></>;
 };
 
-export const ReadOnlyComponentsTab = (props: DialogContentPropsType) => {
+export const ReadOnlyComponentsTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {

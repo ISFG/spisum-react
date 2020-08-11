@@ -5,17 +5,18 @@ import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { SessionType } from "core/features/login/_types";
 import { GenericDocument, genericDocumentProxy } from "core/types";
-import { DocumentType, SitePaths, SpisumNames, SpisumNodeTypes } from "enums";
+import { DocumentType, SitePaths } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
-import { alfrescoQuery, getQueryPath } from "share/utils/query";
+import { getRelativePath } from "share/utils/query";
 import { isUserInLeadership } from "share/utils/user";
+import { traverseNodeType } from "share/utils/utils";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.forSignatureDate).path
   ],
@@ -25,7 +26,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
 const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
   const columns: DataColumn<GenericDocument>[] = [
     {
-      keys: [classPath(genericDocumentProxy.properties!.ssl!.pid).path],
+      keys: [classPath(genericDocumentProxy.properties!.ssl!.pidRef).path],
       label: t(translationPath(lang.general.identifier))
     },
     {
@@ -37,7 +38,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
       label: t(translationPath(lang.general.subject))
     },
     {
-      isDate: true,
+      isDateTime: true,
       keys: [classPath(genericDocumentProxy.createdAt).path],
       label: t(translationPath(lang.general.dateOfEvidence))
     },
@@ -58,7 +59,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
   if (isUserInLeadership(session)) {
     columns.push({
       keys: [
-        classPath(genericDocumentProxy.properties!.cm!.owner?.displayName).path
+        classPath(genericDocumentProxy.properties!.ssl!.currentOwner).path
       ],
       label: t(translationPath(lang.general.owner))
     });
@@ -73,35 +74,32 @@ const Component = () => {
   );
   const activeGroup = session.activeGroup;
   const dispatch = useDispatch();
-  const documentsPath = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        "*",
-        SitePaths.Evidence,
-        SitePaths.Documents,
-        SitePaths.ForProcessing,
-        SitePaths.ForSignature
-      )?.path || ""
-  );
-  const documentsInFilePath = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        "*",
-        SitePaths.Evidence,
-        SitePaths.Files,
-        SitePaths.Documents,
-        SitePaths.ForProcessing,
-        SitePaths.ForSignature
-      )?.path || ""
+  const relativePath = useSelector((state: RootStateType) =>
+    getRelativePath(
+      state.loginReducer.global.paths,
+      activeGroup,
+      SitePaths.Evidence,
+      SitePaths.WaitingForSignature
+    )
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     dispatch(
       openDocumentWithSaveButtonsAction({
-        ...row,
         canUploadComponents: false,
+        data: {
+          ...row,
+          id: row.properties?.ssl?.waitingRef || row.id,
+          nodeType: traverseNodeType(row.nodeType),
+          properties: {
+            ...row.properties,
+            ssl: {
+              ...row.properties?.ssl,
+              pid: row.properties?.ssl?.pidRef
+            }
+          }
+        },
+        hideManageShipmentsIcon: true,
         isReadonly: true
       })
     );
@@ -123,21 +121,15 @@ const Component = () => {
   return (
     <MenuLayout>
       <DocumentView
+        children={{
+          relativePath
+        }}
         columns={getColumns(session)}
         controls={controls}
         customTitle={t(translationPath(lang.table.forSignature))}
         defaultSortAsc={true}
         defaultSortColumn={defaultColumn}
         handleDoubleClick={dispatchOpenDialog}
-        search={{
-          query: {
-            query: alfrescoQuery({
-              paths: [documentsPath, documentsInFilePath],
-              type: [SpisumNodeTypes.Document],
-              where: `${SpisumNames.ForSignatureGroup}:'${activeGroup}'`
-            })
-          }
-        }}
       />
     </MenuLayout>
   );

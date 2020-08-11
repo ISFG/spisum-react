@@ -2,6 +2,7 @@ import { CircularProgress } from "@material-ui/core";
 import MuiDialog from "@material-ui/core/Dialog";
 import MuiTooltip from "@material-ui/core/Tooltip";
 import clsx from "clsx";
+import { debounce } from "lodash";
 import React, { useCallback, useMemo, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
 import { translationPath } from "share/utils/getPath";
@@ -13,6 +14,7 @@ import ActionButtons from "./ActionButtons";
 import {
   StyledCancelIcon,
   StyledDialogTitle,
+  StyledRefreshIcon,
   useStyles
 } from "./Dialog.styles";
 import { TabAndDialogChannel } from "./lib/TabAndDialogChannel";
@@ -28,11 +30,13 @@ import {
   ChannelsType,
   DialogContentType,
   DialogDataProps,
-  DialogType
+  DialogType,
+  TabAndDialogChannelType
 } from "./_types";
 
 export interface OwnProps extends DialogContentType {
   onClose: (props: ActionOnCloseType) => void;
+  dialogProps: DialogDataProps;
   reloadDialog: VoidFunction;
 }
 
@@ -41,7 +45,7 @@ export interface OwnProps extends DialogContentType {
 // - oznamit, ze jsou nevalidni data
 // - ma novou volitelnou property - renderPreview
 // akce
-// - dostanou dispatch a dialogData
+// - dostanou dispatch a dialogProps
 // dialog
 // - po kliknuti na akci musi zjistit, jestli jsou data validni
 // - po kliknuti na zrusit musi zjistit, jestl jsou neulozena data
@@ -53,7 +57,7 @@ const CONTENT_TAB = "contentTab";
 const Dialog = ({
   actions,
   content: Content,
-  dialogData,
+  dialogProps,
   onClose,
   renderPreview,
   tabs,
@@ -62,6 +66,9 @@ const Dialog = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(true);
+  const [activeChannel, setActiveChannel] = useState<
+    TabAndDialogChannelType | undefined
+  >();
   const [{ previewItem, showPreview }, componentDispatch] = useReducer(
     reducer,
     initialState
@@ -84,17 +91,16 @@ const Dialog = ({
   );
 
   const handleClose = useCallback(() => {
-    const dialogDataTyped = dialogData as DialogDataProps;
     const allChannelsSaved = Object.values(channels).every(
       (channel) => channel.isSaved
     );
 
-    if (allChannelsSaved || dialogDataTyped?.dontUseDataModifiedDialog) {
-      const parentMetaData = dialogDataTyped?.parentDialogChannels?.Metadata;
+    if (allChannelsSaved || dialogProps.dontUseDataModifiedDialog) {
+      const parentMetaData = dialogProps.parentDialogChannels?.Metadata;
       setOpen(false);
       onClose({
         channels,
-        dialogData,
+        dialogProps,
         dispatch
       });
       parentMetaData?.setState({
@@ -111,14 +117,16 @@ const Dialog = ({
 
     dispatch(
       dialogOpenAction({
-        dialogData: {
-          formValues: channels?.Metadata?.state?.formValues as SslProperties,
-          id: channels?.Metadata?.state?.id as string,
-          nodeType: channels?.Metadata?.state?.nodeType,
+        dialogProps: {
+          data: {
+            formValues: channels?.Metadata?.state?.formValues as SslProperties,
+            id: channels?.Metadata?.state?.id as string,
+            nodeType: channels?.Metadata?.state?.nodeType
+          },
           onSuccess: () => {
             onClose({
               channels,
-              dialogData,
+              dialogProps,
               dispatch
             });
             setOpen(false);
@@ -149,7 +157,7 @@ const Dialog = ({
       action({
         buttonState,
         channels,
-        dialogData,
+        dialogProps,
         dispatch,
         onClose: handleClose
       });
@@ -163,10 +171,16 @@ const Dialog = ({
 
     return (
       <div className={classes.previewContainer}>
-        {previewItem && renderPreview(dialogData, previewItem)}
+        {previewItem && renderPreview(dialogProps, previewItem)}
       </div>
     );
-  }, [showPreview, renderPreview, previewItem, dialogData]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [showPreview, renderPreview, previewItem, dialogProps]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const refreshTabDebounced = useMemo(() => {
+    return activeChannel?.refreshData
+      ? debounce(activeChannel?.refreshData, 500, { leading: true })
+      : () => {};
+  }, [activeChannel]);
 
   return (
     <MuiDialog
@@ -189,7 +203,10 @@ const Dialog = ({
         >
           {Title && (
             <StyledDialogTitle>
-              <Title dialogData={dialogData} channel={channels[CONTENT_TAB]} />
+              <Title
+                dialogProps={dialogProps}
+                channel={channels[CONTENT_TAB]}
+              />
               <MuiTooltip
                 aria-label={t(translationPath(lang.dialog.form.close))}
                 title={t(translationPath(lang.dialog.form.close))}
@@ -205,12 +222,24 @@ const Dialog = ({
                   showPreview={showPreview}
                 />
               )}
+              {activeChannel?.refreshData && (
+                <MuiTooltip
+                  aria-label={t(translationPath(lang.dialog.form.refresh))}
+                  title={t(translationPath(lang.dialog.form.refresh))}
+                >
+                  <StyledRefreshIcon
+                    data-test-id="dialog-refresh-tab-icon"
+                    onClick={refreshTabDebounced}
+                  />
+                </MuiTooltip>
+              )}
             </StyledDialogTitle>
           )}
           {tabs?.length && (
             <Tabs
               tabs={tabs}
-              dialogData={dialogData}
+              dialogProps={dialogProps}
+              setActiveChannel={setActiveChannel}
               onClose={handleClose}
               channels={channels}
               showPreview={showPreview}
@@ -229,21 +258,22 @@ const Dialog = ({
                 </div>
               )}
               <Content
-                dialogData={dialogData}
+                dialogProps={dialogProps}
                 channel={channels[CONTENT_TAB]}
                 onClose={handleClose}
               />
             </div>
           )}
-          {!(dialogData as DialogDataProps)?.isReadonly && (
+          {!dialogProps.isReadonly && (
             <div
               className={clsx(classes.actionsContainer, {
                 [classes.widthHalf]: showPreview
               })}
             >
-              {actions?.length && (
+              {actions && (
                 <ActionButtons
                   actions={actions}
+                  dialogProps={dialogProps}
                   onClose={handleClose}
                   onActionClicked={handleActionClicked}
                 />

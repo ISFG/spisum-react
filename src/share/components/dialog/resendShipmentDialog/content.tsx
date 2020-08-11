@@ -3,22 +3,22 @@ import { shipmentResendAction } from "core/api/shipment/_action";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import CancelDialog from "../cancelDialog/CancelDialog";
 
 export const resendShipmentDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState }) => {
-        if (!dialogData) {
+      ({ dispatch, dialogProps, onClose, buttonState }) => {
+        if (!dialogProps.data) {
           return;
         }
         buttonState.setIsPending(true);
@@ -33,7 +33,7 @@ export const resendShipmentDialog: DialogContentType = {
             onError: onClose,
             onSuccess,
             payload: {
-              nodeId: (dialogData as DialogDataProps)?.id
+              nodeId: (dialogProps.data as DialogDataGenericData)?.id
             }
           })
         );

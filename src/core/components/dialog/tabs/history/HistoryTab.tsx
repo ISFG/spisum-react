@@ -10,12 +10,12 @@ import { nodeHistoryProxy } from "./_types";
 
 export const columns: DataColumn<NodeHistory>[] = [
   {
-    isDate: true,
+    isDateTime: true,
     keys: [classPath(nodeHistoryProxy.pid).path],
     label: t(translationPath(lang.general.identifier))
   },
   {
-    isDate: true,
+    isDateTime: true,
     keys: [classPath(nodeHistoryProxy.occuredAt).path],
     label: t(translationPath(lang.general.creationDate))
   },

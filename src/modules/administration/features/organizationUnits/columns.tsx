@@ -1,20 +1,13 @@
 import { DataColumn } from "core/components/dataTable/_types";
-import { getService } from "core/features/dependencyInjection";
-import { Members } from "core/services/Members";
+import { fetchMembers } from "core/helpers/api/MemberFetcher";
 import { SpisumGroups } from "enums";
 import { classPath, translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { Member, membersProxy, MembersSuccessResponseType } from "./_types";
+import { Member, membersProxy } from "./_types";
 
 export const getColumns = async (): Promise<DataColumn<Member>[]> => {
-  const membersService = getService(Members);
-
-  const membersDispatch = (await membersService.fetchMembersByGroup(
-    SpisumGroups.Dispatch0
-  )) as MembersSuccessResponseType;
-  const membersRepository = (await membersService.fetchMembersByGroup(
-    SpisumGroups.Repository
-  )) as MembersSuccessResponseType;
+  const membersDispatch = await fetchMembers(SpisumGroups.Dispatch0);
+  const membersRepository = await fetchMembers(SpisumGroups.Repository);
 
   return [
     {

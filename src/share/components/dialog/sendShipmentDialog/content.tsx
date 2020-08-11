@@ -2,22 +2,27 @@ import { callAsyncAction } from "core/action";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import {
   DialogContentType,
-  DialogDataProps,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
-import { ShipmentDocument } from "core/types";
+import NamedTitle from "core/components/namedTitle";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import { SendShipmentContainer } from "./SendShipmentContainer";
 import { sendShipmentAction } from "./_actions";
 
 export const sendShipmentDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dialogData, channels, buttonState, onClose, dispatch }) => {
+      ({
+        dialogProps,
+        channels,
+        buttonState,
+        onClose,
+        dispatch
+      }) => {
         buttonState.setIsPending(true);
         const onError = () => {
           buttonState.setIsPending(false);
@@ -33,8 +38,9 @@ export const sendShipmentDialog: DialogContentType = {
             onError,
             onSuccess,
             payload: {
-              nodeId: (dialogData as DialogDataProps).id,
-              shipmentType: (dialogData as ShipmentDocument).nodeType,
+              nodeId: (dialogProps.data as DialogDataGenericData).id,
+              shipmentType: (dialogProps.data as DialogDataGenericData)
+                .nodeType,
               shipmentsId:
                 channels?.contentTab?.state?.selectedComponentsIds || []
             }

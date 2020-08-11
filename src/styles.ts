@@ -1,7 +1,7 @@
 import styled, { CreateStyled } from "@emotion/styled";
 import { createMuiTheme } from "@material-ui/core";
 
-export interface Theme {
+export interface ITheme {
   colors: {
     backgroundSecondary: string;
     black: string;
@@ -25,7 +25,7 @@ export interface Theme {
   fontFamily: string;
 }
 
-export const theme: Theme = {
+export const theme: ITheme = {
   colors: {
     backgroundSecondary: "#fefbf2",
     black: "#000",
@@ -118,4 +118,4 @@ export const muiTheme = createMuiTheme({
   }
 });
 
-export default styled as CreateStyled<Theme>;
+export default styled as CreateStyled<ITheme>;

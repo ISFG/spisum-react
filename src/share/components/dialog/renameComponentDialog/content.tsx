@@ -1,21 +1,30 @@
 import { callAsyncAction } from "core/action";
 import { componentUpdateAction } from "core/api/components/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
-import {DialogContentPropsType, DialogType} from "core/components/dialog/_types";
+import {
+  DialogContentPropsType,
+  DialogType
+} from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
 import { File } from "core/entities";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { RenameComponentContent } from "./RenameComponentContent";
 import { RenameComponentFormValues } from "./_types";
 import { updateFileName } from "./_utils";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const renameComponentDialog = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
         const onSuccess = () => {
           onClose();
         };
@@ -34,7 +43,7 @@ export const renameComponentDialog = {
             action: componentUpdateAction,
             onError,
             onSuccess,
-            payload: updateFileName(dialogData as File, name || "")
+            payload: updateFileName(dialogProps.data as File, name || "")
           })
         );
       }

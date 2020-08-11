@@ -6,7 +6,7 @@ import {
 } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Cancel } from "@material-ui/icons";
+import { Cancel, Refresh } from "@material-ui/icons";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { Autocomplete } from "@material-ui/lab";
@@ -61,6 +61,7 @@ export const useStyles = makeStyles(({ palette, typography }: Theme) => {
     actionsContainer: {
       background: palette.common.white,
       bottom: 0,
+      minHeight: "65px",
       padding: "15px 30px",
       position: "absolute",
       width: "100%"
@@ -98,11 +99,6 @@ export const useStyles = makeStyles(({ palette, typography }: Theme) => {
       display: "flex",
       justifyContent: "center"
     },
-    datepickerLongLabel: {
-      "& .MuiFormLabel-root": {
-        top: "-10px !important"
-      }
-    },
     detail: {
       // position: "relative"
     },
@@ -131,6 +127,13 @@ export const useStyles = makeStyles(({ palette, typography }: Theme) => {
       flexWrap: "wrap",
       justifyContent: "space-between"
     },
+    fromSignatureContainer: {
+      "@media (max-width: 1000px)": {
+        minWidth: "calc(100vw - 124px)",
+        width: "calc(100vw - 124px)"
+      },
+      minWidth: "720px"
+    },
     fullWidth: {
       width: "100%"
     },
@@ -148,6 +151,11 @@ export const useStyles = makeStyles(({ palette, typography }: Theme) => {
         marginRight: "10%"
       },
       marginRight: "2.5%"
+    },
+    longLabel: {
+      "& .MuiFormLabel-root": {
+        top: "-10px !important"
+      }
     },
     mediumLabel: {
       color: `${palette.common.black} !important`,
@@ -185,7 +193,7 @@ export const useStyles = makeStyles(({ palette, typography }: Theme) => {
       "& > .body-midsize": { ...fullWidth, width: "700px", minWidth: "auto" }
     },
     modalBodyFullscreen: {
-      maxHeight: "calc(100vh - 200px) !important"
+      maxHeight: "calc(100vh - 100px) !important"
     },
     modalBodyInvisible: {
       display: "none"
@@ -290,6 +298,10 @@ export const useStyles = makeStyles(({ palette, typography }: Theme) => {
     textCenter: {
       textAlign: "center"
     },
+    visualCheckbox: {
+      marginLeft: "4px",
+      zIndex: 1
+    },
     warning: {
       border: `1px solid ${palette.warning.main}`,
       color: palette.warning.main
@@ -304,6 +316,13 @@ export const useStyles = makeStyles(({ palette, typography }: Theme) => {
 });
 
 export const StyledCancelIcon = styled(Cancel)(() => ({
+  cursor: "pointer",
+  float: "right",
+  fontSize: 24,
+  margin: "4px"
+}));
+
+export const StyledRefreshIcon = styled(Refresh)(() => ({
   cursor: "pointer",
   float: "right",
   fontSize: 24,

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { RootStateType } from "../../../../reducers";
+import { RootStateType } from "reducers";
 import { UploadState } from "../_types";
 import { FileUploadProgress } from "./FileUploadProgress";
 

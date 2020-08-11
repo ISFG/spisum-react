@@ -51,10 +51,7 @@ export const personallyFormValidationSchema = yup.object().shape({
   [lastPathMember(CreateShipmentFormValuesProxy.addressZip).path]: yup
     .string()
     .required(t(translationPath(lang._validations.required)))
-    .max(
-      MAX_STRING_LENGTH,
-      t(translationPath(lang.dialog.errors.maxLen), { len: MAX_STRING_LENGTH })
-    ),
+    .max(10, t(translationPath(lang.dialog.errors.maxLen), { len: 10 })),
   [lastPathMember(CreateShipmentFormValuesProxy.addressState)
     .path]: yup
     .string()

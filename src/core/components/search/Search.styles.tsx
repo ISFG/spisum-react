@@ -1,5 +1,4 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
-import styled, { theme } from "styles";
 
 export const useStyles = makeStyles((muiTheme: Theme) => {
   return createStyles({
@@ -23,6 +22,7 @@ export const useStyles = makeStyles((muiTheme: Theme) => {
       },
       backgroundColor: "#FFD9A2",
       borderRadius: 18,
+      color: "#000",
       height: 36,
       marginLeft: 0,
       marginRight: 7,

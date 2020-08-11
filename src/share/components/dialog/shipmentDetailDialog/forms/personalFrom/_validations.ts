@@ -1,12 +1,12 @@
+import { lang, t } from "translation/i18n";
 import * as yup from "yup";
 import { lastPathMember, translationPath } from "../../../../../utils/getPath";
+import { isEmptyString } from "../../../../../utils/utils";
+import { validateErrors } from "../../../../../utils/validation";
 import {
   ShipmentFormValues,
   shipmentPersonalFormValuesProxy
 } from "../../_types";
-import { lang, t } from "../../../../../../translation/i18n";
-import { validateErrors } from "../../../../../utils/validation";
-import { isEmptyString } from "../../../../../utils/utils";
 
 const MAX_STRING_LENGTH = 100;
 
@@ -86,10 +86,7 @@ export const personallyFormValidationSchema = yup.object().shape({
   [lastPathMember(shipmentPersonalFormValuesProxy.addressZip).path]: yup
     .string()
     .required(t(translationPath(lang._validations.required)))
-    .max(
-      MAX_STRING_LENGTH,
-      t(translationPath(lang.dialog.errors.maxLen), { len: MAX_STRING_LENGTH })
-    ),
+    .max(10, t(translationPath(lang.dialog.errors.maxLen), { len: 10 })),
   [lastPathMember(shipmentPersonalFormValuesProxy.addressState)
     .path]: yup
     .string()

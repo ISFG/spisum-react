@@ -12,7 +12,7 @@ const initialState: ShipmentsStateType = {
     pagination: {
       count: 0,
       hasMoreItems: false,
-      maxItems: 25,
+      maxItems: 50,
       skipCount: 0,
       totalItems: 0
     }
@@ -23,7 +23,7 @@ const initialState: ShipmentsStateType = {
     pagination: {
       count: 0,
       hasMoreItems: false,
-      maxItems: 25,
+      maxItems: 50,
       skipCount: 0,
       totalItems: 0
     }
@@ -34,7 +34,7 @@ const initialState: ShipmentsStateType = {
     pagination: {
       count: 0,
       hasMoreItems: false,
-      maxItems: 25,
+      maxItems: 50,
       skipCount: 0,
       totalItems: 0
     }

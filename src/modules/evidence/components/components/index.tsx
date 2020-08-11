@@ -1,9 +1,9 @@
-import { DialogContentPropsType } from "core/components/dialog/_types";
+import { useDocumentId } from "core/components/dialog/hooks/useDocumentId";
+import { DialogTabContentPropsType } from "core/components/dialog/_types";
 import React from "react";
 import EvidenceComponentsTabContainer from "./EvidenceComponentsTabContainer";
-import { useDocumentId } from "../../../../core/components/dialog/hooks/useDocumentId";
 
-export const EvidenceComponentsTab = (props: DialogContentPropsType) => {
+export const EvidenceComponentsTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {
@@ -13,7 +13,7 @@ export const EvidenceComponentsTab = (props: DialogContentPropsType) => {
   return <></>;
 };
 
-export const ReadOnlyComponentsTab = (props: DialogContentPropsType) => {
+export const ReadOnlyComponentsTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {

@@ -12,7 +12,7 @@ import {
 import { FormState } from "core/components/reactiveFormik/_types";
 import { SenderRadioWrapper } from "core/components/senderForm/Component";
 import Timepicker from "core/components/timepicker/Component";
-import { sslEmailPropsProxy } from "core/types";
+import { sslEmailPropsProxy, sslPropsProxy } from "core/types";
 import { DateTimeFormats, DeliveryMode, DocumentType } from "enums";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { Select, TextField } from "formik-material-ui";
@@ -20,7 +20,7 @@ import React from "react";
 import { withTranslation } from "react-i18next";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation } from "translation/i18n";
-import { SSLDeliveryMode } from "../../form/fields/SSLDeliveryMode";
+import { SslDeliveryMode } from "../../form/fields/SSLDeliveryMode";
 import { MetaFormProps } from "../_types";
 import { validate } from "./_validations";
 
@@ -65,9 +65,9 @@ const Component = ({
                 label={t(translationPath(lang.general.deliveryTime))}
               />
 
-              <SSLDeliveryMode
+              <SslDeliveryMode
                 className={classes.gapRight}
-                enabledModes={[DeliveryMode.Email]}
+                allowedModes={[DeliveryMode.Email]}
                 disabled={true}
                 required={true}
               />
@@ -133,7 +133,7 @@ const Component = ({
             <div className={clsx(classes.fullWidth, classes.mtGap)}>
               <StyledField
                 component={TextField}
-                className={classes.gapRight}
+                className={clsx(classes.gapRight, classes.longLabel)}
                 data-test-id="carries-meta-input-senderIdent"
                 disabled={readonly}
                 name={lastPathMember(sslEmailPropsProxy.senderIdent).path}
@@ -142,6 +142,7 @@ const Component = ({
               />
               <StyledField
                 component={TextField}
+                className={classes.longLabel}
                 data-test-id="carries-meta-input-senderSSID"
                 disabled={readonly}
                 name={lastPathMember(sslEmailPropsProxy.senderSSID).path}
@@ -157,19 +158,13 @@ const Component = ({
               label={t(translationPath(lang.general.subject))}
             />
             <SenderRadioWrapper
+              disabledFields={[
+                lastPathMember(sslPropsProxy.sender_contact).path
+              ]}
               initialValues={initialValues}
               setFieldValue={setFieldValue}
               readonly={readonly}
               hidden={{ own: !readonly }}
-            />
-            <StyledFieldWide
-              component={TextField}
-              data-test-id="meta-input-senderRegistrationNumber"
-              name={
-                lastPathMember(sslEmailPropsProxy.senderRegistrationNumber).path
-              }
-              type="text"
-              label={t(translationPath(lang.general.senderRegistrationNumber))}
             />
           </Form>
         );

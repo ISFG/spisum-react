@@ -11,7 +11,7 @@ import { nodeVersionProxy } from "./_types";
 
 export const columns: DataColumn<NodeVersion>[] = [
   {
-    isDate: true,
+    isDateTime: true,
     keys: [classPath(nodeVersionProxy.id).path],
     label: t(translationPath(lang.general.versionId))
   },

@@ -1,7 +1,7 @@
+import { PostType } from "enums";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import * as yup from "yup";
-import { PostType } from "../../../../../../enums";
 import { isEmptyString } from "../../../../../utils/utils";
 import { shipmentPostFormValuesProxy } from "../../../shipmentDetailDialog/_types";
 import { CreateShipmentFormValuesProxy } from "../../_types";
@@ -81,10 +81,7 @@ export const postFormValidationSchema = yup.object().shape({
   [lastPathMember(CreateShipmentFormValuesProxy.addressZip).path]: yup
     .string()
     .required(t(translationPath(lang._validations.required)))
-    .max(
-      MAX_STRING_LENGTH,
-      t(translationPath(lang.dialog.errors.maxLen), { len: MAX_STRING_LENGTH })
-    ),
+    .max(10, t(translationPath(lang.dialog.errors.maxLen), { len: 10 })),
   [lastPathMember(CreateShipmentFormValuesProxy.addressState)
     .path]: yup
     .string()
@@ -95,10 +92,6 @@ export const postFormValidationSchema = yup.object().shape({
   [lastPathMember(CreateShipmentFormValuesProxy.postType)
     .path]: yup
     .array()
-    .required(t(translationPath(lang._validations.required))),
-  [lastPathMember(CreateShipmentFormValuesProxy.postItemType)
-    .path]: yup
-    .string()
     .required(t(translationPath(lang._validations.required))),
   [lastPathMember(CreateShipmentFormValuesProxy.postItemWeight).path]: yup
     .number()

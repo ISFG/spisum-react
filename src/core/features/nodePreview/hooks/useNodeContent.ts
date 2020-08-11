@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootStateType } from "../../../../reducers";
+import { RootStateType } from "reducers";
 import { nodeContentAction } from "../../../api/node/_actions";
 import { PreviewState } from "../_types";
 

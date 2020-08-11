@@ -6,15 +6,15 @@ import { EmailDocument } from "core/types";
 import { put, takeLatest } from "redux-saga/effects";
 import { getType } from "typesafe-actions";
 import {
-  DailogOpenEmailDetailsActionType,
-  dialogOpenEmailDetails
+  dialogOpenEmailDetails,
+  DialogOpenEmailDetailsActionType
 } from "./_actions";
 
 export function* watchDialogOpenEmailDetailsAction() {
   yield takeLatest(getType(dialogOpenEmailDetails), function* ({
     payload
-  }: DailogOpenEmailDetailsActionType) {
-    const document = payload as EmailDocument;
+  }: DialogOpenEmailDetailsActionType) {
+    const document = payload!.data as EmailDocument;
 
     yield put(
       metaFormAction__Update({
@@ -30,7 +30,7 @@ export function* watchDialogOpenEmailDetailsAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.EmailDetails
       })
     );

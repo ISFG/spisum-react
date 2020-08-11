@@ -13,11 +13,11 @@ import { ChangeFileMarkDialogContent } from "./ChangeFileMarkDialogContent";
 import { ChangeFileMarkFormValues } from "./_types";
 
 export const changeFileMarkDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState, channels }) => {
-        if (!isGenericDocument(dialogData)) {
+      ({ dispatch, dialogProps, onClose, buttonState, channels }) => {
+        if (!isGenericDocument(dialogProps.data)) {
           return;
         }
 
@@ -34,7 +34,7 @@ export const changeFileMarkDialog: DialogContentType = {
 
         dispatch(
           callAsyncAction({
-            action: isFile(dialogData)
+            action: isFile(dialogProps.data)
               ? fileChangeFileMarkAction
               : documentChangeFileMarkAction,
             onError,
@@ -42,7 +42,7 @@ export const changeFileMarkDialog: DialogContentType = {
             payload: {
               fileMark: (channels.contentTab.state
                 ?.formValues as ChangeFileMarkFormValues).fileMark,
-              nodeId: dialogData.id
+              nodeId: dialogProps.data.id
             }
           })
         );

@@ -8,7 +8,12 @@ import {
 } from "share/utils/convert";
 import { fetchSaga } from "share/utils/fetch";
 import { ActionType, getType } from "typesafe-actions";
+import {
+  closeModalLoadingAction,
+  openModalLoadingAction
+} from "../../components/layout/_actions";
 import { documentSaveReasonFormActionType } from "../../components/reasonForm/_actions";
+import { getNodeTypeSuffix } from "../../mappers/api/general";
 import { SslProperties } from "../models";
 import {
   documentAcceptActionType,
@@ -36,11 +41,6 @@ import {
   documentShreddingDiscardActionType,
   documentUpdateActionType
 } from "./_actions";
-import {
-  closeModalLoadingAction,
-  openModalLoadingAction
-} from "../../components/layout/_actions";
-import { getNodeTypeSuffix } from "../../mappers/api/general";
 
 export function* watchApiDocumentSaga() {
   yield takeEvery(getType(documentCreateActionType.request), function* ({

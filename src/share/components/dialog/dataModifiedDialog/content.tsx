@@ -1,26 +1,40 @@
 import { callAsyncAction } from "core/action";
 import { conceptUpdateActionType } from "core/api/concept/_actions";
 import { documentUpdateActionType } from "core/api/document/_actions";
+import { updateFileAction } from "core/api/file/_actions";
 import { NodeChildAssociationEntry, SslProperties } from "core/api/models";
-import { errorAction, successAction } from "core/components/dialog/lib/actionsFactory";
+import {
+  errorAction,
+  successAction
+} from "core/components/dialog/lib/actionsFactory";
 import { triggerChannelsValidation } from "core/components/dialog/_methods";
-import { ChannelsType, DialogContentType, DialogDataProps, DialogType } from "core/components/dialog/_types";
-import { documentViewAction__Refresh, documentViewAction__UpdateItem } from "core/components/documentView/_actions";
+import {
+  ChannelsType,
+  DialogContentType,
+  DialogDataGenericData,
+  DialogType
+} from "core/components/dialog/_types";
+import {
+  documentViewAction__Refresh,
+  documentViewAction__UpdateItem
+} from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { SpisumNodeTypes } from "enums";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
-import { shipmentDetailBodyList, shipmentDetailSaveActionList } from "../shipmentDetailDialog/mappers";
+import {
+  shipmentDetailBodyList,
+  shipmentDetailSaveActionList
+} from "../shipmentDetailDialog/mappers";
 import DataModifiedDialogContent from "./DataModifiedDialog";
-import { updateFileAction } from "../../../../core/api/file/_actions";
 
 export const dataModifiedDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     successAction(
       t(translationPath(lang.dialog.form.save)),
-      ({ dialogData, onClose, dispatch, buttonState, channels }) => {
-        const dialogDataTyped = dialogData as DialogDataProps;
+      ({ dialogProps, onClose, dispatch, buttonState, channels }) => {
+        const dialogPropsTyped = dialogProps.data as DialogDataGenericData;
         buttonState.setIsPending(true);
 
         const onError = () => {
@@ -30,7 +44,8 @@ export const dataModifiedDialog: DialogContentType = {
         const onSuccess = ({ refreshDocumentView = false } = {}) => (
           response: NodeChildAssociationEntry<SslProperties> | void
         ) => {
-          dialogDataTyped?.onSuccess?.();
+          onClose();
+          dialogProps.onSuccess?.();
           if (refreshDocumentView && response) {
             dispatch(documentViewAction__UpdateItem(response));
           } else if (refreshDocumentView) {
@@ -38,9 +53,9 @@ export const dataModifiedDialog: DialogContentType = {
           }
         };
 
-        if (dialogDataTyped.parentDialogChannels) {
+        if (dialogProps.parentDialogChannels) {
           const parentDialogChannels: ChannelsType =
-            dialogDataTyped.parentDialogChannels;
+            dialogProps.parentDialogChannels;
 
           triggerChannelsValidation(parentDialogChannels).then(() => {
             const allValid = Object.values(parentDialogChannels).every(
@@ -52,7 +67,7 @@ export const dataModifiedDialog: DialogContentType = {
               return;
             }
 
-            switch (dialogDataTyped.nodeType) {
+            switch (dialogPropsTyped.nodeType) {
               case SpisumNodeTypes.Document: {
                 dispatch(
                   callAsyncAction({
@@ -61,9 +76,9 @@ export const dataModifiedDialog: DialogContentType = {
                     onSuccess: onSuccess({ refreshDocumentView: true }),
                     payload: {
                       body: {
-                        properties: dialogDataTyped!.formValues
+                        properties: dialogPropsTyped!.formValues
                       },
-                      nodeId: dialogDataTyped!.id
+                      nodeId: dialogPropsTyped!.id
                     }
                   })
                 );
@@ -76,8 +91,8 @@ export const dataModifiedDialog: DialogContentType = {
                     onError,
                     onSuccess: onSuccess({ refreshDocumentView: true }),
                     payload: {
-                      body: dialogDataTyped!.formValues,
-                      nodeId: dialogDataTyped!.id
+                      body: dialogPropsTyped!.formValues,
+                      nodeId: dialogPropsTyped!.id
                     }
                   })
                 );
@@ -90,8 +105,8 @@ export const dataModifiedDialog: DialogContentType = {
                     onError,
                     onSuccess: onSuccess({ refreshDocumentView: true }),
                     payload: {
-                      nodeId: dialogDataTyped!.id,
-                      properties: dialogDataTyped!.formValues,
+                      nodeId: dialogPropsTyped!.id,
+                      properties: dialogPropsTyped!.formValues
                     }
                   })
                 );
@@ -99,14 +114,14 @@ export const dataModifiedDialog: DialogContentType = {
               }
               default: {
                 const action =
-                  shipmentDetailSaveActionList[dialogDataTyped.nodeType!];
+                  shipmentDetailSaveActionList[dialogPropsTyped.nodeType!];
                 const bodyMapper =
-                  shipmentDetailBodyList[dialogDataTyped.nodeType!];
+                  shipmentDetailBodyList[dialogPropsTyped.nodeType!];
                 const componentIdList =
                   parentDialogChannels?.Komponenty?.state
                     ?.selectedComponentsIds;
                 const body = bodyMapper(
-                  dialogDataTyped.formValues,
+                  dialogPropsTyped.formValues,
                   componentIdList
                 );
 
@@ -117,7 +132,7 @@ export const dataModifiedDialog: DialogContentType = {
                     onSuccess: onSuccess(),
                     payload: {
                       body,
-                      nodeId: dialogDataTyped.id
+                      nodeId: dialogPropsTyped.id
                     }
                   })
                 );
@@ -129,8 +144,8 @@ export const dataModifiedDialog: DialogContentType = {
     ),
     errorAction(
       t(translationPath(lang.dialog.form.dontSave)),
-      ({ dialogData, onClose }) => {
-        (dialogData as DialogDataProps)?.onSuccess?.();
+      ({ dialogProps, onClose }) => {
+        dialogProps.onSuccess?.();
         onClose();
       }
     )

@@ -1,4 +1,3 @@
-import { DocumentReadonly } from "core/api/document/_types";
 import { CommentsTab } from "core/components/dialog/tabs/comments";
 import { ComponentsTab } from "core/components/dialog/tabs/components";
 import { HistoryTab } from "core/components/dialog/tabs/history";
@@ -32,15 +31,15 @@ export const technicalDataCarriesReadonlyDetailsDialog: DialogContentType = crea
       },
       {
         content: ShipmentTab,
-        filter: ({ dialogData }) =>
-          (dialogData as DocumentReadonly)?.hideShipmentsTab !== true,
+        filter: ({ dialogProps }) =>
+          dialogProps.hideShipmentsTab !== true,
         label: t(translationPath(lang.dialog.tabs.shipment))
       },
       {
         content: SettleTab,
-        filter: ({ dialogData }) => {
+        filter: ({ dialogProps }) => {
           const { state } =
-            (dialogData as GenericDocument)?.properties?.ssl || {};
+            (dialogProps.data as GenericDocument)?.properties?.ssl || {};
 
           return SettleTab.filter(state);
         },
@@ -48,9 +47,9 @@ export const technicalDataCarriesReadonlyDetailsDialog: DialogContentType = crea
       },
       {
         content: SaveAndDiscardTab,
-        filter: ({ dialogData }) => {
+        filter: ({ dialogProps }) => {
           const { state } =
-            (dialogData as GenericDocument)?.properties?.ssl || {};
+            (dialogProps.data as GenericDocument)?.properties?.ssl || {};
 
           return SaveAndDiscardTab.filter(state);
         },

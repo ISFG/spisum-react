@@ -2,12 +2,12 @@ import {
   AnalogDocument,
   DataboxDocument,
   EmailDocument,
+  FileDocument,
   GenericDocument
 } from "core/types";
-import { SpisumNodeTypes } from "enums";
+import { SpisumNodeTypes, SubmitToRepositoryDialog } from "enums";
 import { Dispatch } from "redux";
-import { SubmitToRepositoryDialogType } from "share/components/dialog/submitToRepository/_types";
-import { SslProperties } from "../../api/models";
+import { GroupMember, SslProperties } from "../../api/models";
 import { DocumentViewType } from "../documentView/_types";
 import { FormValues } from "../MetaForm/_types";
 import { TabPropsType } from "./tabs/_types";
@@ -31,6 +31,9 @@ export interface DialogReducerStateType {
 }
 
 export interface TabAndDialogChannelType extends TabState {
+  // if a tab loads data from an api, calling this method refresh data
+  // it's not available for all tabs, as not all tabs loads data from an api
+  refreshData?: () => void;
   // after any action is clicked, the triggerValidation clb will be run
   // after its promise is resolved, the dialog will check the TabState.isValid property
   // if it is true - then the action will be triggered, otherwise not
@@ -51,11 +54,16 @@ export interface TabAndDialogChannelType extends TabState {
   setPreviewItem(item: ChannelPreviewItemType, showPreview?: boolean): void;
 }
 
-export type ChannelsType = { [key: string]: TabAndDialogChannelType };
+export type ChannelsType = {
+  [key: string]: TabAndDialogChannelType;
+};
 
+export interface DialogTabContentPropsType extends DialogContentPropsType {
+  isActive: boolean;
+}
 export interface DialogContentPropsType {
   channel: TabAndDialogChannelType;
-  dialogData: DialogDataType;
+  dialogProps: DialogDataProps;
   onClose?: VoidFunction;
 }
 
@@ -78,8 +86,8 @@ export interface ComponentPreviewItem {
   entityId: string;
 }
 
-export type SetStateType = (newState: DialogDataType) => void;
-export type StateType = () => DialogDataType;
+export type SetStateType = (newState: DialogDataProps) => void;
+export type StateType = () => DialogDataProps;
 
 export type ActionButtonStateType = {
   setIsPending: (isPending: boolean) => void;
@@ -96,20 +104,20 @@ export interface ActionType {
 export interface ActionOnclickType {
   dispatch: Dispatch;
   channels: ChannelsType;
-  dialogData: DialogDataType;
+  dialogProps: DialogDataProps;
   onClose: VoidFunction;
   buttonState: ActionButtonStateType;
 }
 
 export interface ActionOnCloseType {
-  dialogData: DialogDataType;
+  dialogProps: DialogDataProps;
   dispatch: Dispatch;
   channels: ChannelsType;
 }
 
 export interface DialogStateType {
   dialogType: DialogType | null;
-  dialogData?: DialogDataType;
+  dialogProps: DialogDataProps;
 }
 
 export enum DialogType {
@@ -163,6 +171,7 @@ export enum DialogType {
   RegisterDatabox = "registerDatabox",
   RegisterEmail = "registerEmail",
   RenameComponent = "renameComponent",
+  RepositoryAndShreddingPlan = "repositoryAndShreddingPlan",
   ResendShipment = "resendShipment",
   ReturnForRework = "ReturnForRework",
   ReturnShipment = "returnShipment",
@@ -194,53 +203,66 @@ export enum DialogTypeReadOnly {
   digital = DialogType.technicalDataCarriesReadonlyDetails
 }
 
-export type DialogDataProps = {
-  cancelDocumentOwner?: boolean;
-  canUploadComponents?: boolean;
-  componentId?: string;
-  disableConverIcon?: boolean;
-  documentId?: string;
-  dontUseDataModifiedDialog?: boolean;
-  formValues?: SslProperties;
-  id?: string;
-  isComponentReadonly?: boolean;
-  isReadonly?: boolean;
-  nodeType?: SpisumNodeTypes;
-  onClose?: (props: ActionOnCloseType) => void;
-  onError?: VoidFunction;
-  onSuccess?: VoidFunction;
-  parentDialogChannels?: ChannelsType;
-  saveOnOpen?: boolean;
-  selected?: DocumentsType[] | string[];
-  signerComponentId?: string;
-  useAutoSave?: boolean;
-};
-
 // other dialogs can add their data type here. Using the | operator
 export type DocumentsType =
   | DocumentViewType
   | DocumentViewType[]
   | GenericDocument
+  | File
+  | FileDocument
   | AnalogDocument
   | DataboxDocument
   | EmailDocument
-  | SubmitToRepositoryDialogType
   | null
   | undefined;
 
-export type DialogDataType = DialogDataProps | DocumentsType;
+export interface DialogDataGenericData {
+  componentId?: string;
+  documentId?: string;
+  formValues?: SslProperties;
+  groupList?: GroupMember[];
+  id?: string;
+  nodeType?: SpisumNodeTypes;
+  selected?: DocumentsType[];
+  entityType?: SubmitToRepositoryDialog;
+}
+
+export type DialogDataType =
+  | DialogDataGenericData
+  | DocumentsType
+  | DocumentsType[];
+
+export type DialogDataProps = {
+  data?: DialogDataType;
+  hideShipmentsTab?: boolean;
+  cancelDocumentOwner?: boolean;
+  hideManageShipmentsIcon?: boolean;
+  canUploadComponents?: boolean;
+  disableConverIcon?: boolean;
+  dontUseDataModifiedDialog?: boolean;
+  isComponentReadonly?: boolean;
+  isReadonly?: boolean;
+  initiator?: string;
+  onClose?: (props: ActionOnCloseType) => void;
+  onError?: VoidFunction;
+  onSuccess?: VoidFunction;
+  parentDialogChannels?: ChannelsType;
+  saveOnOpen?: boolean;
+  signerComponentId?: string;
+  signerVisual?: boolean;
+  useAutoSave?: boolean;
+};
 
 export type RenderPreviewType =
   | ((
-      dialogData: DialogDataType,
+      dialogProps: DialogDataProps,
       previewItem?: ChannelPreviewItemType
     ) => JSX.Element)
   | undefined;
 
 export interface DialogContentType {
-  actions?: ActionType[];
+  actions?: (dialogProps: DialogDataProps) => ActionType[];
   content?: (props: DialogContentPropsType) => JSX.Element;
-  dialogData?: DialogDataType;
   renderPreview?: RenderPreviewType;
   tabs?: TabPropsType[];
   title?: (props: DialogContentPropsType) => JSX.Element;

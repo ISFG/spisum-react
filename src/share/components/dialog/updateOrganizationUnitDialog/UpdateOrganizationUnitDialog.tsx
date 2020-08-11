@@ -1,25 +1,24 @@
+import { GroupMember } from "core/api/models";
 import { useStyles } from "core/components/dialog/Dialog.styles";
+import { useSyncFormValidityWithDialog } from "core/components/dialog/hooks/useSyncFormValidityWithDialog";
 import { DialogContentType } from "core/components/dialog/_types";
-import React from "react";
-import { useSyncFormValidityWithDialog } from "../../../../core/components/dialog/hooks/useSyncFormValidityWithDialog";
+import { FormState } from "core/components/reactiveFormik/_types";
 import { Formik } from "formik";
-import { validate } from "./_validations";
-import { FormState } from "../../../../core/components/reactiveFormik/_types";
+import React from "react";
 import { UpdateOrganizationUnitForm } from "./UpdateOrganizationUnitForm";
 import { UpdateOrganizationUnitFormValues } from "./_types";
-import { GroupMember } from "../../../../core/api/models";
+import { validate } from "./_validations";
 
 export const UpdateOrganizationUnitDialogContent: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const classes = useStyles();
   const setFormRef = useSyncFormValidityWithDialog(channel);
-
   const onSubmit = () => {};
 
   const initialValues: UpdateOrganizationUnitFormValues = {
-    name: (dialogData as GroupMember)?.displayName
+    name: (dialogProps.data as GroupMember)?.displayName
   };
 
   return (

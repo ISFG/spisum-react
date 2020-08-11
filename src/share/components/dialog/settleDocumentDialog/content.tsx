@@ -1,38 +1,54 @@
 import { callAsyncAction } from "core/action";
 import { documentSettleActionType } from "core/api/document/_actions";
-import {
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "core/components/dialog/_types";
+import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
+import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
+import { NotificationSeverity } from "core/components/notifications/_types";
 import { GenericDocument } from "core/types";
+import { ErrorCodeList } from "enums";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
+import { ErrorType } from "types";
 import { SettleDocumentContent } from "./SettleDocumentDialog";
 import { SettleDocumentFormValues } from "./_types";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const settleDocumentDialog: DialogContentType = {
-  actions: [
-    {
-      color: "secondary",
-      name: t(translationPath(lang.dialog.form.confirm)),
-      onClick: ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+  actions: () => [
+    secondaryAction(
+      t(translationPath(lang.dialog.form.confirm)),
+      ({ dispatch, channels, dialogProps, onClose, buttonState }) => {
         const onSuccess = () => {
           onClose();
           dispatch(documentViewAction__Refresh(true));
           buttonState.setIsPending(false);
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
         };
 
         const onError = () => {
           buttonState.setIsPending(false);
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
         };
 
-        const { id } = dialogData as GenericDocument;
+        const onErrorNotification = (payload: ErrorType) => {
+          const getErrorMessage = (code: string | null) => {
+            return code === ErrorCodeList.SettleOutputReadableType
+              ? t(
+                  translationPath(
+                    lang.dialog.notifications.settleOutputReadableType
+                  )
+                )
+              : t(translationPath(lang.dialog.notifications.actionFailed));
+          };
+
+          return {
+            message: getErrorMessage(payload?.code),
+            severity: NotificationSeverity.Error
+          };
+        };
+
+        const { id } = dialogProps.data as GenericDocument;
 
         buttonState.setIsPending(true);
 
@@ -43,6 +59,7 @@ export const settleDocumentDialog: DialogContentType = {
           callAsyncAction({
             action: documentSettleActionType,
             onError,
+            onErrorNotification,
             onSuccess,
             payload: {
               body: {
@@ -55,9 +72,8 @@ export const settleDocumentDialog: DialogContentType = {
             }
           })
         );
-      },
-      type: "contained"
-    }
+      }
+    )
   ],
   content: SettleDocumentContent,
   title: (props) => (

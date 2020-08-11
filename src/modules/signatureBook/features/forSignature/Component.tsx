@@ -1,21 +1,22 @@
 import { Backspace, Description, Gesture } from "@material-ui/icons";
 import { openDocumentWithSaveButtonsAction } from "core/api/document/_actions";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { GenericDocument, genericDocumentProxy } from "core/types";
-import { DocumentType, SitePaths, SpisumNames, SpisumNodeTypes } from "enums";
+import { DocumentType, SitePaths } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
-import { alfrescoQuery, getQueryPath } from "share/utils/query";
+import { getRelativePath } from "share/utils/query";
+import { traverseNodeType } from "share/utils/utils";
 import { lang, t, withTranslation } from "translation/i18n";
-import { dialogOpenAction } from "../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../core/components/dialog/_types";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.forSignatureDate).path
   ],
@@ -24,7 +25,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
 
 export const columns: DataColumn<GenericDocument>[] = [
   {
-    keys: [classPath(genericDocumentProxy.properties!.ssl!.pid).path],
+    keys: [classPath(genericDocumentProxy.properties!.ssl!.pidRef).path],
     label: t(translationPath(lang.general.identifier))
   },
   {
@@ -47,9 +48,7 @@ export const columns: DataColumn<GenericDocument>[] = [
     label: t(translationPath(lang.general.attachmentsCount))
   },
   {
-    keys: [
-      classPath(genericDocumentProxy.properties!.cm!.owner!.displayName).path
-    ],
+    keys: [classPath(genericDocumentProxy.properties!.ssl!.currentOwner).path],
     label: t(translationPath(lang.general.owner))
   },
   defaultColumn
@@ -61,35 +60,32 @@ const Component = () => {
     (state: RootStateType) => state.loginReducer.session
   );
   const activeGroup = session.activeGroup;
-  const pathDocuments = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        state.loginReducer.session.activeGroup,
-        SitePaths.Evidence,
-        SitePaths.Documents,
-        SitePaths.ForProcessing,
-        SitePaths.ForSignature
-      )?.path || ""
-  );
-  const pathFileDocuments = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        state.loginReducer.session.activeGroup,
-        SitePaths.Evidence,
-        SitePaths.Files,
-        SitePaths.Documents,
-        SitePaths.ForProcessing,
-        SitePaths.ForSignature
-      )?.path || ""
+  const relativePath = useSelector((state: RootStateType) =>
+    getRelativePath(
+      state.loginReducer.global.paths,
+      activeGroup,
+      SitePaths.Evidence,
+      SitePaths.ForSignature
+    )
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     dispatch(
       openDocumentWithSaveButtonsAction({
-        ...row,
         canUploadComponents: false,
+        data: {
+          ...row,
+          id: row.properties?.ssl?.takeRef || row.id,
+          nodeType: traverseNodeType(row.nodeType),
+          properties: {
+            ...row.properties,
+            ssl: {
+              ...row.properties?.ssl,
+              pid: row.properties?.ssl?.pidRef
+            }
+          }
+        },
+        hideManageShipmentsIcon: true,
         isReadonly: true
       })
     );
@@ -108,7 +104,13 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: {
+                  data: {
+                    ...selected[0],
+                    id: selected[0].properties?.ssl?.takeRef || selected[0].id,
+                    nodeType: traverseNodeType(selected[0].nodeType)
+                  }
+                },
                 dialogType: DialogType.FromSignature
               })
             );
@@ -120,7 +122,13 @@ const Component = () => {
           action: (selected) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: {
+                  data: {
+                    ...selected[0],
+                    id: selected[0].properties?.ssl?.takeRef || selected[0].id,
+                    nodeType: traverseNodeType(selected[0].nodeType)
+                  }
+                },
                 dialogType: DialogType.ReturnForRework
               })
             );
@@ -135,21 +143,15 @@ const Component = () => {
   return (
     <MenuLayout>
       <DocumentView
+        children={{
+          relativePath
+        }}
         columns={columns}
         controls={controls}
         customTitle={t(translationPath(lang.table.documentsForSignature))}
         defaultSortAsc={true}
         defaultSortColumn={defaultColumn}
         handleDoubleClick={dispatchOpenDialog}
-        search={{
-          query: {
-            query: alfrescoQuery({
-              paths: [pathDocuments, pathFileDocuments],
-              type: [SpisumNodeTypes.Document],
-              where: `${SpisumNames.ForSignatureGroup}:'${activeGroup}'`
-            })
-          }
-        }}
       />
     </MenuLayout>
   );

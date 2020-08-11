@@ -31,7 +31,7 @@ const DataModifiedDialogContent = ({
 
   return (
     <div
-      className={clsx(classes.modalSmall, classes.textCenter)}
+      className={clsx(classes.modalSmall, classes.contentCentered)}
       style={{ padding: "10px 0", ...style }}
     >
       {question}

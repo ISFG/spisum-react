@@ -22,7 +22,7 @@ const renameComponentFormSchema = Yup.object().shape({
 
 export const RenameComponentContent: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const classes = useStyles();
   const setFormRef = useSyncFormValidityWithDialog(channel);
@@ -33,7 +33,7 @@ export const RenameComponentContent: DialogContentType["content"] = ({
     <div className={classes.modalSmall}>
       <Formik<RenameComponentFormValues>
         initialValues={{
-          name: getNameWithoutExtension(dialogData as File)
+          name: getNameWithoutExtension(dialogProps.data as File)
         }}
         onSubmit={onSubmit}
         innerRef={setFormRef}

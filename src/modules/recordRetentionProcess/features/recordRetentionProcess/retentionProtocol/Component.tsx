@@ -64,7 +64,7 @@ export const columns: DataColumn<GenericDocument>[] = [
     label: t(translationPath(lang.general.idDA))
   },
   {
-    isDate: true,
+    isDateTime: true,
     keys: [classPath(genericDocumentProxy.properties!.ssl!.eraseDate).path],
     label: t(translationPath(lang.general.erase))
   }

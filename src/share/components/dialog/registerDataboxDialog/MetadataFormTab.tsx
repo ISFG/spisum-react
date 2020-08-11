@@ -6,13 +6,13 @@ import { RegisterDataboxForm } from "./RegisterDataboxForm";
 
 export const MetadataFormTab = ({
   channel,
-  dialogData,
+  dialogProps,
   onClose
 }: DialogContentPropsType) => {
   return (
     <MetaFormContainer<SslDatabox>
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       MetaForm={RegisterDataboxForm}
       onClose={onClose}
     />

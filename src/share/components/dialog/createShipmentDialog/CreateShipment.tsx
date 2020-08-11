@@ -1,12 +1,12 @@
 import { shipmentsAction } from "core/api/node/_actions";
 import {
   DialogContentType,
-  DialogDataProps
+  DialogDataGenericData
 } from "core/components/dialog/_types";
 import { Associations } from "enums";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootStateType } from "../../../../reducers";
+import { RootStateType } from "reducers";
 import { ShipmentAssocTypes } from "../sendShipmentDialog/_types";
 import { CreateShipmentForm } from "./CreateShipmentForm";
 
@@ -19,10 +19,10 @@ const handleSortingChange: (
 
 export const CreateShipment: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const dispatch = useDispatch();
-  const nodeId = (dialogData as DialogDataProps).id as string;
+  const nodeId = (dialogProps.data as DialogDataGenericData).id as string;
 
   useEffect(() => {
     channel.setIsSaved(true);
@@ -60,11 +60,11 @@ export const CreateShipment: DialogContentType["content"] = ({
     <div className="body-fullsize">
       <CreateShipmentForm
         channel={channel}
-        dialogData={dialogData}
+        dialogProps={dialogProps}
         handleSortingChange={handleSortingChange}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         handleChangePage={handleChangePage}
-        readonly={!!(dialogData as DialogDataProps)?.isReadonly}
+        readonly={!!dialogProps.isReadonly}
         isLoading={!!isLoading}
         totalItems={totalItems}
         rows={entities}

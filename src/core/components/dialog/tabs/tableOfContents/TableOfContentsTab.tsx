@@ -2,10 +2,10 @@ import DataTable from "core/components/dataTable";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
 import { useStyles } from "core/components/dialog/Dialog.styles";
 import { DataTableValues } from "core/components/documentView/_types";
+import { SenderType } from "enums";
 import React from "react";
 import { classPath, translationPath } from "share/utils/getPath";
 import { lang, t, withTranslation, WithTranslation } from "translation/i18n";
-import { SenderType } from "../../../../../enums";
 import { Node, SslProperties } from "../../../../api/models";
 import { GenericDocument } from "../../../../types";
 import {
@@ -40,7 +40,7 @@ export const columns: DataColumn<Node<SslProperties>>[] = [
         ? item.createdAt
         : ssl?.deliveryDate;
     },
-    isDate: true,
+    isDateTime: true,
     keys: [
       classPath(TableOfContentsTableTypeProxy?.properties?.ssl?.dateOfEvidence)
         .path

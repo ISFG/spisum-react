@@ -14,6 +14,7 @@ export interface DataColumn<T> {
     | JSX.Element[];
   isBoolean?: boolean;
   isDate?: boolean;
+  isDateTime?: boolean;
   keys: string[];
   sortKeys?: string[];
   label: string;
@@ -44,7 +45,7 @@ export interface ControlsBarItemType<T> {
   icon: ((selected: T[]) => JSX.Element) | JSX.Element;
   title?: ((selected: T[]) => string) | string;
   // result = null - valid, result != null - not valid
-  // return "" not valid and for empty text and disabled icon effect
+  // return " " for not valid and for empty text and disabled icon effect
   validation?: (source: T[]) => string | null | Promise<string | null>;
 }
 

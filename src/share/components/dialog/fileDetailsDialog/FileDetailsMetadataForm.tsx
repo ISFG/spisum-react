@@ -2,6 +2,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import { SslAnalog } from "core/api/models";
 import Datepicker from "core/components/datepicker/Component";
+import { StyledKeyboardDatePickerFifth } from "core/components/datepicker/Component.styles";
+import { DateTimePicker } from "core/components/datetimepicker";
+import { StyledDateTimePickerFifth } from "core/components/datetimepicker/Component.styles";
 import {
   StyledFieldFifth,
   StyledFieldWide,
@@ -9,6 +12,7 @@ import {
   useStyles
 } from "core/components/dialog/Dialog.styles";
 import FormControlWithError from "core/components/formControlWithError";
+import { MetaFormProps } from "core/components/MetaForm/_types";
 import { FormState } from "core/components/reactiveFormik/_types";
 import { SenderRadioWrapper } from "core/components/senderForm/Component";
 import { cmPropsProxy, sslPropsProxy } from "core/types";
@@ -18,17 +22,10 @@ import { Select, TextField } from "formik-material-ui";
 import React from "react";
 import { withTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { RootStateType } from "reducers";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation } from "translation/i18n";
-import {
-  StyledDatepickerFifth,
-  StyledKeyboardDatePickerFifth
-} from "../../../../core/components/datepicker/Component.styles";
-import { DateTimePicker } from "../../../../core/components/datetimepicker";
-import { StyledDateTimePickerFifth } from "../../../../core/components/datetimepicker/Component.styles";
-import { MetaFormProps } from "../../../../core/components/MetaForm/_types";
-import { RootStateType } from "../../../../reducers";
-import { SSLStateField } from "../../form/fields/SSLStateField";
+import { SslDocumentState } from "../../form/fields/SSLDocumentState";
 import { validate } from "./_validations";
 
 const Component = ({
@@ -58,6 +55,11 @@ const Component = ({
         const handlePlanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           filePlan = shreddingPlans.find((plan) => plan.id === e.target.value);
           fileMarks = filePlan?.items || [];
+
+          if (!e.target.value) {
+            setFieldValue(lastPathMember(sslPropsProxy.fileMark).path, "");
+          }
+
           setRetentionValues(values.fileMark);
         };
 
@@ -145,7 +147,7 @@ const Component = ({
               label={t(translationPath(lang.general.createdDateAndTime))}
             />
             <Datepicker
-              component={StyledDatepickerFifth}
+              component={StyledKeyboardDatePickerFifth}
               data-test-id="meta-input-createdDate"
               disabled={true}
               name={lastPathMember(sslPropsProxy.createdDate).path}
@@ -176,7 +178,7 @@ const Component = ({
               label={t(translationPath(lang.general.owner))}
             />
 
-            <SSLStateField />
+            <SslDocumentState isFile={true} />
 
             <StyledFieldFifth
               component={TextField}
@@ -223,7 +225,7 @@ const Component = ({
               <Field
                 component={Select}
                 data-test-id="meta-input-fileMark"
-                disabled={readonly}
+                disabled={readonly || !values.filePlan}
                 name={lastPathMember(sslPropsProxy.fileMark).path}
                 inputProps={{
                   id: "fileMark",

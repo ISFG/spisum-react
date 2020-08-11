@@ -14,7 +14,7 @@ export function* watchEvidenceCancelDialogAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.CancelDialog
       })
     );

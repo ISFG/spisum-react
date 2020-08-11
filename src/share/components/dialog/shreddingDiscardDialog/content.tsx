@@ -4,20 +4,26 @@ import { fileShreddingDiscardAction } from "core/api/file/_actions";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import { ShreddingDiscardContent } from "./ShreddingDiscardContent";
 import { ShreddingDiscardFormValues } from "./_types";
 
 export const shreddingDiscardDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+      ({
+        dispatch,
+        channels,
+        dialogProps,
+        onClose,
+        buttonState
+      }) => {
         buttonState.setIsPending(true);
 
         const onSuccess = () => {
@@ -29,7 +35,7 @@ export const shreddingDiscardDialog: DialogContentType = {
           buttonState.setIsPending(false);
         };
 
-        const { nodeType } = dialogData as GenericDocument;
+        const { nodeType } = dialogProps.data as GenericDocument;
 
         const action =
           nodeType === SpisumNodeTypes.DocumentRM
@@ -42,7 +48,7 @@ export const shreddingDiscardDialog: DialogContentType = {
           return;
         }
 
-        const id = (dialogData as GenericDocument)?.properties?.ssl?.ref;
+        const id = (dialogProps.data as GenericDocument)?.properties?.ssl?.ref;
 
         if (!id) {
           return;

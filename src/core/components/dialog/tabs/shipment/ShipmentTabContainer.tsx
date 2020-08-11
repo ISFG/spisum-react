@@ -1,20 +1,22 @@
 import { Description, Mail } from "@material-ui/icons";
 import { ControlsBarType } from "core/components/dataTable/_types";
 import { dialogOpenAction } from "core/components/dialog/_actions";
-import { DialogType } from "core/components/dialog/_types";
+import {
+  DialogTabContentPropsType,
+  DialogType
+} from "core/components/dialog/_types";
 import { isGenericDocument, ShipmentDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { shipmentDetailDialogOpen } from "share/components/dialog/shipmentDetailDialog/_action";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { DialogContentPropsType } from "../../_types";
 import ShipmentTab from "./ShipmentTab";
 import { nodeShipmentAction } from "./_actions";
 
-type ShipmentTabContainerProps = DialogContentPropsType & {
+type ShipmentTabContainerProps = DialogTabContentPropsType & {
   nodeId: string;
 };
 
@@ -25,10 +27,15 @@ interface ShipmentTabContainerState {
 
 const initialState: ShipmentTabContainerState = {
   pageNumber: 0,
-  rowsPerPage: 25
+  rowsPerPage: 50
 };
 
-const ShipmentTabContainer = ({ nodeId, dialogData }: ShipmentTabContainerProps) => {
+const ShipmentTabContainer = ({
+  channel,
+  dialogProps,
+  isActive,
+  nodeId
+}: ShipmentTabContainerProps) => {
   const [{ pageNumber, rowsPerPage }, setState] = useState<
     ShipmentTabContainerState
   >(initialState);
@@ -36,8 +43,7 @@ const ShipmentTabContainer = ({ nodeId, dialogData }: ShipmentTabContainerProps)
   const { entries, totalItems, isLoading, error } = useSelector(
     (state: RootStateType) => {
       return {
-        entries:
-          state.shipmentTabReducer.list.entries?.map((e) => e.entry) || [],
+        entries: state.shipmentTabReducer.list.entries?.map((e) => e.entry),
         error: state.shipmentTabReducer.error,
         isLoading: state.shipmentTabReducer.isLoading,
         totalItems: state.shipmentTabReducer.list.pagination?.totalItems || 0
@@ -46,16 +52,29 @@ const ShipmentTabContainer = ({ nodeId, dialogData }: ShipmentTabContainerProps)
   );
 
   const dispatch = useDispatch();
-  const loadData = () =>
-    dispatch(
-      nodeShipmentAction.request({
-        nodeId,
-        where: `(nodeType='${SpisumNodeTypes.Shipment} INCLUDESUBTYPES')`
-      })
-    );
+  const loadData = useCallback(
+    () =>
+      dispatch(
+        nodeShipmentAction.request({
+          nodeId,
+          where: `(nodeType='${SpisumNodeTypes.Shipment} INCLUDESUBTYPES')`
+        })
+      ),
+    [nodeId] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  channel.refreshData = loadData;
 
   useEffect(() => {
-    loadData();
+    if (isActive && entries === undefined) {
+      loadData();
+    }
+  }, [isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isActive) {
+      loadData();
+    }
   }, [pageNumber, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChangePage: (
@@ -79,24 +98,31 @@ const ShipmentTabContainer = ({ nodeId, dialogData }: ShipmentTabContainerProps)
 
   const controls: ControlsBarType<ShipmentDocument> = {
     default: {
-      items: [
-        {
-          action: (selected: ShipmentDocument[]) => {
-            dispatch(
-              dialogOpenAction({
-                dialogData: {
-                  id: nodeId,
-                  ...(isGenericDocument(dialogData) ? { nodeType: dialogData.nodeType } : {}),
-                  onClose: () => loadData()
-                },
-                dialogType: DialogType.SendShipment
-              })
-            );
-          },
-          icon: <Mail />,
-          title: t(translationPath(lang.general.manageShipments))
-        }
-      ]
+      items: dialogProps.hideManageShipmentsIcon
+        ? undefined
+        : [
+            {
+              action: (selected: ShipmentDocument[]) => {
+                dispatch(
+                  dialogOpenAction({
+                    dialogProps: {
+                      data: {
+                        id: nodeId,
+                        ...(isGenericDocument(dialogProps.data)
+                          ? { nodeType: dialogProps.data.nodeType }
+                          : {})
+                      },
+
+                      onClose: () => loadData()
+                    },
+                    dialogType: DialogType.SendShipment
+                  })
+                );
+              },
+              icon: <Mail />,
+              title: t(translationPath(lang.general.manageShipments))
+            }
+          ]
     },
     single: {
       items: [
@@ -125,7 +151,7 @@ const ShipmentTabContainer = ({ nodeId, dialogData }: ShipmentTabContainerProps)
   return (
     <ShipmentTab
       controls={controls}
-      items={entries}
+      items={entries || []}
       totalItems={totalItems}
       pageNumber={pageNumber}
       refreshTable={loadData}

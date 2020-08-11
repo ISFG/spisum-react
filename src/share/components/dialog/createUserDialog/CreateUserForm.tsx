@@ -2,20 +2,20 @@ import { Chip } from "@material-ui/core";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import clsx from "clsx";
+import { createUserDefaultFormValues } from "core/api/user/_sagas";
 import {
   StyledField,
   StyledFieldThird,
   StyledFormControl,
   useStyles
 } from "core/components/dialog/Dialog.styles";
+import FormControlWithError from "core/components/formControlWithError";
+import { MetaFormProps } from "core/components/MetaForm/_types";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { Select, TextField } from "formik-material-ui";
 import React, { useEffect, useState } from "react";
 import { withTranslation } from "react-i18next";
-import { createUserDefaultFormValues } from "../../../../core/api/user/_sagas";
-import FormControlWithError from "../../../../core/components/formControlWithError";
-import { MetaFormProps } from "../../../../core/components/MetaForm/_types";
-import { lang, t, WithTranslation } from "../../../../translation/i18n";
+import { lang, t, WithTranslation } from "translation/i18n";
 import { lastPathMember, translationPath } from "../../../utils/getPath";
 import { UserFormValuesProxy, UserFormValuesType } from "./_types";
 import { getValidationMethod } from "./_validations";
@@ -169,7 +169,7 @@ export const CreateUserForm = ({
                       style={{ maxWidth: values.mainGroup ? "initial" : 175 }}
                       required={true}
                     >
-                      {t(translationPath(lang.general.mainOrganizationalUnit))}
+                      {t(translationPath(lang.general.mainGroup))}
                     </InputLabel>
                     <Field
                       component={Select}

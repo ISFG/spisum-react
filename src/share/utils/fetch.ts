@@ -1,18 +1,24 @@
-import { push } from "connected-react-router";
-import { loginUpdateExpireInAction } from "core/features/login/_actions";
-import { SessionStatus } from "core/features/login/_types";
-import { logoutAction } from "core/features/logout/_actions";
-import { CoreRoutes } from "core/routes";
-import { httpClient } from "core/services";
-import { RootStateType } from "reducers";
-import { call, put, select } from "redux-saga/effects";
+import { getService } from "core/features/dependencyInjection";
+import { HttpClient } from "core/services/HttpClient";
+import { call } from "redux-saga/effects";
 import { ErrorType } from "types";
 
 type WildCards = Record<string, string | number>;
 
-interface FetchSagaReponseType {
+export type ErrorResponseDataType = {
+  code?: string | number;
+  data?: object;
+  fields?: [] | null;
+  message?: string;
+};
+
+export type ResponseDataType = string | object | Blob | true;
+
+export interface FetchReturnType {
   errorResponse?: ErrorType;
-  response?: object;
+  errorResponseData?: object | null;
+  fields?: [] | null;
+  response?: ResponseDataType | ErrorResponseDataType;
   responseHeaders?: Headers;
   status: number;
   success: boolean;
@@ -125,82 +131,11 @@ export function* fetchSaga(
     contentType?: string;
   } = {}
 ) {
-  let fetchData: FetchSagaReponseType;
-
+  const httpClient = getService<HttpClient>(HttpClient);
+  const fetch = httpClient.fetch.bind(httpClient);
   try {
-    const response = yield call(() =>
-      httpClient().fetch(suffixURL, method, options)
-    );
-    const responseData = yield call(parseResponse, response);
-
-    if (response.ok) {
-      yield put(loginUpdateExpireInAction());
-      fetchData = yield {
-        response: responseData || true,
-        responseHeaders: response.headers,
-        status: response.status,
-        success: true
-      };
-
-      return fetchData;
-    }
-
-    if (response.status === 500) {
-      // yield put(push(RouteType.ERROR_500));
-      return yield {
-        errorResponse: {
-          code: "500",
-          message: null
-        } as ErrorType,
-        status: 500,
-        success: false
-      };
-    }
-
-    const sessionStatus: SessionStatus = yield select(
-      (state: RootStateType) => state.loginReducer.session.status
-    );
-
-    if (
-      response.status === 401 &&
-      sessionStatus !== SessionStatus.UNAUTHORIZED
-    ) {
-      yield put(logoutAction.success());
-      yield put(push(CoreRoutes.LOGIN));
-    }
-
-    if (response.status === 401) {
-      return yield {
-        errorResponse: {
-          code: "401",
-          message: "unauthorized"
-        } as ErrorType,
-        errorResponseData: null,
-        status: response.status,
-        success: false
-      };
-    }
-
-    return yield {
-      errorResponse: {
-        code: (responseData && responseData.code) || response.status.toString(),
-        message: (responseData && responseData.message) || "badRequest"
-      } as ErrorType,
-      errorResponseData: (responseData && responseData.data) || null,
-      fields: (responseData && responseData.fields) || null,
-      responseHeaders: response.headers,
-      status: response.status,
-      success: false
-    };
+    return yield call(fetch, suffixURL, method, options);
   } catch (ex) {
-    // yield put(push(RouteType.ERROR_500));
-    return yield {
-      errorResponse: {
-        code: "500",
-        message: null
-      } as ErrorType,
-      status: 500,
-      success: false
-    };
+    return yield httpClient.error();
   }
 }

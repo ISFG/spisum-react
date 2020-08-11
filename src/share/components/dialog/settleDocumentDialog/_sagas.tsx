@@ -14,7 +14,7 @@ export function* watchSettleDocumentDialogAction() {
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.SettleDocument
       })
     );

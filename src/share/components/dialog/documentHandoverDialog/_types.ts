@@ -1,11 +1,9 @@
 import { GroupMember } from "core/api/models";
-import { DialogContentType } from "core/components/dialog/_types";
+import { DialogDataProps } from "core/components/dialog/_types";
 import { Group } from "core/entities";
 import { createProxy } from "share/utils/getPath";
 
-export interface DocumentHandoverDialogContentType {
-  documentHandoverDialogContent: DialogContentType;
-}
+export type HandoverDocumentPayloadType = DialogDataProps;
 
 export type DocumentHandoverFormValues = {
   nextGroup?: Group["id"];

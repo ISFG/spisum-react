@@ -1,39 +1,35 @@
 import { callAsyncAction } from "core/action";
 import { databoxDontRegisterActionType } from "core/api/databox/_actions";
 import { emailDontRegisterActionType } from "core/api/email/_actions";
-import {
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "core/components/dialog/_types";
+import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
+import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { DontRegisterDocumentContent } from "./DontRegisterDocumentContent";
 import { DontRegisterDocumentFormValues } from "./_types";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const dontRegisterDocumentDialog: DialogContentType = {
-  actions: [
-    {
-      color: "secondary",
-      name: t(translationPath(lang.dialog.form.confirm)),
-      onClick: ({ dispatch, channels, dialogData, onClose, buttonState }) => {
+  actions: () => [
+    secondaryAction(
+      t(translationPath(lang.dialog.form.confirm)),
+      ({ dispatch, channels, dialogProps, onClose, buttonState }) => {
         const onSuccess = () => {
           onClose();
           dispatch(documentViewAction__Refresh(true));
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
         };
 
         const onError = () => {
           buttonState.setIsPending(false);
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
         };
 
-        const { nodeType, id } = dialogData as GenericDocument;
+        const { nodeType, id } = dialogProps.data as GenericDocument;
 
         const action =
           nodeType === SpisumNodeTypes.Email
@@ -62,9 +58,8 @@ export const dontRegisterDocumentDialog: DialogContentType = {
             }
           })
         );
-      },
-      type: "outlined"
-    }
+      }
+    )
   ],
   content: DontRegisterDocumentContent,
   title: (props) => (

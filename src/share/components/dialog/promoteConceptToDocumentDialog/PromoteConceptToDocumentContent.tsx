@@ -2,16 +2,16 @@ import { useStyles } from "core/components/dialog/Dialog.styles";
 import { useSyncFormValidityWithDialog } from "core/components/dialog/hooks/useSyncFormValidityWithDialog";
 import { DialogContentType } from "core/components/dialog/_types";
 import { FormState } from "core/components/reactiveFormik/_types";
+import { GenericDocument } from "core/types";
 import { Formik } from "formik";
 import React from "react";
-import { GenericDocument } from "../../../../core/types";
 import { PromoteConceptToDocumentForm } from "./PromoteConceptToDocumentForm";
 import { PromoteConceptToDocumentFormValues } from "./_types";
 import { validate } from "./_validations";
 
 export const PromoteConceptToDocumentContent: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const classes = useStyles();
   const setFormRef = useSyncFormValidityWithDialog(channel);
@@ -27,7 +27,8 @@ export const PromoteConceptToDocumentContent: DialogContentType["content"] = ({
             author: "",
             settleTo: null,
             subject:
-              (dialogData as GenericDocument)?.properties?.ssl?.subject || ""
+              (dialogProps.data as GenericDocument)?.properties?.ssl?.subject ||
+              ""
           }}
           onSubmit={onSubmit}
           innerRef={setFormRef}

@@ -6,12 +6,12 @@ import { translationPath } from "../../../utils/getPath";
 
 export const LostDestroyedContent: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   return (
     <ReasonForm
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       reasonLabel={t(translationPath(lang.general.lostReason))}
     />
   );

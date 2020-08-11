@@ -1,24 +1,19 @@
-import { DialogContentPropsType } from "core/components/dialog/_types";
 import React from "react";
 import { useDocumentId } from "../../hooks/useDocumentId";
+import { DialogTabContentPropsType } from "../../_types";
 import ComponentsTabContainer from "./ComponentsTabContainer";
 
-export const ComponentsTab = (props: DialogContentPropsType) => {
+export const ComponentsTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {
-    return (
-      <ComponentsTabContainer
-        nodeId={documentId}
-        {...props}
-      />
-    );
+    return <ComponentsTabContainer nodeId={documentId} {...props} />;
   }
 
   return <></>;
 };
 
-export const ReadOnlyComponentsTab = (props: DialogContentPropsType) => {
+export const ReadOnlyComponentsTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {

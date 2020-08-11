@@ -1,3 +1,4 @@
+import { SslShipment } from "core/api/models";
 import DataTable from "core/components/dataTable";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
 import { useStyles } from "core/components/dialog/Dialog.styles";
@@ -7,7 +8,6 @@ import { SpisumNodeTypes } from "enums";
 import { default as React } from "react";
 import { lang, t } from "translation/i18n";
 import { v1 as uuidv1 } from "uuid";
-import { SslShipment } from "../../../../core/api/models";
 import { classPath, translationPath } from "../../../utils/getPath";
 import { useStyles as useShipmentStyles } from "./SendShipment.styles";
 

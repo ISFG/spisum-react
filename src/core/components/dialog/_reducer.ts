@@ -6,6 +6,7 @@ import {
 } from "./_actions";
 import { DialogStateType } from "./_types";
 const initialState: DialogStateType = {
+  dialogProps: {},
   dialogType: null
 };
 
@@ -16,7 +17,7 @@ export default (
   switch (action.type) {
     case getType(dialogOpenAction):
       return {
-        dialogData: action.payload.dialogData,
+        dialogProps: action.payload.dialogProps,
         dialogType: action.payload.dialogType
       };
 

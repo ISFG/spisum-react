@@ -13,7 +13,7 @@ import { MetaFormProps } from "core/components/MetaForm/_types";
 import { FormState } from "core/components/reactiveFormik/_types";
 import { SenderRadioWrapper } from "core/components/senderForm/Component";
 import TimePicker from "core/components/timepicker";
-import { sslAnalogPropsProxy } from "core/types";
+import { sslAnalogPropsProxy, sslPropsProxy } from "core/types";
 import { DateTimeFormats, DeliveryMode } from "enums";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { Select, TextField } from "formik-material-ui";
@@ -21,7 +21,7 @@ import React from "react";
 import { withTranslation } from "react-i18next";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t, WithTranslation } from "translation/i18n";
-import { SSLDeliveryMode } from "../../form/fields/SSLDeliveryMode";
+import { SslDeliveryMode } from "../../form/fields/SSLDeliveryMode";
 import { validate } from "./_validations";
 
 const Component = ({
@@ -61,13 +61,10 @@ const Component = ({
               label={t(translationPath(lang.general.deliveryTime))}
             />
 
-            <SSLDeliveryMode
-              disabledButVisibleModes={[
-                DeliveryMode.Email,
-                DeliveryMode.Databox
-              ]}
+            <SslDeliveryMode
+              disabledModes={[DeliveryMode.Email, DeliveryMode.Databox]}
               disabled={readonly}
-              withEmptyOption={true}
+              firstEmpty={true}
               required={true}
             />
 
@@ -153,6 +150,13 @@ const Component = ({
               label={t(translationPath(lang.general.subject))}
             />
             <SenderRadioWrapper
+              disabledFields={
+                values.form === "digital" &&
+                (values.documentType === "databox" ||
+                  values.documentType === "email")
+                  ? [lastPathMember(sslPropsProxy.sender_contact).path]
+                  : []
+              }
               initialValues={initialValues}
               setFieldValue={setFieldValue}
               readonly={readonly}

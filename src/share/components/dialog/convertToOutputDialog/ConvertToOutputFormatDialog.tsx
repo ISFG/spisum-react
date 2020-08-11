@@ -6,12 +6,12 @@ import { lang, t } from "translation/i18n";
 
 const ConvertToOutputFormatDialog = ({
   channel,
-  dialogData
+  dialogProps
 }: DialogContentPropsType) => {
   return (
     <ReasonForm
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       reasonLabel={t(translationPath(lang.general.convertReason))}
     />
   );

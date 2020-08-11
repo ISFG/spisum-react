@@ -20,7 +20,7 @@ export function* watchSubmitToRepositoryDialogAction() {
       return;
     }
     const repository = yield select(getRepository);
-    const { selected, onSubmitActionName } = payload;
+    const { data } = payload;
     const onErrorNotification = {
       message: t(
         translationPath(lang.dialog.notifications.notFoundAnyRepositories)
@@ -31,14 +31,15 @@ export function* watchSubmitToRepositoryDialogAction() {
       yield put(notificationAction(onErrorNotification));
       return;
     }
-    const dialogData = {
-      groupList: repository,
-      onSubmitActionName,
-      selected
-    };
+
     yield put(
       dialogOpenAction({
-        dialogData,
+        dialogProps: {
+          data: {
+            ...data,
+            groupList: repository
+          }
+        },
         dialogType: DialogType.SubmitTo
       })
     );

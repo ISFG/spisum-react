@@ -47,7 +47,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
     x?.properties?.ssl?.senderType === "own"
       ? x?.createdAt
       : x?.properties?.ssl?.deliveryDate,
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
     classPath(genericDocumentProxy.createdAt).path
@@ -96,7 +96,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
       label: t(translationPath(lang.general.retentionMode))
     },
     {
-      isDate: true,
+      isDateTime: true,
       keys: [classPath(genericDocumentProxy.properties!.ssl!.settleDate).path],
       label: t(translationPath(lang.general.settleDate))
     }
@@ -230,8 +230,8 @@ const Component = () => {
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     dispatch(
       openDocumentWithSaveButtonsAction({
-        ...row,
         canUploadComponents: false,
+        data: row,
         isReadonly: true
       })
     );
@@ -274,8 +274,10 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               submitToRepositoryDialogOpen({
-                onSubmitActionName: SubmitToRepositoryDialog.Documents,
-                selected
+                data: {
+                  entityType: SubmitToRepositoryDialog.Documents,
+                  selected
+                }
               })
             );
           },
@@ -297,7 +299,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.CreateNewDocumentFile
               })
             );
@@ -307,7 +309,7 @@ const Component = () => {
         },
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(handoverDocument(selected[0]));
+            dispatch(handoverDocument({ data: selected[0] }));
           },
           icon: <Send />,
           title: t(translationPath(lang.general.handOVer))
@@ -346,7 +348,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.SendShipment
               })
             );
@@ -358,7 +360,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.CancelProcessing
               })
             );
@@ -370,8 +372,10 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               submitToRepositoryDialogOpen({
-                onSubmitActionName: SubmitToRepositoryDialog.Documents,
-                selected
+                data: {
+                  entityType: SubmitToRepositoryDialog.Documents,
+                  selected
+                }
               })
             );
           },
@@ -390,7 +394,7 @@ const Component = () => {
       */
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(lostDestroyedDialogOpen(selected[0]));
+            dispatch(lostDestroyedDialogOpen({ data: selected[0] }));
           },
           filter: (x) => x.properties?.ssl?.form === DocumentType.Analog,
           icon: <Whatshot />,

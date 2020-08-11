@@ -61,7 +61,7 @@ export function* watchApiConceptComponentsSagas() {
             orderBy: sortKeys.map(
               (key) =>
                 `${getPropertySortName(key)} ${
-                sortAsc === true ? "ASC" : "DESC"
+                  sortAsc === true ? "ASC" : "DESC"
                 }`
             )
           })
@@ -157,6 +157,7 @@ export function* watchApiConceptComponentsSagas() {
 
         yield put(
           componentCreateAction.success({
+            componentId,
             file: action.payload.file
           })
         );

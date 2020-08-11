@@ -1,15 +1,15 @@
+import { CommentsTab } from "core/components/dialog/tabs/comments";
+import { HistoryTab } from "core/components/dialog/tabs/history";
+import { ProcessingOrClosingTab } from "core/components/dialog/tabs/processingOrClosing/ProcessingOrClosingTab";
+import { SaveAndDiscardTab } from "core/components/dialog/tabs/saveAndDiscard/SaveAndDiscardTab";
 import { ShipmentTab } from "core/components/dialog/tabs/shipment";
 import { TableOfContentsTab } from "core/components/dialog/tabs/tableOfContents";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
+import { GenericDocument } from "core/types";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { CommentsTab } from "../../../../core/components/dialog/tabs/comments";
-import { HistoryTab } from "../../../../core/components/dialog/tabs/history";
-import { ProcessingOrClosingTab } from "../../../../core/components/dialog/tabs/processingOrClosing/ProcessingOrClosingTab";
-import { SaveAndDiscardTab } from "../../../../core/components/dialog/tabs/saveAndDiscard/SaveAndDiscardTab";
-import NamedTitle from "../../../../core/components/namedTitle";
-import { GenericDocument } from "../../../../core/types";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import MetadataFormTab from "../fileDetailsDialog/MetadataFormTab";
 
@@ -26,9 +26,9 @@ export const fileDetailsReadonlyDialog: DialogContentType = createDocumentDialog
       },
       {
         content: ProcessingOrClosingTab,
-        filter: ({ dialogData }) => {
+        filter: ({ dialogProps }) => {
           const { state } =
-            (dialogData as GenericDocument)?.properties?.ssl || {};
+            (dialogProps.data as GenericDocument)?.properties?.ssl || {};
           return ProcessingOrClosingTab.filter(state);
         },
         label: t(translationPath(lang.dialog.tabs.processOrClose))
@@ -39,9 +39,9 @@ export const fileDetailsReadonlyDialog: DialogContentType = createDocumentDialog
       },
       {
         content: SaveAndDiscardTab,
-        filter: ({ dialogData }) => {
+        filter: ({ dialogProps }) => {
           const { state } =
-            (dialogData as GenericDocument)?.properties?.ssl || {};
+            (dialogProps.data as GenericDocument)?.properties?.ssl || {};
 
           return SaveAndDiscardTab.filter(state);
         },

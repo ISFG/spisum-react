@@ -4,11 +4,10 @@ import {
   Lock,
   Mail,
   Send,
-  Star,
-  StarBorderOutlined,
   Whatshot
 } from "@material-ui/icons";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
+import { openFileDetailsAction } from "core/components/dialog/tabs/tableOfContents/_actions";
 import { dialogOpenAction } from "core/components/dialog/_actions";
 import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
@@ -26,8 +25,6 @@ import {
   SpisumNamesWithoutPrefix,
   SpisumNodeTypes
 } from "enums";
-import { changeDocumentIsFavoriteAction } from "modules/evidence/_actions";
-import { ChangeDocumentIsFavoriteActionType } from "modules/evidence/_types";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
@@ -46,7 +43,6 @@ import { isEmptyString } from "share/utils/utils";
 import { validateItems } from "share/utils/validation";
 import { lang, t, withTranslation } from "translation/i18n";
 import * as yup from "yup";
-import { openFileDetailsAction } from "../../../../../core/components/dialog/tabs/tableOfContents/_actions";
 
 const defaultColumn: DataColumn<GenericDocument> = {
   isDate: true,
@@ -83,7 +79,7 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
       label: t(translationPath(lang.general.sender))
     },
     {
-      isDate: true,
+      isDateTime: true,
       keys: [classPath(genericDocumentProxy.properties!.ssl!.createdDate).path],
       label: t(translationPath(lang.general.dateOfEvidence))
     },
@@ -167,18 +163,24 @@ const Component = () => {
       items: [
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(openFileDetailsAction(selected[0]));
+            dispatch(
+              openFileDetailsAction({
+                data: selected[0],
+                initiator: SpisumNodeTypes.File
+              })
+            );
           },
           icon: <Description />,
           title: t(translationPath(lang.general.showDetails))
         },
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(handoverDocument(selected[0]));
+            dispatch(handoverDocument({ data: selected[0] }));
           },
           icon: <Send />,
           title: t(translationPath(lang.general.handOVer))
         },
+        /*
         {
           action: (selected: GenericDocument[]) => {
             dispatch(
@@ -207,11 +209,12 @@ const Component = () => {
           icon: <StarBorderOutlined />,
           title: t(translationPath(lang.general.bookmarkRemove))
         },
+        */
         {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.SendShipment
               })
             );
@@ -221,7 +224,7 @@ const Component = () => {
         },
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(closeFileDialogOpen(selected[0]));
+            dispatch(closeFileDialogOpen({ data: selected[0] }));
           },
           icon: <Lock />,
           title: t(translationPath(lang.general.lock)),
@@ -315,7 +318,7 @@ const Component = () => {
         */
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(lostDestroyedDialogOpen(selected[0]));
+            dispatch(lostDestroyedDialogOpen({ data: selected[0] }));
           },
           filter: (x) =>
             x.properties?.ssl?.form === DocumentType.Analog ||
@@ -325,7 +328,7 @@ const Component = () => {
         },
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(evidenceCancelDialogOpen(selected[0]));
+            dispatch(evidenceCancelDialogOpen({ data: selected[0] }));
           },
           filter: (x) => !x.properties?.ssl?.associationCount,
           icon: <Delete />,
@@ -336,7 +339,7 @@ const Component = () => {
   };
 
   const handleDoubleClick = (row: ShipmentDocument) => {
-    dispatch(openFileDetailsAction(row));
+    dispatch(openFileDetailsAction({ data: row }));
   };
 
   const relativePath = useSelector((state: RootStateType) =>

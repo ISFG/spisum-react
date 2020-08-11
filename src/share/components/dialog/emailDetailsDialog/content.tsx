@@ -5,26 +5,26 @@ import {
 import { ReadOnlyComponentsTab } from "core/components/dialog/tabs/components";
 import { dialogOpenAction } from "core/components/dialog/_actions";
 import { DialogType } from "core/components/dialog/_types";
+import NamedTitle from "core/components/namedTitle";
 import { EmailDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
 import { documentRegisterAction } from "modules/mailroom/features/income/_actions";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import { MetadataFormTab } from "./MetadataFormTab";
-import NamedTitle from "../../../../core/components/namedTitle";
-import React from "react";
 
 export const emailDetailsDialog = createDocumentDialog({
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.form.register)),
-      ({ dispatch, dialogData, onClose }) => {
+      ({ dispatch, dialogProps, onClose }) => {
         onClose();
         dispatch(
           documentRegisterAction({
             dialogType: DialogType.RegisterEmail,
-            document: dialogData as EmailDocument,
+            document: dialogProps.data as EmailDocument,
             nodeType: SpisumNodeTypes.Email,
             onSuccess: onClose
           })
@@ -34,11 +34,11 @@ export const emailDetailsDialog = createDocumentDialog({
 
     primaryAction(
       t(translationPath(lang.dialog.form.notRegister)),
-      ({ dispatch, dialogData, onClose }) => {
+      ({ dispatch, dialogProps, onClose }) => {
         dispatch(
           dialogOpenAction({
-            dialogData: {
-              ...dialogData,
+            dialogProps: {
+              ...dialogProps,
               onSuccess: onClose
             },
             dialogType: DialogType.DontRegisterDocument
@@ -48,11 +48,11 @@ export const emailDetailsDialog = createDocumentDialog({
     ),
     primaryAction(
       t(translationPath(lang.dialog.form.notReadable)),
-      ({ dispatch, dialogData, onClose }) => {
+      ({ dispatch, dialogProps, onClose }) => {
         dispatch(
           dialogOpenAction({
-            dialogData: {
-              ...(dialogData as EmailDocument),
+            dialogProps: {
+              ...dialogProps,
               onSuccess: onClose
             },
             dialogType: DialogType.IncompleteDocument

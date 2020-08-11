@@ -1,25 +1,25 @@
-import React from "react";
 import { callAsyncAction } from "core/action";
+import { deleteOrganizationUnitAction } from "core/api/groups/_actions";
+import { GroupMember } from "core/api/models";
+import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
 import { DialogContentType, DialogType } from "core/components/dialog/_types";
+import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
+import { NotificationSeverity } from "core/components/notifications/_types";
+import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
-import { documentViewAction__Refresh } from "core/components/documentView/_actions";
-import NamedTitle from "../../../../core/components/namedTitle";
 import DeleteOrganizationUnit from "./DeleteOrganizationUnit";
-import { deleteOrganizationUnitAction } from "../../../../core/api/groups/_actions";
-import { GroupMember } from "../../../../core/api/models";
-import { NotificationSeverity } from "../../../../core/components/notifications/_types";
 
 export const deleteOrganizationUnitDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState }) => {
-        if (!dialogData) {
+      ({ dispatch, dialogProps, onClose, buttonState }) => {
+        if (!dialogProps.data) {
           return;
         }
-        const id = (dialogData as GroupMember)?.id;
+        const id = (dialogProps.data as GroupMember).id;
         if (!id) {
           return;
         }

@@ -5,22 +5,21 @@ import { ComponentsShipmentTab } from "core/components/dialog/tabs/shipmentCompo
 import {
   DialogContentPropsType,
   DialogContentType,
+  DialogDataGenericData,
   DialogType
 } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
-import { ShipmentDocument } from "core/types";
+import NamedTitle from "core/components/namedTitle";
+import { SpisumNodeTypes } from "enums";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
-import { SpisumNodeTypes } from "../../../../enums";
 import { createDocumentDialog } from "../baseDocumentDialog/documentDialogFactory";
 import {
   shipmentDetailBodyList,
   shipmentDetailSaveActionList
 } from "./mappers";
 import MetaDataTab from "./MetadataFormTab";
-import { ShipmentFormValues } from "./_types";
 
 const komponentList = {
   [SpisumNodeTypes.ShipmentDatabox]: true,
@@ -29,16 +28,24 @@ const komponentList = {
   [SpisumNodeTypes.ShipmentPersonally]: false,
   [SpisumNodeTypes.ShipmentPublish]: true
 };
-const componentFilter = ({ dialogData }: DialogContentPropsType) => {
-  return komponentList[(dialogData as ShipmentDocument)?.nodeType];
+const componentFilter = ({
+  dialogProps
+}: DialogContentPropsType) => {
+  return komponentList[(dialogProps.data as DialogDataGenericData).nodeType!];
 };
 
 export const openShipmentDetailDialog: DialogContentType = createDocumentDialog(
   {
-    actions: [
+    actions: () => [
       secondaryAction(
         t(translationPath(lang.dialog.form.edit)),
-        ({ dispatch, channels, onClose, buttonState, dialogData }) => {
+        ({
+          dispatch,
+          channels,
+          onClose,
+          buttonState,
+          dialogProps
+        }) => {
           const formValues = channels?.Metadata?.state?.formValues;
           const componentIdList =
             channels?.Komponenty?.state?.selectedComponentsIds;
@@ -47,18 +54,18 @@ export const openShipmentDetailDialog: DialogContentType = createDocumentDialog(
             return;
           }
 
-          const { nodeType } = dialogData as ShipmentFormValues;
-          if (komponentList[nodeType] && preventAction) return;
+          const { nodeType } = dialogProps.data as DialogDataGenericData;
+          if (komponentList[nodeType!] && preventAction) return;
 
           if (
-            !shipmentDetailSaveActionList.hasOwnProperty(nodeType) ||
-            !shipmentDetailBodyList.hasOwnProperty(nodeType)
+            !shipmentDetailSaveActionList.hasOwnProperty(nodeType!) ||
+            !shipmentDetailBodyList.hasOwnProperty(nodeType!)
           ) {
             return;
           }
 
-          const action = shipmentDetailSaveActionList[nodeType];
-          const bodyMapper = shipmentDetailBodyList[nodeType];
+          const action = shipmentDetailSaveActionList[nodeType!];
+          const bodyMapper = shipmentDetailBodyList[nodeType!];
           const body = bodyMapper(formValues, componentIdList);
 
           const onSuccess = () => {

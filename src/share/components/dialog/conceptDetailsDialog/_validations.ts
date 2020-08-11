@@ -11,9 +11,9 @@ export const validate = (values: SslProperties) =>
   validateErrors(validationSchema, values);
 
 export const validationSchema = yup.object().shape({
-  [lastPathMember(conceptProxy.properties?.ssl?.subject).path]: yup
+  [lastPathMember(conceptProxy.properties?.ssl?.subject)
+    .path]: yup
     .string()
-    .required(t(translationPath(lang._validations.required)))
     .max(
       MAX_STRING_LENGTH,
       t(translationPath(lang.dialog.errors.maxLen), { len: MAX_STRING_LENGTH })

@@ -10,7 +10,7 @@ export function* watchDocumentHandoverAction() {
   }: ActionType<typeof handoverDocument>) {
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.HandoverDocument
       })
     );

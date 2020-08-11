@@ -6,12 +6,12 @@ import { DataboxMetadataForm } from "./DataboxMetadataForm";
 
 export const MetadataFormTab = ({
   channel,
-  dialogData
+  dialogProps
 }: DialogContentPropsType) => {
   return (
     <MetaFormContainer<SslDatabox>
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       MetaForm={DataboxMetadataForm}
     />
   );

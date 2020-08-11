@@ -5,6 +5,7 @@ import {
   CreateShipmentFormValuesProxy,
   CreateShipmentsRequestType
 } from "share/components/dialog/createShipmentDialog/_types";
+import { mergeDateTime, removeTimeFromDate } from "share/utils/date";
 import { lastPathMember } from "share/utils/getPath";
 import { PostType, SendModeValues } from "../../../enums";
 import {
@@ -14,7 +15,6 @@ import {
   SuccessListResponseType
 } from "../../api/models";
 import { FormValues } from "../../components/MetaForm/_types";
-import { mergeDateTime, removeTimeFromDate } from "../../helpers/api/document";
 import { mapListResponseToEntityList } from "./listResponse";
 
 export const transformDocumentForApi = <T extends SslProperties>(

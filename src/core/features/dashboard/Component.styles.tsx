@@ -1,7 +1,7 @@
 import manual from "assets/icons/manual.svg";
 import support from "assets/icons/support.svg";
 import youtube from "assets/icons/youtube.svg";
-import styled from "../../../styles";
+import styled from "styles";
 
 export const DashboardBody = styled("div")<{}>(() => ({
   background: "black",

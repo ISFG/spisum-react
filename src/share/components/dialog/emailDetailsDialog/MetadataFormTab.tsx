@@ -6,12 +6,12 @@ import { EmailMetadataForm } from "./EmailMetadataForm";
 
 export const MetadataFormTab = ({
   channel,
-  dialogData
+  dialogProps
 }: DialogContentPropsType) => {
   return (
     <MetaFormContainer<SslEmail>
       channel={channel}
-      dialogData={dialogData}
+      dialogProps={dialogProps}
       MetaForm={EmailMetadataForm}
     />
   );

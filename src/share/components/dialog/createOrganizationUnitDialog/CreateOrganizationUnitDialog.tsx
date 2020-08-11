@@ -1,16 +1,16 @@
 import { useStyles } from "core/components/dialog/Dialog.styles";
+import { useSyncFormValidityWithDialog } from "core/components/dialog/hooks/useSyncFormValidityWithDialog";
 import { DialogContentType } from "core/components/dialog/_types";
-import React from "react";
-import { useSyncFormValidityWithDialog } from "../../../../core/components/dialog/hooks/useSyncFormValidityWithDialog";
+import { FormState } from "core/components/reactiveFormik/_types";
 import { Formik } from "formik";
-import { validate } from "./_validations";
-import { FormState } from "../../../../core/components/reactiveFormik/_types";
+import React from "react";
 import { CreateOrganizationUnitForm } from "./CreateOrganizationUnitForm";
 import { CreateOrganizationUnitFormValues } from "./_types";
+import { validate } from "./_validations";
 
 export const CreateOrganizationUnitDialogContent: DialogContentType["content"] = ({
   channel,
-  dialogData
+  dialogProps
 }) => {
   const classes = useStyles();
   const setFormRef = useSyncFormValidityWithDialog(channel);

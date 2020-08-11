@@ -2,21 +2,21 @@ import { AssignmentReturn, Description } from "@material-ui/icons";
 import { openDocumentWithSaveButtonsAction } from "core/api/document/_actions";
 import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
 import { openFileDetailsAction } from "core/components/dialog/tabs/tableOfContents/_actions";
+import { dialogOpenAction } from "core/components/dialog/_actions";
+import { DialogType } from "core/components/dialog/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { GenericDocument, genericDocumentProxy } from "core/types";
-import { SenderType, SitePaths, SpisumNames, SpisumNodeTypes } from "enums";
+import { SenderType, SitePaths, SpisumNodeTypes } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
-import { alfrescoQuery, getQueryPath } from "share/utils/query";
+import { getRelativePath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
-import { dialogOpenAction } from "../../../../core/components/dialog/_actions";
-import { DialogType } from "../../../../core/components/dialog/_types";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.borrowDate).path],
   label: t(translationPath(lang.general.borrowDate))
 };
@@ -75,38 +75,35 @@ export const columns: DataColumn<GenericDocument>[] = [
 
 const Component = () => {
   const dispatch = useDispatch();
-  const documentsPath = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        null,
-        SitePaths.Repository,
-        SitePaths.Documents,
-        SitePaths.Rented
-      )?.path || ""
-  );
-  const filesPath = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        null,
-        SitePaths.Repository,
-        SitePaths.Files,
-        SitePaths.Rented
-      )?.path || ""
+  const relativePath = useSelector((state: RootStateType) =>
+    getRelativePath(
+      state.loginReducer.global.paths,
+      null,
+      SitePaths.Repository,
+      SitePaths.Rented
+    )
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     if (row.nodeType === SpisumNodeTypes.Document) {
       dispatch(
         openDocumentWithSaveButtonsAction({
-          ...row,
           canUploadComponents: false,
+          data: row,
+          hideManageShipmentsIcon: true,
+          initiator: SpisumNodeTypes.File,
           isReadonly: true
         })
       );
     } else if (row.nodeType === SpisumNodeTypes.File) {
-      dispatch(openFileDetailsAction({ ...row, readonly: true }));
+      dispatch(
+        openFileDetailsAction({
+          data: row,
+          hideManageShipmentsIcon: true,
+          initiator: SpisumNodeTypes.File,
+          isReadonly: true
+        })
+      );
     }
   };
 
@@ -120,10 +117,10 @@ const Component = () => {
           title: t(translationPath(lang.general.showDetails))
         },
         {
-          action: (selected) => {
+          action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.ReturnToRepository
               })
             );
@@ -138,21 +135,15 @@ const Component = () => {
   return (
     <MenuLayout>
       <DocumentView
+        children={{
+          relativePath
+        }}
         columns={columns}
         controls={controls}
         customTitle={t(translationPath(lang.table.borrowedDocuments))}
         defaultSortAsc={true}
         defaultSortColumn={defaultColumn}
         handleDoubleClick={dispatchOpenDialog}
-        search={{
-          query: {
-            query: alfrescoQuery({
-              paths: [documentsPath, filesPath],
-              type: [SpisumNodeTypes.Document, SpisumNodeTypes.File],
-              where: `${SpisumNames.IsInFile}:false`
-            })
-          }
-        }}
       />
     </MenuLayout>
   );

@@ -4,12 +4,7 @@ import { RootStateType } from "reducers";
 import { Dispatch } from "redux";
 import Dialog from "./Dialog";
 import { DialogActionType, dialogAction__Clear } from "./_actions";
-import {
-  ActionOnCloseType,
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "./_types";
+import { ActionOnCloseType, DialogContentType, DialogType } from "./_types";
 
 const registeredDialogs = {};
 
@@ -32,7 +27,7 @@ let dialogs: DialogQueueType[] = [];
 
 const Component = () => {
   const dispatch = useDispatch<Dispatch<DialogActionType>>();
-  const { dialogType, dialogData } = useSelector(
+  const { dialogType, dialogProps } = useSelector(
     (state: RootStateType) => state.dialogReducer
   );
   const sessionStatus = useSelector(
@@ -60,14 +55,14 @@ const Component = () => {
         (dialog) => dialog.content === dialogElement
       );
       dialogs.splice(dialogIndex, dialogs.length);
-      (dialogData as DialogDataProps)?.onClose?.(props);
+      dialogProps.onClose?.(props);
     };
 
     const dialogElement = () => (
       <Dialog
         onClose={onClose}
         {...registeredDialogs[dialogType]}
-        dialogData={dialogData}
+        dialogProps={dialogProps}
       />
     );
 

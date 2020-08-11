@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useStyles } from "core/components/dialog/Dialog.styles";
 import { DialogContentPropsType } from "core/components/dialog/_types";
 import React, { useEffect } from "react";
@@ -7,27 +8,31 @@ import { TakeOutFromFileDialogDataType } from "./_types";
 
 export const TakeOutFromFile = ({
   channel,
-  dialogData
+  dialogProps
 }: DialogContentPropsType) => {
   const classes = useStyles();
   useEffect(() => {
     channel.setIsSaved(true);
   }, [channel]);
 
-  const count = (dialogData as TakeOutFromFileDialogDataType)?.selected.length;
+  const data = dialogProps.data as TakeOutFromFileDialogDataType;
+
+  const count = data?.selected.length;
 
   useEffect(() => {
-    const selectedComponents = (dialogData as TakeOutFromFileDialogDataType)
-      .selected;
+    const selectedComponents = data.selected;
     channel.setState({
       ...channel.state,
-      id: (dialogData as TakeOutFromFileDialogDataType).id,
+      id: data.id,
       selectedComponentsIds: selectedComponents.map((com) => com.id)
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className={classes.modalSmall} style={{ minHeight: 50 }}>
+    <div
+      className={clsx(classes.modalSmall, classes.contentCentered)}
+      style={{ minHeight: 50 }}
+    >
       {t(translationPath(lang.dialog.content.takeOutFromFile), { count })}
     </div>
   );

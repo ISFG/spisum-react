@@ -10,9 +10,8 @@ import {
   Whatshot
 } from "@material-ui/icons";
 import { ControlsBarType } from "core/components/dataTable/_types";
-import { EntityList, File } from "core/entities";
-import { getService } from "core/features/dependencyInjection";
-import { DocumentComponents } from "core/services/DocumentComponents";
+import { File } from "core/entities";
+import { fetchDocumentComponents } from "core/helpers/api/DocumentComponentFetcher";
 import { GenericDocument, genericDocumentProxy } from "core/types";
 import { DocumentType, SenderType } from "enums";
 import React from "react";
@@ -42,7 +41,6 @@ export const getControls: ControlsType = async ({
     /*
    multi: {
       items: [
-        
         {
           action: (selected: GenericDocument[]) => {
             dispatch(
@@ -71,7 +69,6 @@ export const getControls: ControlsType = async ({
           icon: <StarBorderOutlined />,
           title: t(translationPath(lang.general.bookmarkRemove))
         }
-        
       ]
     },
     */
@@ -131,10 +128,7 @@ export const getControls: ControlsType = async ({
           icon: <Gesture />,
           title: t(translationPath(lang.general.toSign)),
           validation: async (items: GenericDocument[]) => {
-            const componentsService = getService(DocumentComponents);
-            const components = (await componentsService.fetchComponentsByNodeId(
-              items[0]?.id
-            )) as EntityList<File>;
+            const components = await fetchDocumentComponents(items[0]?.id);
 
             let isValid = true;
             components?.entities?.forEach((x: File) => {
@@ -296,8 +290,7 @@ export const getControls: ControlsType = async ({
         },
         {
           action: handleOpenCancelDialog,
-          filter: (x) =>
-            (userId && x?.properties?.cm?.owner?.id === userId) === true,
+          filter: (x) => x?.properties?.ssl?.senderType === "own",
           icon: <Delete />,
           title: t(translationPath(lang.general.cancel))
         }

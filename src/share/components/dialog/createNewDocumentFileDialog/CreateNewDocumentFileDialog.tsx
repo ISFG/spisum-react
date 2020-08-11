@@ -24,7 +24,7 @@ const MAX_ITEMS = 25;
 
 export const CreateNewDocumentFileDialogContent = ({
   channel,
-  dialogData
+  dialogProps
 }: DialogContentPropsType) => {
   const setFormRef = useSyncFormValidityWithDialog(channel);
   const dispatch = useDispatch<React.Dispatch<SearchFilesActionType>>();
@@ -84,7 +84,7 @@ export const CreateNewDocumentFileDialogContent = ({
       {(props: FormState<CreateNewDocumentFileFormValues>) => (
         <CreateNewDocumentFileForm
           {...props}
-          document={dialogData as GenericDocument}
+          document={dialogProps.data as GenericDocument}
           isLoading={isLoading}
           onFileSearchChange={onInputChange}
           searchResults={results || []}

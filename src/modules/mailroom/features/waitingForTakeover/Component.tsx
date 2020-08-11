@@ -4,7 +4,7 @@ import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { GenericDocument, genericDocumentProxy } from "core/types";
-import { SenderType, SitePaths, SpisumGroups, SpisumNodeTypes } from "enums";
+import { SenderType, SitePaths } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
@@ -12,19 +12,20 @@ import { handoverDocument } from "share/components/dialog/documentHandoverDialog
 import { dialogOpenHandoverBack } from "share/components/dialog/handoverBackDialog/_actions";
 import { classPath, translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
+import { traverseNodeType } from "share/utils/utils";
 import { validateItems } from "share/utils/validation";
 import { lang, t, withTranslation } from "translation/i18n";
 import * as yup from "yup";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path],
   label: t(translationPath(lang.general.deliveryDate))
 };
 
 export const columns: DataColumn<GenericDocument>[] = [
   {
-    keys: [classPath(genericDocumentProxy.properties!.ssl!.pidRef).path],
+    keys: [classPath(genericDocumentProxy.properties!.ssl!.pid).path],
     label: t(translationPath(lang.general.identifier))
   },
   {
@@ -62,17 +63,16 @@ const Component = () => {
   const relativePath = useSelector((state: RootStateType) =>
     getRelativePath(
       state.loginReducer.global.paths,
-      SpisumGroups.Mailroom,
-      SitePaths.Evidence,
+      null,
+      SitePaths.Mailroom,
       SitePaths.WaitingForTakeOver
     )
   );
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     dispatch(
       openDocumentReadonlyDetailsAction({
-        ...row,
-        hideShipmentsTab: true,
-        id: row.properties?.ssl?.waitingRef || row.id
+        data: row,
+        hideShipmentsTab: true
       })
     );
   };
@@ -82,10 +82,7 @@ const Component = () => {
       items: [
         {
           action: (selected: GenericDocument[]) => {
-            dispatchOpenDialog({
-              ...selected[0],
-              id: selected[0].properties?.ssl?.waitingRef || selected[0].id
-            });
+            dispatchOpenDialog(selected[0]);
           },
           icon: <Description />,
           title: t(translationPath(lang.general.showDetails))
@@ -94,8 +91,11 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenHandoverBack({
-                ...selected[0],
-                id: selected[0].properties?.ssl?.waitingRef || selected[0].id
+                data: {
+                  ...selected[0],
+                  id: selected[0].properties?.ssl?.waitingRef || selected[0].id,
+                  nodeType: traverseNodeType(selected[0].nodeType)
+                }
               })
             );
           },
@@ -119,9 +119,12 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               handoverDocument({
-                ...selected[0],
-                id: selected[0].properties?.ssl?.waitingRef || selected[0].id,
-                ...{ cancelDocumentOwner: true }
+                cancelDocumentOwner: true,
+                data: {
+                  ...selected[0],
+                  id: selected[0].properties?.ssl?.waitingRef || selected[0].id,
+                  nodeType: traverseNodeType(selected[0].nodeType)
+                }
               })
             );
           },
@@ -136,8 +139,7 @@ const Component = () => {
     <MenuLayout>
       <DocumentView
         children={{
-          relativePath,
-          where: `(nodeType='${SpisumNodeTypes.TakeDocumentForProcessing}')`
+          relativePath
         }}
         columns={columns}
         controls={controls}

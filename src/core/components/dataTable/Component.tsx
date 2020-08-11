@@ -1,5 +1,6 @@
 import {
   Grid,
+  LabelDisplayedRowsArgs,
   Table,
   TableBody,
   TableCell,
@@ -12,10 +13,11 @@ import {
 import Checkbox from "@material-ui/core/Checkbox";
 import clsx from "clsx";
 import { unionBy } from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
+import { useSafeSetState } from "../../hooks/useSafeSetState";
 import { DataTableValues, DocumentViewType } from "../documentView/_types";
 import ActionBar from "./ActionBar";
 import {
@@ -28,7 +30,6 @@ import Loading from "./Loading";
 import NoData from "./NoData";
 import { Row, RowProps } from "./Row";
 import { ControlsBarType, DataColumn } from "./_types";
-import { useSafeSetState } from "../../hooks/useSafeSetState";
 
 interface OwnProps<T> {
   breadcrumbs: string[];
@@ -73,6 +74,8 @@ interface OwnProps<T> {
 
 const MIN_LOADING_TIME = 1500;
 
+const voidFunction = () => {};
+
 const DataTable = <T extends DocumentViewType>(props: OwnProps<T>) => {
   const {
     breadcrumbs,
@@ -113,9 +116,9 @@ const DataTable = <T extends DocumentViewType>(props: OwnProps<T>) => {
 
   const [selectedInState, setSelectedInState] = useSafeSetState<T[]>([]);
   const selected = props.selected || selectedInState;
-  const [minLoadingTimePassed, setMinLoadingTimePassed] = useSafeSetState<boolean>(
-    false
-  );
+  const [minLoadingTimePassed, setMinLoadingTimePassed] = useSafeSetState<
+    boolean
+  >(!pending);
 
   // Minimal loading time
   useEffect(() => {
@@ -124,7 +127,7 @@ const DataTable = <T extends DocumentViewType>(props: OwnProps<T>) => {
     window.setTimeout(() => {
       setMinLoadingTimePassed(true);
     }, MIN_LOADING_TIME);
-  }, [pending]);
+  }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setSelected = (items: T[]) => {
     setSelectedInState(items);
@@ -194,8 +197,6 @@ const DataTable = <T extends DocumentViewType>(props: OwnProps<T>) => {
   const isSelected = (row: T) =>
     selectedIds.findIndex((sId) => sId === row.id) !== -1;
 
-  const voidFunction = () => {};
-
   const refreshPendingText = t(
     translationPath(lang.general.refreshPendingTableText)
   );
@@ -214,6 +215,12 @@ const DataTable = <T extends DocumentViewType>(props: OwnProps<T>) => {
       </div>
     );
   };
+  const labelDisplayedRows = ({ from, to, count }: LabelDisplayedRowsArgs) =>
+    `${from}-${to} ${t(translationPath(lang.general.from))} ${
+      count !== -1
+        ? count
+        : `${t(translationPath(lang.general.moreThan))} ${to}`
+    }`;
   return (
     <Wrapper className={tableWrapperClassName}>
       <ActionBar<T>
@@ -303,10 +310,13 @@ const DataTable = <T extends DocumentViewType>(props: OwnProps<T>) => {
               </Table>
             )) || <NoData />}
           <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
+            backIconButtonText={t(translationPath(lang.general.previousPage))}
+            rowsPerPageOptions={[10, 25, 50, 100]}
             component={PaginatorWrapper}
             count={rowsCount}
+            labelDisplayedRows={labelDisplayedRows}
             labelRowsPerPage={t(translationPath(lang.table.rowsPerPage))}
+            nextIconButtonText={t(translationPath(lang.general.nextPage))}
             rowsPerPage={rowsPerPage}
             page={pageNumber}
             onChangePage={handleChangePage}

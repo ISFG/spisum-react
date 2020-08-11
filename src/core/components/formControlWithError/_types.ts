@@ -1,9 +1,10 @@
 import { StyledComponent } from "@emotion/styled";
+import { FormControlTypeMap } from "@material-ui/core";
 import { DefaultComponentProps } from "@material-ui/core/OverridableComponent";
-import { FormControlTypeMap, Theme } from "@material-ui/core";
+import { ITheme } from "styles";
 
-export type FromControlComponent = StyledComponent<
+export type FormControlComponent = StyledComponent<
   DefaultComponentProps<FormControlTypeMap<{}, "div">>,
   {},
-  Theme
+  ITheme
 >;

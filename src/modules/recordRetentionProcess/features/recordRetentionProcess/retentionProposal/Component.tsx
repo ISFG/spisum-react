@@ -3,12 +3,12 @@ import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { GenericDocument, genericDocumentProxy } from "core/types";
-import { SitePaths, SpisumNames, SpisumNodeTypes } from "enums";
+import { SitePaths, SpisumNodeTypes } from "enums";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
-import { alfrescoQuery, getQueryPath } from "share/utils/query";
+import { getRelativePath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
@@ -74,33 +74,26 @@ const controls: ControlsBarType<GenericDocument> = {
 };
 
 const Component = () => {
-  const path = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        null,
-        SitePaths.RM,
-        SitePaths.ShreddingPlan
-      )?.path || ""
+  const relativePath = useSelector((state: RootStateType) =>
+    getRelativePath(
+      state.loginReducer.global.paths,
+      null,
+      SitePaths.Repository,
+      SitePaths.ShreddingProposal
+    )
   );
 
   return (
     <MenuLayout>
       <DocumentView
+        children={{
+          relativePath
+        }}
         columns={columns}
         controls={controls}
         customTitle={t(translationPath(lang.table.archivedDocumentsFiles))}
         defaultSortAsc={true}
         defaultSortColumn={defaultColumn}
-        search={{
-          query: {
-            query: alfrescoQuery({
-              paths: [path],
-              type: [],
-              where: `${SpisumNames.RetentionProposal}:[* TO *]`
-            })
-          }
-        }}
       />
     </MenuLayout>
   );

@@ -3,44 +3,40 @@ import { documentChangeLocationActionType } from "core/api/document/_actions";
 import { fileChangeLocationAction } from "core/api/file/_actions";
 import { NodeChildAssociationEntry, SslProperties } from "core/api/models";
 import { secondaryAction } from "core/components/dialog/lib/actionsFactory";
-import {
-  DialogContentType,
-  DialogDataProps,
-  DialogType
-} from "core/components/dialog/_types";
+import { DialogContentType, DialogType } from "core/components/dialog/_types";
 import { documentViewAction__Refresh } from "core/components/documentView/_actions";
+import NamedTitle from "core/components/namedTitle";
 import { GenericDocument } from "core/types";
 import { SpisumNodeTypes } from "enums";
 import React from "react";
 import { translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import NamedTitle from "../../../../core/components/namedTitle";
 import { ChangeLocationDialog } from "./ChangeLocationDialog";
 import { ChangeLocationValues } from "./_types";
 
 export const changeLocationDialog: DialogContentType = {
-  actions: [
+  actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({ dispatch, dialogData, onClose, buttonState, channels }) => {
+      ({ dispatch, dialogProps, onClose, buttonState, channels }) => {
         const onSuccess = (
           response: NodeChildAssociationEntry<SslProperties>
         ) => {
           onClose();
           dispatch(documentViewAction__Refresh(true));
-          (dialogData as DialogDataProps)?.onSuccess?.();
+          dialogProps.onSuccess?.();
         };
 
         const onError = () => {
           buttonState.setIsPending(false);
-          (dialogData as DialogDataProps)?.onError?.();
+          dialogProps.onError?.();
         };
 
-        if (!dialogData) {
+        if (!dialogProps.data) {
           return;
         }
 
-        const { nodeType, id } = dialogData as GenericDocument;
+        const { nodeType, id } = dialogProps.data as GenericDocument;
 
         const action =
           nodeType === SpisumNodeTypes.Document

@@ -1,4 +1,4 @@
-import { SendModeValues } from "../../../../enums";
+import { SendModeValues } from "enums";
 import { createProxy } from "../../../utils/getPath";
 
 export interface CreateShipmentTableItemType {
@@ -35,7 +35,7 @@ export interface CreateShipmentFormValues {
   postItemStatedPrice?: number | string;
   postType?: string[];
   postTypeOther?: string;
-  postItemType?: string;
+  postItemType?: string | null;
   postItemTypeOther?: string;
   postItemWeight?: number | string;
   recipient?: string;

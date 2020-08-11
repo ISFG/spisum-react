@@ -1,10 +1,10 @@
 import HistoryTabContainer from "core/components/dialog/tabs/historyShipment/HistoryTabContainer";
-import { DialogContentPropsType } from "core/components/dialog/_types";
 import React from "react";
 import { SslProperties } from "../../../../api/models";
 import { useMetaFormDocument } from "../../hooks/useMetaFormDocument";
+import { DialogTabContentPropsType } from "../../_types";
 
-export const HistoryShipmentTab = (props: DialogContentPropsType) => {
+export const HistoryShipmentTab = (props: DialogTabContentPropsType) => {
   const { documentId, formValues } = useMetaFormDocument();
 
   const pid = (formValues as SslProperties)?.pid;

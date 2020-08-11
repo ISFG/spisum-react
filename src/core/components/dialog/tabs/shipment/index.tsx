@@ -1,9 +1,9 @@
-import { DialogContentPropsType } from "core/components/dialog/_types";
+import { DialogTabContentPropsType } from "core/components/dialog/_types";
 import React from "react";
-import ShipmentTabContainer from "./ShipmentTabContainer";
 import { useDocumentId } from "../../hooks/useDocumentId";
+import ShipmentTabContainer from "./ShipmentTabContainer";
 
-export const ShipmentTab = (props: DialogContentPropsType) => {
+export const ShipmentTab = (props: DialogTabContentPropsType) => {
   const documentId = useDocumentId(props);
 
   if (documentId) {

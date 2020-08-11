@@ -1,6 +1,6 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import error from "assets/images/error.svg";
-import styled from "../../../styles";
+import styled from "styles";
 
 export const ErrorPic = styled("div")<{}>(() => ({
   background: `url(${error}) center center no-repeat`,

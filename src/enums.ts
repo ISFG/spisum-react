@@ -13,11 +13,15 @@ export enum Associations {
 
 export enum DocumentType {
   Analog = "analog",
-  Daatabox = "databox",
+  Databox = "databox",
   Digital = "digital",
   Email = "email",
   Hybrid = "hybrid",
   TechnicalDataCarries = "technicalDataCarries"
+}
+
+export enum ErrorCodeList {
+  SettleOutputReadableType = "V_SETTLE_OUTPUTFORMAT_READABLE_TYPE"
 }
 
 export enum SitePaths {
@@ -41,6 +45,7 @@ export enum SitePaths {
   LostDestroyed = "LostDestroyed",
   MailBox = "MailBox",
   Mailroom = "Mailroom",
+  NotPassed = "NotPassed",
   NotRegistered = "NotRegistered",
   Open = "Open",
   Processed = "Processed",
@@ -52,12 +57,14 @@ export enum SitePaths {
   SignatureBook = "SignatureBook",
   Shredded = "Shredded",
   ShreddingPlan = "ShreddingPlan",
+  ShreddingProposal = "ShreddingProposal",
   Stored = "Stored",
   ToDispatch = "ToDispatch",
   ToAprove = "ToAprove",
   ToHandover = "ToHandover",
   ToTakeOver = "ToTakeOver",
   Unfinished = "Unfinished",
+  WaitingForSignature = "WaitingForSignature",
   WaitingForTakeOver = "WaitingForTakeOver"
 }
 
@@ -199,6 +206,7 @@ export enum PostType {
 }
 
 export enum PostItemType {
+  empty = "",
   insuredParcel = "CennyBalik",
   insuredLetter = "CennePsani",
   internationalInsuredParcel = "CennyBalikDoZahranici",

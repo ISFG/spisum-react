@@ -1,6 +1,6 @@
-import { DialogContentPropsType } from "core/components/dialog/_types";
 import React from "react";
 import { useDocumentId } from "../../hooks/useDocumentId";
+import { DialogContentPropsType } from "../../_types";
 import ComponentsTabContainer from "./ComponentsTabContainer";
 
 export const ComponentsFromSignatureTab = (props: DialogContentPropsType) => {

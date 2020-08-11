@@ -1,5 +1,5 @@
+import { SendModeValues } from "enums";
 import { partition } from "lodash";
-import { SendModeValues } from "../../../../../enums";
 import { File, FileMetaType } from "../../../../entities";
 import { sumFileSizes } from "../../../../helpers/file";
 

@@ -5,12 +5,12 @@ import { openFileDetailsAction } from "core/components/dialog/tabs/tableOfConten
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { GenericDocument, genericDocumentProxy } from "core/types";
-import { SitePaths, SpisumNames, SpisumNodeTypes } from "enums";
+import { SitePaths, SpisumNodeTypes } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
-import { alfrescoQuery, getQueryPath } from "share/utils/query";
+import { getRelativePath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
@@ -57,7 +57,7 @@ export const columns: DataColumn<GenericDocument>[] = [
     label: t(translationPath(lang.general.yearOfShredding))
   },
   {
-    isDate: true,
+    isDateTime: true,
     keys: [classPath(genericDocumentProxy.properties!.ssl!.shreddingDate).path],
     label: t(translationPath(lang.general.shreddingDate))
   },
@@ -70,38 +70,26 @@ export const columns: DataColumn<GenericDocument>[] = [
 
 const Component = () => {
   const dispatch = useDispatch();
-  const documentsPath = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        null,
-        SitePaths.Repository,
-        SitePaths.Documents,
-        SitePaths.Archived
-      )?.path || ""
-  );
-  const filesPath = useSelector(
-    (state: RootStateType) =>
-      getQueryPath(
-        state.loginReducer.global.paths,
-        null,
-        SitePaths.Repository,
-        SitePaths.Files,
-        SitePaths.Archived
-      )?.path || ""
+  const relativePath = useSelector((state: RootStateType) =>
+    getRelativePath(
+      state.loginReducer.global.paths,
+      null,
+      SitePaths.Repository,
+      SitePaths.Archived
+    )
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     if (row.nodeType === SpisumNodeTypes.Document) {
       dispatch(
         openDocumentWithSaveButtonsAction({
-          ...row,
           canUploadComponents: false,
+          data: row,
           isReadonly: true
         })
       );
     } else if (row.nodeType === SpisumNodeTypes.File) {
-      dispatch(openFileDetailsAction({ ...row, readonly: true }));
+      dispatch(openFileDetailsAction({ data: row, isReadonly: true }));
     }
   };
 
@@ -121,21 +109,15 @@ const Component = () => {
   return (
     <MenuLayout>
       <DocumentView
+        children={{
+          relativePath
+        }}
         columns={columns}
         controls={controls}
         customTitle={t(translationPath(lang.table.archivedDocumentsFiles))}
         defaultSortAsc={true}
         defaultSortColumn={defaultColumn}
         handleDoubleClick={dispatchOpenDialog}
-        search={{
-          query: {
-            query: alfrescoQuery({
-              paths: [documentsPath, filesPath],
-              type: [SpisumNodeTypes.Document, SpisumNodeTypes.File],
-              where: `${SpisumNames.IsInFile}:false`
-            })
-          }
-        }}
       />
     </MenuLayout>
   );

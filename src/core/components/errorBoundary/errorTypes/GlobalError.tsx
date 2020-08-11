@@ -1,20 +1,15 @@
 import { Button } from "@material-ui/core";
+import { OwnProps as ErrorBoundaryProps } from "core/components/errorBoundary/ErrorBoundary";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { translationPath } from "../../../../share/utils/getPath";
-import { lang, t } from "../../../../translation/i18n";
+import { translationPath } from "share/utils/getPath";
+import { lang, t } from "translation/i18n";
 import { callAsyncAction } from "../../../action";
 import { logoutAction } from "../../../features/logout/_actions";
 import { useStyles } from "../../dialog/Dialog.styles";
 import { ErrorBoundaryContainer, ErrorPic } from "../ErrorBoundary.styles";
 
-export interface OwnProps {
-  reloadTab?: VoidFunction;
-  clearErrorState: VoidFunction;
-  handleClose?: VoidFunction;
-}
-
-export const GlobalError = (props: OwnProps) => {
+export const GlobalError = (props: ErrorBoundaryProps) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const { clearErrorState } = props;

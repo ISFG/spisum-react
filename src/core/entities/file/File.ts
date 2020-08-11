@@ -3,6 +3,7 @@ import { isObject } from "lodash";
 import { createProxy, lastPathMember } from "share/utils/getPath";
 
 export type File = {
+  canBeSigned?: SslComponent["canBeSigned"];
   id: Node["id"];
   isReadable?: SslComponent["fileIsReadable"];
   name?: SslComponent["fileName"];

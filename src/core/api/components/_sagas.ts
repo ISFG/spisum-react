@@ -99,8 +99,9 @@ export function* watchComponentViewShipmentAction() {
   yield takeLatest(getType(componentViewShipmentAction.request), function* ({
     payload
   }: ActionType<typeof componentViewShipmentAction.request>) {
-    const { documentId, nodeId = "-root-", where } = payload;
+    const { documentId, nodeId = "-root-", where, include } = payload;
     let parentComponentResponse;
+
     if (documentId) {
       parentComponentResponse = yield call(
         fetchSaga,
@@ -108,6 +109,7 @@ export function* watchComponentViewShipmentAction() {
         "GET",
         {
           params: {
+            include: [...(include || []), "properties"].join(","),
             where
           } as Record<string, string>,
           urlWildCards: {
@@ -253,6 +255,7 @@ export function* watchComponentCreateAction() {
 
         yield put(
           componentCreateAction.success({
+            componentId,
             file: action.payload.file
           })
         );

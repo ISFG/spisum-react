@@ -2,11 +2,12 @@ import { Popper, Tooltip, Typography } from "@material-ui/core";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { MoreVert } from "@material-ui/icons";
 import React, { useState } from "react";
+import { ActionBarItem } from "./ActionBarItem";
 import {
-  ActionBarContainer, ActionBarItemElement,
+  ActionBarContainer,
+  ActionBarItemElement,
   ActionBarSection,
   ActionBarWrapper,
-  ExpandedItem,
   Path,
   PopoverDialog,
   Title
@@ -16,7 +17,6 @@ import {
   ControlsBarItemType,
   ControlsBarType
 } from "./_types";
-import { ActionBarItem } from "./ActionBarItem";
 
 export interface ActionBarProps<T> {
   breadcrumbs: string[];
@@ -74,7 +74,7 @@ const RenderAdditionalButtons = <T,>({
   return (
     <>
       <ActionBarItemElement xs="auto" item={true} onClick={onOpen}>
-        <Tooltip title="More actions" placement="top">
+        <Tooltip title="Další akce" placement="top">
           <MoreVert />
         </Tooltip>
       </ActionBarItemElement>
@@ -97,7 +97,7 @@ const renderActionButtons = <T,>(
       {control.items &&
         control.items.length &&
         renderButtons(props, filterActions(props.selected, control.items))()}
-      {control.more && control.more.length && (
+      {control.more?.length && filterActions(props.selected, control.more).length > 0 && (
         <RenderAdditionalButtons
           more={filterActions(props.selected, control.more)}
           props={props}

@@ -11,11 +11,11 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { dialogOpenConceptDetails } from "share/components/dialog/conceptDetailsDialog/_actions";
+import { handoverDocument } from "share/components/dialog/documentHandoverDialog/_actions";
 import { classPath, translationPath } from "share/utils/getPath";
 import { alfrescoQuery, getQueryPath } from "share/utils/query";
 import { isUserInLeadership } from "share/utils/user";
 import { lang, t, withTranslation } from "translation/i18n";
-import { handoverDocument } from "../../../../../share/components/dialog/documentHandoverDialog/_actions";
 
 const defaultColumn: DataColumn<GenericDocument> = {
   getValue: (x) =>
@@ -24,7 +24,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
       : x?.properties?.ssl?.senderType === "own"
       ? x?.createdAt
       : x?.properties?.ssl?.deliveryDate,
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
     classPath(genericDocumentProxy.createdAt).path,
@@ -41,9 +41,9 @@ const getColumns = (session: SessionType): DataColumn<GenericDocument>[] => {
     },
     {
       getValue: (item) =>
-        item.nodeType === SpisumNodeTypes.Document
-          ? item.properties?.ssl?.ssid
-          : item.properties?.ssl?.fileIdentificator,
+        item.nodeType === SpisumNodeTypes.File
+          ? item.properties?.ssl?.fileIdentificator
+          : item.properties?.ssl?.ssid,
       keys: [
         classPath(genericDocumentProxy.properties!.ssl!.ssid).path,
         classPath(genericDocumentProxy.properties!.ssl!.fileIdentificator).path
@@ -145,20 +145,29 @@ const Component = () => {
         SitePaths.Closed
       )?.path || ""
   );
+  const pathConcepts = useSelector(
+    (state: RootStateType) =>
+      getQueryPath(
+        state.loginReducer.global.paths,
+        "*",
+        SitePaths.Evidence,
+        SitePaths.Concepts
+      )?.path || ""
+  );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     if (row.nodeType === SpisumNodeTypes.Document) {
       dispatch(
         openDocumentWithSaveButtonsAction({
-          ...row,
           canUploadComponents: false,
+          data: row,
           isReadonly: true
         })
       );
     } else if (row.nodeType === SpisumNodeTypes.File) {
-      dispatch(openFileDetailsAction({ ...row, readonly: true }));
+      dispatch(openFileDetailsAction({ data: row, isReadonly: true }));
     } else if (row.nodeType === SpisumNodeTypes.Concept) {
-      dispatch(dialogOpenConceptDetails({ ...row, isReadonly: true }));
+      dispatch(dialogOpenConceptDetails({ data: row, isReadonly: true }));
     }
   };
 
@@ -173,7 +182,7 @@ const Component = () => {
         },
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(handoverDocument(selected[0]));
+            dispatch(handoverDocument({ data: selected[0] }));
           },
           icon: <Send />,
           title: t(translationPath(lang.general.handOVer))
@@ -199,10 +208,15 @@ const Component = () => {
                 pathDocumentsForProcessing,
                 pathDocumentsProcessed,
                 pathFilesOpen,
-                pathFilesClosed
+                pathFilesClosed,
+                pathConcepts
               ],
-              type: [SpisumNodeTypes.Document, SpisumNodeTypes.File],
-              where: `${SpisumNames.Group}:'${activeGroup}'  AND ${SpisumNames.NextOwnerDecline}:true AND ${SpisumNames.IsInFile}:false`
+              type: [
+                SpisumNodeTypes.Concept,
+                SpisumNodeTypes.Document,
+                SpisumNodeTypes.File
+              ],
+              where: `${SpisumNames.Group}:'${activeGroup}' AND ${SpisumNames.NextOwnerDecline}:true AND ${SpisumNames.IsInFile}:false`
             })
           }
         }}

@@ -16,6 +16,7 @@ import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
 import { isUserInLeadership } from "share/utils/user";
+import { traverseNodeType } from "share/utils/utils";
 import { validateItems } from "share/utils/validation";
 import { lang, t, withTranslation } from "translation/i18n";
 import * as yup from "yup";
@@ -28,7 +29,7 @@ const defaultColumn: DataColumn<GenericDocument> = {
       : x?.properties?.ssl?.senderType === "own"
       ? x?.createdAt
       : x?.properties?.ssl?.deliveryDate,
-  isDate: true,
+  isDateTime: true,
   keys: [
     classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path,
     classPath(genericDocumentProxy.createdAt).path,
@@ -124,7 +125,7 @@ const Component = () => {
                 onSuccess,
                 payload: {
                   nodeId: selected[0].properties?.ssl?.takeRef,
-                  nodeType: selected[0].nodeType
+                  nodeType: traverseNodeType(selected[0].nodeType)
                 }
               })
             );
@@ -149,9 +150,12 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: {
-                  ...selected[0],
-                  id: selected[0].properties?.ssl?.takeRef || selected[0].id
+                dialogProps: {
+                  data: {
+                    ...selected[0],
+                    id: selected[0].properties?.ssl?.takeRef || selected[0].id,
+                    nodeType: traverseNodeType(selected[0].nodeType)
+                  }
                 },
                 dialogType: DialogType.DeclineHandover
               })

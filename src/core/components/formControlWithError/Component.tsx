@@ -3,10 +3,10 @@ import { useField, useFormikContext } from "formik";
 import React, { useEffect, useState } from "react";
 // will be some global format ?
 import { StyledFormControl } from "../dialog/Dialog.styles";
-import { FromControlComponent } from "./_types";
+import { FormControlComponent } from "./_types";
 
 interface OwnProps {
-  component?: FromControlComponent;
+  component?: FormControlComponent;
   name: string;
   children: JSX.Element[] | JSX.Element;
   className?: string;

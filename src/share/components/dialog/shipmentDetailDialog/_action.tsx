@@ -1,15 +1,15 @@
 import {
-  createSafeAction,
-  createSafeAsyncAction
-} from "share/utils/typesafeActions";
-import {
   NodeChildAssociationEntry,
   SslAnalog,
   SslDatabox,
   SslEmail,
   SslProperties
-} from "../../../../core/api/models";
-import { ErrorType } from "../../../../types";
+} from "core/api/models";
+import {
+  createSafeAction,
+  createSafeAsyncAction
+} from "share/utils/typesafeActions";
+import { ErrorType } from "types";
 import {
   ShipmentOpenDialogDetailActionType,
   ShipmentSaveRequestType

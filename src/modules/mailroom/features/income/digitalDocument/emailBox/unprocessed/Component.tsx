@@ -34,44 +34,58 @@ import {
 } from "../../../_actions";
 
 const defaultColumn: DataColumn<EmailDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(emailDocumentProxy.properties!.ssl!.emailDeliveryDate).path],
   label: t(translationPath(lang.general.delivery))
 };
-
-const columns: DataColumn<EmailDocument>[] = [
-  {
-    keys: [classPath(emailDocumentProxy.properties!.ssl!.emailSubject).path],
-    label: t(translationPath(lang.general.subject))
-  },
-  {
-    getValue: (item) =>
-      `${item.properties?.ssl?.emailSender}${
-        !isEmptyString(item.properties?.ssl?.emailSenderName)
-          ? ` (${item.properties?.ssl?.emailSenderName})`
-          : ""
-      }`,
-    keys: [
-      classPath(emailDocumentProxy.properties!.ssl!.emailSender).path,
-      classPath(emailDocumentProxy.properties!.ssl!.emailSenderName).path
-    ],
-    label: t(translationPath(lang.general.sender))
-  },
-  defaultColumn,
-  {
-    keys: [
-      classPath(emailDocumentProxy.properties!.ssl!.emailAttachmentsCount).path
-    ],
-    label: t(translationPath(lang.general.attachmentsCount))
-  }
-];
 
 const Component = () => {
   const dispatch = useDispatch();
   const [refreshPending, setRefreshPending] = useState<boolean>(false);
 
+  const emailAccounts = useSelector(
+    (state: RootStateType) => state.emailReducer.emailAccounts
+  );
+
+  const columns: DataColumn<EmailDocument>[] = [
+    {
+      keys: [classPath(emailDocumentProxy.properties!.ssl!.emailSubject).path],
+      label: t(translationPath(lang.general.subject))
+    },
+    {
+      getValue: (item) =>
+        `${item.properties?.ssl?.emailSender}${
+          !isEmptyString(item.properties?.ssl?.emailSenderName)
+            ? ` (${item.properties?.ssl?.emailSenderName})`
+            : ""
+        }`,
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.emailSender).path,
+        classPath(emailDocumentProxy.properties!.ssl!.emailSenderName).path
+      ],
+      label: t(translationPath(lang.general.sender))
+    },
+    defaultColumn,
+    {
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.emailAttachmentsCount)
+          .path
+      ],
+      label: t(translationPath(lang.general.attachmentsCount))
+    }
+  ];
+
+  if (emailAccounts?.length > 1) {
+    columns.push({
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.emailRecipient).path
+      ],
+      label: t(translationPath(lang.general.recipient))
+    });
+  }
+
   const dispatchOpenDialog: (row: EmailDocument) => void = (row) => {
-    dispatch(dialogOpenEmailDetails(row));
+    dispatch(dialogOpenEmailDetails({ data: row }));
   };
 
   const onSuccess = (payload: RefreshStatusPayload) => {
@@ -144,7 +158,8 @@ const Component = () => {
                 dialogType: DialogType.RegisterEmail,
                 document: selected[0] as EmailDocument,
                 documentType: DocumentType.Digital,
-                nodeType: SpisumNodeTypes.Email
+                nodeType: SpisumNodeTypes.Email,
+                sitePath: SitePaths.Unprocessed
               })
             );
           },
@@ -155,7 +170,7 @@ const Component = () => {
           action: (selected: EmailDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.DontRegisterDocument
               })
             );
@@ -167,7 +182,7 @@ const Component = () => {
           action: (selected: EmailDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.IncompleteDocument
               })
             );

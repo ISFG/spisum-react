@@ -13,6 +13,7 @@ export type ComponentsTabStateType = Readonly<{
 
 export type ReadonlyControlsType = (handlers: {
   handleSign: (selected: File[]) => void;
+  signer: boolean;
 }) => ControlsBarType<File>;
 
 export type SelectedComponentsFnType = (components: File[]) => void;
@@ -21,4 +22,5 @@ export type SelectedComponentFnType = (components: File) => void;
 
 export type ControlsType = (handlers: {
   handleSign: SelectedComponentsFnType;
+  signer: boolean;
 }) => ControlsBarType<File>;

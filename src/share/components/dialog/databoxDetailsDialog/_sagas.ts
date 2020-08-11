@@ -6,31 +6,31 @@ import { DataboxDocument } from "core/types";
 import { put, takeLatest } from "redux-saga/effects";
 import { getType } from "typesafe-actions";
 import {
-  DailogOpenDataboxDetailsActionType,
-  dialogOpenDataboxDetails
+  dialogOpenDataboxDetails,
+  DialogOpenDataboxDetailsActionType
 } from "./_actions";
 
 export function* watchDialogOpenDataboxDetailsAction() {
   yield takeLatest(getType(dialogOpenDataboxDetails), function* ({
     payload
-  }: DailogOpenDataboxDetailsActionType) {
-    const document = payload as DataboxDocument;
+  }: DialogOpenDataboxDetailsActionType) {
+    const data = payload.data as DataboxDocument;
 
     yield put(
       metaFormAction__Update({
-        documentId: document.id,
+        documentId: data.id,
         formValues: {
-          ...document.properties?.ssl,
-          databoxDeliveryTime: document.properties?.ssl?.databoxDeliveryDate
+          ...data.properties?.ssl,
+          databoxDeliveryTime: data.properties?.ssl?.databoxDeliveryDate
         } as SslDatabox,
         isLoading: false,
-        nodeType: document.nodeType
+        nodeType: data.nodeType
       })
     );
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: DialogType.DataboxDetails
       })
     );

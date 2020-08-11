@@ -23,6 +23,7 @@ export const DontRegisterDocumentForm = React.memo(
           component={TextField}
           data-test-id="meta-input-reason"
           name={lastPathMember(dontRegisterDocumentFormValuesProxy.reason).path}
+          required={true}
           type="text"
           label={t(translationPath(lang.general.reasonForNotRegister))}
         />

@@ -35,7 +35,7 @@ const Component = ({
       {({ setFieldValue }: FormState<ShipmentFormValues>) => {
         return (
           <Form className={dialogClasses.form}>
-            <BaseUpperForm initialValues={initialValues} readonly={readonly}  />
+            <BaseUpperForm initialValues={initialValues} readonly={readonly} />
             <StyledFieldWide
               component={TextField}
               data-test-id="detail-shipment-databox-toHands"
@@ -69,7 +69,7 @@ const Component = ({
                 disabled={true}
                 InputLabelProps={{ className: "MuiFormLabel-root--long-text" }}
                 name={
-                  lastPathMember(shipmentDocumentProxy.properties?.ssl?.fake)
+                  lastPathMember(shipmentDocumentProxy.properties?.ssl?.sender)
                     .path
                 }
                 type="text"
@@ -260,7 +260,7 @@ const Component = ({
                 disabled={true}
                 className={dialogClasses.gapRight}
                 name={
-                  lastPathMember(shipmentDocumentProxy.properties?.ssl?.sender)
+                  lastPathMember(shipmentDocumentProxy.properties?.ssl?.itemId)
                     .path
                 }
                 type="text"

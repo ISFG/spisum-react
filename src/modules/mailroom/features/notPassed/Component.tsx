@@ -4,7 +4,7 @@ import { ControlsBarType, DataColumn } from "core/components/dataTable/_types";
 import DocumentView from "core/components/documentView";
 import MenuLayout from "core/components/layout/MenuLayout";
 import { GenericDocument, genericDocumentProxy } from "core/types";
-import { SenderType, SitePaths, SpisumGroups, SpisumNodeTypes } from "enums";
+import { SenderType, SitePaths, SpisumNodeTypes } from "enums";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
@@ -14,7 +14,7 @@ import { getRelativePath } from "share/utils/query";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path],
   label: t(translationPath(lang.general.deliveryDate))
 };
@@ -51,18 +51,17 @@ const Component = () => {
   const relativePath = useSelector((state: RootStateType) =>
     getRelativePath(
       state.loginReducer.global.paths,
-      SpisumGroups.Mailroom,
-      SitePaths.Evidence,
-      SitePaths.Documents,
-      SitePaths.ForProcessing
+      null,
+      SitePaths.Mailroom,
+      SitePaths.NotPassed
     )
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
     dispatch(
       openDocumentWithSaveButtonsAction({
-        ...row,
         canUploadComponents: false,
+        data: row,
         hideShipmentsTab: true
       })
     );
@@ -80,7 +79,7 @@ const Component = () => {
         },
         {
           action: (selected: GenericDocument[]) => {
-            dispatch(handoverDocument(selected[0]));
+            dispatch(handoverDocument({ data: selected[0] }));
           },
           icon: <Send />,
           title: t(translationPath(lang.general.handOVer))

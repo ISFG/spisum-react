@@ -1,4 +1,5 @@
 import { put, takeLatest } from "@redux-saga/core/effects";
+import { fetchDocument } from "core/action";
 import {
   documentCreateActionType,
   openDocumentDetailsAction,
@@ -18,7 +19,8 @@ import { FormValues } from "core/components/MetaForm/_types";
 import { notificationAction } from "core/components/notifications/_actions";
 import { NotificationSeverity } from "core/components/notifications/_types";
 import { transformDocumentPayload } from "core/mappers/api/document";
-import { DeliveryMode, DocumentType, SpisumNodeTypes } from "enums";
+import { GenericDocument } from "core/types";
+import { DeliveryMode, DocumentType, SitePaths, SpisumNodeTypes } from "enums";
 import { pick } from "lodash";
 import { documentRegisterAction } from "modules/mailroom/features/income/_actions";
 import { translationPath } from "share/utils/getPath";
@@ -38,26 +40,48 @@ export function* watchDialogOpenDocumentWithSaveButtonsDetailsAction() {
   yield takeLatest(getType(openDocumentWithSaveButtonsAction), function* ({
     payload
   }: ActionType<typeof openDocumentWithSaveButtonsAction>) {
-    const form = payload?.properties?.ssl?.form;
+    const document = payload.data as GenericDocument;
+    const form = document?.properties?.ssl?.form;
+
+    yield put(
+      fetchDocument.request({
+        id: document.id,
+        nodeType: document.nodeType
+      })
+    );
+
+    const [successResponse, , success] = yield handleResponse(fetchDocument);
+
+    if (!success) {
+      yield put(
+        notificationAction({
+          message: t(translationPath(lang.dialog.notifications.actionFailed)),
+          severity: NotificationSeverity.Error
+        })
+      );
+      return;
+    }
 
     yield put(
       metaFormAction__Update({
-        documentId: payload.id,
+        documentId: successResponse.entry?.id,
         formValues: {
           ...(form
             ? defaultDialogFormValues[form]
             : defaultDialogFormValues.analog),
-          ...transformDocumentPayload(payload.properties?.ssl as SslProperties),
-          createdAt: payload.createdAt || null,
-          owner: payload.properties?.cm?.owner?.displayName
+          ...transformDocumentPayload(
+            successResponse.entry?.properties?.ssl as SslProperties
+          ),
+          createdAt: successResponse.entry?.createdAt || null,
+          owner: successResponse.entry?.properties?.cm?.owner?.displayName
         },
-        nodeType: payload.nodeType
+        nodeType: successResponse.entry?.nodeType
       })
     );
 
     yield put(
       dialogOpenAction({
-        dialogData: payload,
+        dialogProps: payload,
         dialogType: form
           ? DialogTypeWithSaveButtons[form]
           : DialogTypeWithSaveButtons.analog
@@ -70,25 +94,47 @@ export function* watchDialogOpenReadOnlyDetailsAction() {
   yield takeLatest(getType(openDocumentReadonlyDetailsAction), function* ({
     payload
   }: ActionType<typeof openDocumentReadonlyDetailsAction>) {
-    const form = payload?.properties?.ssl?.form;
+    const document = payload?.data as GenericDocument;
+    const form = document?.properties?.ssl?.form;
+
+    yield put(
+      fetchDocument.request({
+        id: document.id,
+        nodeType: document.nodeType
+      })
+    );
+
+    const [successResponse, , success] = yield handleResponse(fetchDocument);
+
+    if (!success) {
+      yield put(
+        notificationAction({
+          message: t(translationPath(lang.dialog.notifications.actionFailed)),
+          severity: NotificationSeverity.Error
+        })
+      );
+      return;
+    }
 
     yield put(
       metaFormAction__Update({
-        documentId: payload.id,
+        documentId: successResponse.entry?.id,
         formValues: {
           ...(form
             ? defaultDialogFormValues[form]
             : defaultDialogFormValues.analog),
-          ...transformDocumentPayload(payload.properties?.ssl as SslProperties),
-          owner: payload.properties?.cm?.owner?.displayName
+          ...transformDocumentPayload(
+            successResponse.entry?.properties?.ssl as SslProperties
+          ),
+          owner: successResponse.entry?.properties?.cm?.owner?.displayName
         },
-        nodeType: payload.nodeType
+        nodeType: successResponse.entry?.nodeType
       })
     );
 
     yield put(
       dialogOpenAction({
-        dialogData: {
+        dialogProps: {
           ...payload,
           isReadonly: true
         },
@@ -102,25 +148,47 @@ export function* watchOpenDialogDetailsAction() {
   yield takeLatest(getType(openDocumentDetailsAction), function* ({
     payload
   }: ActionType<typeof openDocumentDetailsAction>) {
-    const form = payload?.properties?.ssl?.form;
+    const document = payload?.data as GenericDocument;
+    const form = document?.properties?.ssl?.form;
+
+    yield put(
+      fetchDocument.request({
+        id: document.id,
+        nodeType: document.nodeType
+      })
+    );
+
+    const [successResponse, , success] = yield handleResponse(fetchDocument);
+
+    if (!success) {
+      yield put(
+        notificationAction({
+          message: t(translationPath(lang.dialog.notifications.actionFailed)),
+          severity: NotificationSeverity.Error
+        })
+      );
+      return;
+    }
 
     yield put(
       metaFormAction__Update({
-        documentId: payload.id,
+        documentId: successResponse.entry?.id,
         formValues: {
           ...(form
             ? defaultDialogFormValues[form]
             : defaultDialogFormValues.analog),
-          ...transformDocumentPayload(payload.properties?.ssl as SslProperties),
-          owner: payload.properties?.cm?.owner?.displayName
+          ...transformDocumentPayload(
+            successResponse.entry?.properties?.ssl as SslProperties
+          ),
+          owner: successResponse.entry?.properties?.cm?.owner?.displayName
         },
-        nodeType: payload.nodeType
+        nodeType: successResponse.entry?.nodeType
       })
     );
 
     yield put(
       dialogOpenAction({
-        dialogData: {
+        dialogProps: {
           ...payload,
           useAutoSave: true
         },
@@ -149,7 +217,6 @@ const getDefaultValuesForEmailAndDataboxRegisterForm = (
     form: DocumentType.Digital,
     pid: "",
     sender: "",
-    senderRegistrationNumber: "",
     senderType: "individual",
     sender_address: "",
     sender_contact: "",
@@ -166,18 +233,14 @@ export function* watchRegisterDocumentAction() {
   yield takeLatest(getType(documentRegisterAction), function* ({
     payload
   }: ActionType<typeof documentRegisterAction>) {
-    const { dialogType, documentType, document, nodeType, onSuccess } = payload;
-
-    yield put(
-      dialogOpenAction({
-        dialogData: {
-          disableConverIcon: true,
-          onSuccess,
-          useAutoSave: true
-        },
-        dialogType
-      })
-    );
+    const {
+      dialogType,
+      documentType,
+      document,
+      nodeType,
+      onSuccess,
+      sitePath
+    } = payload;
 
     yield put(
       documentCreateActionType.request({
@@ -239,6 +302,18 @@ export function* watchRegisterDocumentAction() {
         ) as FormValues,
         isLoading: false,
         nodeType: successResponse.entry.nodeType
+      })
+    );
+
+    yield put(
+      dialogOpenAction({
+        dialogProps: {
+          disableConverIcon: true,
+          onSuccess,
+          saveOnOpen: sitePath === SitePaths.Unprocessed,
+          useAutoSave: true
+        },
+        dialogType
       })
     );
   });

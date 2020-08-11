@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { GroupMember, Person } from "core/api/models";
+import { ApiURL } from "core/apiURL";
 import Datepicker from "core/components/datepicker/Component";
 import {
   StyledAutocomplete,
@@ -9,15 +10,13 @@ import {
 } from "core/components/dialog/Dialog.styles";
 import FormikAutocomplete from "core/components/formikAutocomplete/Component";
 import { FormState } from "core/components/reactiveFormik/_types";
-import { AutocompleteFetcher } from "core/services/AutocompleteFetcher";
+import { fetchSuggestions } from "core/helpers/api/AutocompleteFetcher";
 import { Field, Form } from "formik";
 import { TextField } from "formik-material-ui";
 import { debounce } from "lodash";
 import React, { useCallback, useState } from "react";
 import { lastPathMember, translationPath } from "share/utils/getPath";
 import { lang, t } from "translation/i18n";
-import { ApiURL } from "../../../../core/apiURL";
-import { getService } from "../../../../core/features/dependencyInjection";
 import {
   PromoteConceptToDocumentFormValues,
   PromoteConceptToDocumentFormValuesProxy
@@ -31,7 +30,6 @@ export const PromoteConceptToDocumentForm = React.memo(
     setFieldValue
   }: FormState<PromoteConceptToDocumentFormValues>) => {
     const dialogClasses = useStyles();
-    const peopleAutocomplete = getService(AutocompleteFetcher);
 
     const [autocompleteLoading, setAutocompleteLoading] = useState<boolean>(
       false
@@ -47,7 +45,7 @@ export const PromoteConceptToDocumentForm = React.memo(
     const getAutocompleteOptions = useCallback(
       debounce(async (term: string) => {
         setAutocompleteLoading(true);
-        const entities = await peopleAutocomplete.fetchSuggestions<Person>({
+        const entities = await fetchSuggestions<Person>({
           term,
           url: ApiURL.QUERIES_PEOPLE
         });

@@ -16,7 +16,7 @@ import { lang, t, withTranslation } from "translation/i18n";
 import { documentRegisterAction } from "../income/_actions";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDate: true,
+  isDateTime: true,
   keys: [classPath(genericDocumentProxy.properties!.ssl!.deliveryDate).path],
   label: t(translationPath(lang.general.deliveryDate))
 };
@@ -76,7 +76,7 @@ const Component = () => {
           nodeType: SpisumNodeTypes.Email
         })
       );
-    } else if (row.properties?.ssl?.documentType === DocumentType.Daatabox) {
+    } else if (row.properties?.ssl?.documentType === DocumentType.Databox) {
       dispatch(
         documentRegisterAction({
           dialogType: DialogType.RegisterDatabox,
@@ -86,7 +86,7 @@ const Component = () => {
         })
       );
     } else {
-      dispatch(openDocumentDetailsAction(row));
+      dispatch(openDocumentDetailsAction({ data: row }));
     }
   };
 
@@ -106,7 +106,7 @@ const Component = () => {
           action: (selected: GenericDocument[]) => {
             dispatch(
               dialogOpenAction({
-                dialogData: selected[0],
+                dialogProps: { data: selected[0] },
                 dialogType: DialogType.Cancel
               })
             );

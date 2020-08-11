@@ -28,6 +28,7 @@ import { watchApiEvidenceSaga } from "./api/evidence/_sagas";
 import { watchApiFileActions } from "./api/file/_sagas";
 import { watchGetGroupMembers } from "./api/groups/members/_sagas";
 import { watchGetGroups } from "./api/groups/_sagas";
+import { watchDailyImprint } from "./api/imprint/_sagas";
 import {
   watchFetchNodeChildrenAction,
   watchNodeContentAction,
@@ -45,15 +46,12 @@ import {
   watchUploadFileAction,
   watchUploadFileWithNotificationAction
 } from "./features/fileUpload/_sagas";
-import { watchHttpSagas } from "./features/httpClient/_sagas";
 import { watchCoreActions } from "./_sagas";
-import { watchDiscardCancelDialogAction } from "../share/components/dialog/cancelDiscardDialog/_sagas";
-import { watchDailyImprint } from "./api/imprint/_sagas";
 
 export default [
   // http sagas should be always first, other sagas rely on correct http client settings
   // which are handled by the http sagas
-  watchHttpSagas,
+  watchCoreActions,
   // here we can sort by alphabet
   watchAddComments,
   watchApiConceptComponentsSagas,
@@ -68,13 +66,11 @@ export default [
   watchComponentUpdateAction,
   watchComponentViewAction,
   watchComponentViewShipmentAction,
-  watchCoreActions,
   watchDataboxDontRegister,
   watchDocumentViewAction,
   watchEmailDontRegister,
   watchEmailIncomplete,
   watchEvidenceCancelDialogAction,
-  watchDiscardCancelDialogAction,
   watchFetchComments,
   watchFetchNodeChildrenAction,
   watchFetchSearchAction,
