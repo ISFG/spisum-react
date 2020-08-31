@@ -13,8 +13,8 @@ import { lang, t } from "translation/i18n";
 import CancelDialog from "../cancelDialog/CancelDialog";
 
 const actionDiscardList = {
-  [SpisumNodeTypes.DocumentRM]: documentCancelDiscardActionType,
-  [SpisumNodeTypes.FileRM]: fileCancelDiscardActionType
+  [SpisumNodeTypes.Document]: documentCancelDiscardActionType,
+  [SpisumNodeTypes.File]: fileCancelDiscardActionType
 };
 
 export const cancelDiscardDialog: DialogContentType = {
@@ -26,7 +26,7 @@ export const cancelDiscardDialog: DialogContentType = {
           return;
         }
         const nodeType = (dialogProps.data as GenericDocument).nodeType;
-        const id = (dialogProps.data as GenericDocument)?.properties?.ssl?.ref;
+        const id = (dialogProps.data as GenericDocument)?.id;
 
         if (!id || !actionDiscardList.hasOwnProperty(nodeType)) {
           return;

@@ -5,8 +5,8 @@ export enum AlfrescoNames {
 export enum Associations {
   Documents = "ssl:documents",
   Components = "ssl:components",
-  Databox = "ssl:databoxAttachments",
-  Email = "ssl:emailAttachments",
+  Databox = "ssl:digitalDeliveryAttachments",
+  Email = "ssl:digitalDeliveryAttachments",
   ShipmentsCreated = "ssl:shipmentsCreated",
   ShipmentsReturned = "ssl:shipmentsReturned"
 }
@@ -53,7 +53,6 @@ export enum SitePaths {
   Rented = "Rented",
   Repository = "Repository",
   Returned = "Returned",
-  RM = "RM",
   SignatureBook = "SignatureBook",
   Shredded = "Shredded",
   ShreddingPlan = "ShreddingPlan",
@@ -87,7 +86,6 @@ export enum SpisumNames {
   Borrower = "ssl:borrower",
   BorrowGroup = "ssl:borrowGroup",
   CancelDate = "ssl:cancelDate",
-  CutOffDate = "rma:cutOffDate",
   DispatchedDate = "ssl:dispatchedDate",
   ForSignatureGroup = "ssl:forSignatureGroup",
   Group = "ssl:group",
@@ -100,7 +98,8 @@ export enum SpisumNames {
   NextOwnerDecline = "ssl:nextOwnerDecline",
   RetentionProposal = "ssl:retentionProposal",
   ReturnedForReworkDate = "ssl:returnedForReworkDate",
-  SendMode = "ssl:sendMode"
+  SendMode = "ssl:sendMode",
+  ShreddingYear = "ssl:shreddingYear"
 }
 
 export enum SpisumNamesWithoutPrefix {
@@ -111,10 +110,8 @@ export enum SpisumNodeTypes {
   Concept = "ssl:concept",
   Databox = "ssl:databox",
   Document = "ssl:document",
-  DocumentRM = "ssl:documentRM",
   Email = "ssl:email",
   File = "ssl:file",
-  FileRM = "ssl:fileRM",
   Shipment = "ssl:shipment",
   ShipmentDatabox = "ssl:shipmentDatabox",
   ShipmentEmail = "ssl:shipmentEmail",

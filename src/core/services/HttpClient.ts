@@ -149,6 +149,7 @@ export class HttpClient {
       ...(this.config.authToken && {
         Authorization: `Basic ${this.config.authToken}`
       }),
+      Domain: this.appStore.store.getState().loginReducer?.session?.domain,
       Group: this.appStore.store.getState().loginReducer?.session?.activeGroup
     } as HeadersInit;
 

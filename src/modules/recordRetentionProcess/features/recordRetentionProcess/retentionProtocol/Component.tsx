@@ -9,9 +9,11 @@ import { useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
 import { alfrescoQuery, getQueryPath } from "share/utils/query";
+import { convertDateToYear } from "share/utils/utils";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
+  getValue: (x) => convertDateToYear(x?.properties?.ssl?.shreddingYear),
   keys: [classPath(genericDocumentProxy.properties!.ssl!.shreddingYear).path],
   label: t(translationPath(lang.general.yearOfShredding))
 };
@@ -88,8 +90,8 @@ const Component = () => {
       getQueryPath(
         state.loginReducer.global.paths,
         null,
-        SitePaths.RM,
-        SitePaths.ShreddingPlan
+        SitePaths.Repository,
+        SitePaths.Stored
       )?.path || ""
   );
 

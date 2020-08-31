@@ -24,7 +24,7 @@ export const IncompleteDocumentContent: DialogContentType["content"] = ({
   const initialValues: IncompleteDocumentFormValues = {
     body: "",
     recipient: document.properties?.ssl?.emailSender || "",
-    subject: document.properties?.ssl?.emailSubject || ""
+    subject: document.properties?.ssl?.digitalDeliverySubject || ""
   };
 
   return (

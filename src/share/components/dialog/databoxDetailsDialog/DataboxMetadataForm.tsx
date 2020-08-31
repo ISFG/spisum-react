@@ -26,7 +26,7 @@ const ReadonlyDataboxMetadataForm = ({
 
   const mappedValues = {
     ...initialValues,
-    databoxDeliveryTime: initialValues.databoxDeliveryDate
+    databoxDeliveryTime: initialValues.digitalDeliveryDeliveryDate
   };
 
   return (
@@ -40,7 +40,10 @@ const ReadonlyDataboxMetadataForm = ({
           <Datepicker
             className={classes.gapRight}
             data-test-id="meta-input-deliveryDate"
-            name={lastPathMember(sslDataboxPropsProxy.databoxDeliveryDate).path}
+            name={
+              lastPathMember(sslDataboxPropsProxy.digitalDeliveryDeliveryDate)
+                .path
+            }
             disabled={true}
             label={t(translationPath(lang.general.deliveryDate))}
           />
@@ -56,7 +59,9 @@ const ReadonlyDataboxMetadataForm = ({
             component={TextField}
             data-test-id="meta-input-attachmentsCount"
             name={
-              lastPathMember(sslDataboxPropsProxy.databoxAttachmentsCount).path
+              lastPathMember(
+                sslDataboxPropsProxy.digitalDeliveryAttachmentsCount
+              ).path
             }
             type="number"
             disabled={true}
@@ -74,7 +79,9 @@ const ReadonlyDataboxMetadataForm = ({
         <StyledFieldWide
           component={TextField}
           data-test-id="meta-input-subject"
-          name={lastPathMember(sslDataboxPropsProxy.databoxSubject).path}
+          name={
+            lastPathMember(sslDataboxPropsProxy.digitalDeliverySubject).path
+          }
           type="text"
           disabled={true}
           label={t(translationPath(lang.general.subject))}

@@ -80,6 +80,7 @@ describe("Login page tests", () => {
           error: null,
           pending: true,
           session: {
+            domain: "",
             groups: [],
             myGroups: [],
             remember: null,
@@ -112,6 +113,7 @@ describe("Login page tests", () => {
           },
           pending: true,
           session: {
+            domain: "",
             groups: [],
             myGroups: [],
             remember: null,
@@ -148,6 +150,7 @@ describe("Login page tests", () => {
           },
           pending: true,
           session: {
+            domain: "",
             groups: [],
             myGroups: [],
             remember: null,

@@ -17,13 +17,7 @@ export const shreddingDiscardDialog: DialogContentType = {
   actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.buttons.confirm)),
-      ({
-        dispatch,
-        channels,
-        dialogProps,
-        onClose,
-        buttonState
-      }) => {
+      ({ dispatch, channels, dialogProps, onClose, buttonState }) => {
         buttonState.setIsPending(true);
 
         const onSuccess = () => {
@@ -38,9 +32,9 @@ export const shreddingDiscardDialog: DialogContentType = {
         const { nodeType } = dialogProps.data as GenericDocument;
 
         const action =
-          nodeType === SpisumNodeTypes.DocumentRM
+          nodeType === SpisumNodeTypes.Document
             ? documentShreddingDiscardActionType
-            : nodeType === SpisumNodeTypes.FileRM
+            : nodeType === SpisumNodeTypes.File
             ? fileShreddingDiscardAction
             : undefined;
 
@@ -48,7 +42,7 @@ export const shreddingDiscardDialog: DialogContentType = {
           return;
         }
 
-        const id = (dialogProps.data as GenericDocument)?.properties?.ssl?.ref;
+        const id = (dialogProps.data as GenericDocument)?.id;
 
         if (!id) {
           return;

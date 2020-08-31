@@ -15,15 +15,9 @@ export const createRetentionProposalDialog: DialogContentType = {
   actions: () => [
     secondaryAction(
       t(translationPath(lang.dialog.form.confirm)),
-      ({
-        dispatch,
-        channels,
-        dialogProps,
-        onClose,
-        buttonState
-      }) => {
+      ({ dispatch, channels, dialogProps, onClose, buttonState }) => {
         const ids = (dialogProps.data as GenericDocument[]).map(
-          (selected) => selected?.properties?.ssl?.ref
+          (selected) => selected?.id
         );
 
         if (!ids.length) return;

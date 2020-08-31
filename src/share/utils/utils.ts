@@ -1,5 +1,17 @@
 import { SpisumNodeTypes } from "enums";
 
+export const convertDateToYear = (value?: string | Date | null) => {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    return new Date(value).getFullYear();
+  } catch {
+    return null;
+  }
+};
+
 export const isEmptyString = (value: string | null | undefined) =>
   !value || value.toString().trim() === "";
 
@@ -14,6 +26,11 @@ export const getColorByChar = (char: string) => {
     return colorList[char];
   }
   return "#FFFFFF";
+};
+
+export const getDomainFromUsername = (username: string) => {
+  const index = username.indexOf("@");
+  return index === -1 ? "" : username.substr(index + 1);
 };
 
 export function mapKey2Value<T, K>(
@@ -70,16 +87,14 @@ export const traverseNodeType = (
   if (
     nodeType === SpisumNodeTypes.Document ||
     nodeType === SpisumNodeTypes.TakeDocumentForProcessing ||
-    nodeType === SpisumNodeTypes.TakeDocumentProcessed ||
-    nodeType === SpisumNodeTypes.DocumentRM
+    nodeType === SpisumNodeTypes.TakeDocumentProcessed
   ) {
     return SpisumNodeTypes.Document;
   }
   if (
     nodeType === SpisumNodeTypes.File ||
     nodeType === SpisumNodeTypes.TakeFileOpen ||
-    nodeType === SpisumNodeTypes.TakeFileClosed ||
-    nodeType === SpisumNodeTypes.FileRM
+    nodeType === SpisumNodeTypes.TakeFileClosed
   ) {
     return SpisumNodeTypes.File;
   }

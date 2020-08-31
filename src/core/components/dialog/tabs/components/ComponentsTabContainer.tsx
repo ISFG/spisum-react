@@ -397,6 +397,7 @@ const ComponentsTabContainer = React.memo(
         !document?.isLocked &&
         component?.fileIsInOutputFormat !== "yes" &&
         component?.fileIsInOutputFormat !== "impossible" &&
+        component?.fileIsInOutputFormat !== "converted" &&
         !isReadOnly
       );
     };

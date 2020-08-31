@@ -25,9 +25,15 @@ export interface FetchReturnType {
 }
 
 export const getURL = (suffixURL: string) => {
-  return `${process.env.REACT_APP_PROTOCOL || "http"}://${
-    process.env.REACT_APP_API_URL
-  }${suffixURL}`;
+  let domain = process.env.REACT_APP_API_URL;
+  let protocol = process.env.REACT_APP_PROTOCOL;
+  if (!domain) {
+    domain = window.location.host;
+  }
+  if (!protocol) {
+    protocol = window.location.protocol.trimEnd(":");
+  }
+  return `${protocol}://${domain}${suffixURL}`;
 };
 
 export const replaceWildCards = (suffixURL: string, wildCards?: WildCards) => {
@@ -43,49 +49,6 @@ export const replaceWildCards = (suffixURL: string, wildCards?: WildCards) => {
 
 export const createAuthorization64 = (token: string) =>
   btoa(`ROLE_TICKET:${token}`);
-
-export const createRequest = ({
-  activeGroup,
-  contentType = "application/json",
-  bodyFormData,
-  bodyJSON,
-  method,
-  privateToken
-}: {
-  activeGroup: string;
-  contentType?: string;
-  bodyFormData?: FormData;
-  bodyJSON?: object;
-  method: string;
-  privateToken: string;
-}): RequestInit => {
-  method = method.toUpperCase();
-  const methodIsPost = method === "POST";
-  const headers: HeadersInit = {
-    Accept: "application/json",
-    ...(privateToken && {
-      Authorization: `Basic ${createAuthorization64(privateToken)}`
-    }),
-    ...(methodIsPost && bodyJSON && { "Content-Type": `${contentType}` }),
-    ...(activeGroup && {
-      Group: activeGroup
-    })
-  } as HeadersInit;
-
-  let body = null;
-
-  if (methodIsPost && bodyJSON) {
-    body = JSON.stringify(bodyJSON);
-  } else if (methodIsPost && bodyFormData) {
-    body = bodyFormData;
-  }
-
-  return {
-    body,
-    headers,
-    method
-  };
-};
 
 export const createUrl = (
   suffixURL: string,

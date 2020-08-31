@@ -37,6 +37,7 @@ export const initialState: LoginStateType = {
   logoutPending: false,
   pending: false,
   session: {
+    domain: "",
     groups: [],
     isAdmin: false,
     myGroups: [],
@@ -163,6 +164,7 @@ export default (
         ...state,
         session: {
           ...state.session,
+          domain: action.payload.domain,
           isAdmin: action.payload.isAdmin,
           token: action.payload.token
         }

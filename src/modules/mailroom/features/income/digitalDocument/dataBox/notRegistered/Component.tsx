@@ -19,7 +19,8 @@ import { documentRegisterAction } from "../../../_actions";
 const defaultColumn: DataColumn<DataboxDocument> = {
   isDateTime: true,
   keys: [
-    classPath(dataBoxDocumentProxy.properties!.ssl!.databoxDeliveryDate).path
+    classPath(dataBoxDocumentProxy.properties!.ssl!.digitalDeliveryDeliveryDate)
+      .path
   ],
   label: t(translationPath(lang.general.delivery))
 };
@@ -42,7 +43,8 @@ const Component = () => {
   const columns: DataColumn<DataboxDocument>[] = [
     {
       keys: [
-        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxSubject).path
+        classPath(dataBoxDocumentProxy.properties!.ssl!.digitalDeliverySubject)
+          .path
       ],
       label: t(translationPath(lang.general.subject))
     },
@@ -55,15 +57,17 @@ const Component = () => {
     defaultColumn,
     {
       keys: [
-        classPath(dataBoxDocumentProxy.properties!.ssl!.databoxAttachmentsCount)
-          .path
+        classPath(
+          dataBoxDocumentProxy.properties!.ssl!.digitalDeliveryAttachmentsCount
+        ).path
       ],
       label: t(translationPath(lang.general.attachmentsCount))
     },
     {
       keys: [
         classPath(
-          dataBoxDocumentProxy.properties!.ssl!.databoxNotRegisteredReason
+          dataBoxDocumentProxy.properties!.ssl!
+            .digitalDeliveryNotRegisteredReason
         ).path
       ],
       label: t(translationPath(lang.general.notRegisterReason))

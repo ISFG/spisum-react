@@ -19,21 +19,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
 import { alfrescoQuery, getQueryPath } from "share/utils/query";
+import { convertDateToYear } from "share/utils/utils";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
+  getValue: (x) => convertDateToYear(x?.properties?.ssl?.shreddingYear),
   keys: [classPath(genericDocumentProxy.properties!.ssl!.shreddingYear).path],
   label: t(translationPath(lang.general.yearOfShredding))
 };
 
 export const columns: DataColumn<GenericDocument>[] = [
   {
-    keys: [classPath(genericDocumentProxy.properties!.ssl!.pidRef).path],
+    keys: [classPath(genericDocumentProxy.properties!.ssl!.pid).path],
     label: t(translationPath(lang.general.identifier))
   },
   {
     getValue: (item) =>
-      item.nodeType === SpisumNodeTypes.DocumentRM
+      item.nodeType === SpisumNodeTypes.Document
         ? item.properties?.ssl?.ssid
         : item.properties?.ssl?.fileIdentificator,
     keys: [
@@ -74,19 +76,18 @@ const Component = () => {
       getQueryPath(
         state.loginReducer.global.paths,
         null,
-        SitePaths.RM,
-        SitePaths.ShreddingPlan
+        SitePaths.Repository,
+        SitePaths.Stored
       )?.path || ""
   );
 
   const dispatchOpenDialog: (row: GenericDocument) => void = (row) => {
-    if (row.nodeType === SpisumNodeTypes.DocumentRM) {
+    if (row.nodeType === SpisumNodeTypes.Document) {
       dispatch(
         openDocumentWithSaveButtonsAction({
           canUploadComponents: false,
           data: {
             ...row,
-            id: row?.properties?.ssl?.ref || row.id,
             nodeType: SpisumNodeTypes.Document
           },
           hideManageShipmentsIcon: true,
@@ -94,12 +95,11 @@ const Component = () => {
           isReadonly: true
         })
       );
-    } else if (row.nodeType === SpisumNodeTypes.FileRM) {
+    } else if (row.nodeType === SpisumNodeTypes.File) {
       dispatch(
         openFileDetailsAction({
           data: {
             ...row,
-            id: row?.properties?.ssl?.ref || row.id,
             nodeType: SpisumNodeTypes.File
           },
           hideManageShipmentsIcon: true,
@@ -142,10 +142,7 @@ const Component = () => {
             dispatch(
               dialogOpenAction({
                 dialogProps: {
-                  data: {
-                    ...selected[0],
-                    id: selected[0].properties?.ssl?.ref || selected[0].id
-                  }
+                  data: selected[0]
                 },
                 dialogType: DialogType.ChangeFileMark
               })
@@ -252,8 +249,10 @@ const Component = () => {
           query: {
             query: alfrescoQuery({
               paths: [path],
-              type: [SpisumNodeTypes.DocumentRM, SpisumNodeTypes.FileRM],
-              where: `${SpisumNames.CutOffDate}:[* TO *]`
+              type: [SpisumNodeTypes.Document, SpisumNodeTypes.File],
+              where: `${
+                SpisumNames.ShreddingYear
+              }:[MIN TO '${new Date().toISOString()}']`
             })
           }
         }}

@@ -29,6 +29,7 @@ describe("ResolveDefaultRoute test", () => {
             error: null,
             pending: true,
             session: {
+              domain: "",
               groups: [],
               myGroups: [],
               remember: null,
@@ -83,6 +84,7 @@ describe("ResolveDefaultRoute test", () => {
             error: null,
             pending: true,
             session: {
+              domain: "",
               groups: [],
               myGroups: [],
               remember: null,

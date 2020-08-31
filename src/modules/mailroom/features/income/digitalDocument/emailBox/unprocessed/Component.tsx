@@ -35,7 +35,10 @@ import {
 
 const defaultColumn: DataColumn<EmailDocument> = {
   isDateTime: true,
-  keys: [classPath(emailDocumentProxy.properties!.ssl!.emailDeliveryDate).path],
+  keys: [
+    classPath(emailDocumentProxy.properties!.ssl!.digitalDeliveryDeliveryDate)
+      .path
+  ],
   label: t(translationPath(lang.general.delivery))
 };
 
@@ -49,7 +52,10 @@ const Component = () => {
 
   const columns: DataColumn<EmailDocument>[] = [
     {
-      keys: [classPath(emailDocumentProxy.properties!.ssl!.emailSubject).path],
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.digitalDeliverySubject)
+          .path
+      ],
       label: t(translationPath(lang.general.subject))
     },
     {
@@ -68,8 +74,9 @@ const Component = () => {
     defaultColumn,
     {
       keys: [
-        classPath(emailDocumentProxy.properties!.ssl!.emailAttachmentsCount)
-          .path
+        classPath(
+          emailDocumentProxy.properties!.ssl!.digitalDeliveryAttachmentsCount
+        ).path
       ],
       label: t(translationPath(lang.general.attachmentsCount))
     }

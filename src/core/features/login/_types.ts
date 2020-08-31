@@ -43,6 +43,7 @@ export interface LoginResponseType {
 }
 
 export interface LoginSetSessionType {
+  domain: string;
   isAdmin: boolean;
   token: string;
 }
@@ -98,6 +99,7 @@ export type SessionRememberType = {
 } | null;
 
 export interface SessionType {
+  domain: string;
   isAdmin?: boolean;
   activeGroup?: string;
   groups: UserGroupType[];

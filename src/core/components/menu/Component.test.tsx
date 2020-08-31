@@ -123,6 +123,7 @@ describe("Menu test", () => {
             error: null,
             pending: true,
             session: {
+              domain: "",
               groups: [],
               myGroups: [],
               remember: null,

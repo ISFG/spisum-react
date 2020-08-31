@@ -21,7 +21,8 @@ export function* watchDialogOpenEmailDetailsAction() {
         documentId: document.id,
         formValues: {
           ...document.properties?.ssl,
-          emailDeliveryTime: document.properties?.ssl?.emailDeliveryDate
+          emailDeliveryTime:
+            document.properties?.ssl?.digitalDeliveryDeliveryDate
         } as SslEmail,
         isLoading: false,
         nodeType: document.nodeType

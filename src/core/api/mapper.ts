@@ -1,8 +1,6 @@
 export const databoxMapper = {
   databoxAcceptanceTime: "acceptanceTime",
   databoxAllowSubstDelivery: "allowSubstDelivery",
-  databoxAttachmentsCount: "attachmentsCount",
-  databoxDeliveryDate: "deliveryDate",
   databoxLegalTitleLaw: "legalTitleLaw",
   databoxLegalTitlePar: "legalTitlePar",
   databoxLegalTitlePoint: "legalTitlePoint",
@@ -10,7 +8,6 @@ export const databoxMapper = {
   databoxLegalTitleYear: "legalTitleYear",
   databoxMessageState: "messageState",
   databoxMessageType: "messageType",
-  databoxNotRegisteredReason: "notRegisteredReason",
   databoxPersonalDelivery: "personalDelivery",
   databoxRecipient: "recipient",
   databoxRecipientAddress: "recipientAddress",
@@ -24,18 +21,21 @@ export const databoxMapper = {
   databoxSenderIdent: "senderIdent",
   databoxSenderName: "senderName",
   databoxSenderRefNumber: "senderRefNumber",
-  databoxSubject: "subject",
-  databoxToHands: "toHands"
+  databoxToHands: "toHands",
+  digitalDeliveryAttachmentsCount: "attachmentsCount",
+  digitalDeliveryDeliveryDate: "deliveryDate",
+  digitalDeliveryNotRegisteredReason: "notRegisteredReason",
+  digitalDeliverySubject: "subject"
 };
 
 export const emailMapper = {
-  emailAttachmentsCount: "attachmentsCount",
-  emailDeliveryDate: "deliveryDate",
+  digitalDeliveryAttachmentsCount: "attachmentsCount",
+  digitalDeliveryDeliveryDate: "deliveryDate",
+  digitalDeliveryNotRegisteredReason: "notRegisteredReason",
+  digitalDeliverySubject: "subject",
   emailMessageId: "messageId",
-  emailNotRegisteredReason: "notRegisteredReason",
   emailRecipient: "recipient",
   emailRecipientName: "recipientName",
   emailSender: "sender",
-  emailSenderName: "senderName",
-  emailSubject: "subject"
+  emailSenderName: "senderName"
 };

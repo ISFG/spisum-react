@@ -28,6 +28,7 @@ describe("Router test", () => {
             error: null,
             pending: true,
             session: {
+              domain: "",
               groups: [],
               myGroups: [],
               remember: null,

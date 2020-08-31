@@ -36,9 +36,9 @@ export const changeToSDialog: DialogContentType = {
         const { nodeType } = dialogProps.data as GenericDocument;
 
         const action =
-          nodeType === SpisumNodeTypes.DocumentRM
+          nodeType === SpisumNodeTypes.Document
             ? documentChangeToSAction
-            : nodeType === SpisumNodeTypes.FileRM
+            : nodeType === SpisumNodeTypes.File
             ? fileChangeToSAction
             : undefined;
 
@@ -46,7 +46,7 @@ export const changeToSDialog: DialogContentType = {
           return;
         }
 
-        const id = (dialogProps.data as GenericDocument)?.properties?.ssl?.ref;
+        const id = (dialogProps.data as GenericDocument)?.id;
 
         if (!id) {
           return;

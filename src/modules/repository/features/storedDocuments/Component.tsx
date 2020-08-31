@@ -17,10 +17,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootStateType } from "reducers";
 import { classPath, translationPath } from "share/utils/getPath";
 import { getRelativePath } from "share/utils/query";
+import { convertDateToYear } from "share/utils/utils";
 import { lang, t, withTranslation } from "translation/i18n";
 
 const defaultColumn: DataColumn<GenericDocument> = {
-  isDateTime: true,
+  getValue: (x) => convertDateToYear(x?.properties?.ssl?.shreddingYear),
   keys: [classPath(genericDocumentProxy.properties!.ssl!.shreddingYear).path],
   label: t(translationPath(lang.general.yearOfShredding))
 };

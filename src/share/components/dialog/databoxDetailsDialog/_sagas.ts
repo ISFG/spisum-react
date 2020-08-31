@@ -21,7 +21,7 @@ export function* watchDialogOpenDataboxDetailsAction() {
         documentId: data.id,
         formValues: {
           ...data.properties?.ssl,
-          databoxDeliveryTime: data.properties?.ssl?.databoxDeliveryDate
+          databoxDeliveryTime: data.properties?.ssl?.digitalDeliveryDeliveryDate
         } as SslDatabox,
         isLoading: false,
         nodeType: data.nodeType

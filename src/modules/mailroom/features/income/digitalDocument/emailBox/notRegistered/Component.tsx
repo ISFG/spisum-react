@@ -26,7 +26,10 @@ const NotRegisteredTranslationMap = {
 
 const defaultColumn: DataColumn<EmailDocument> = {
   isDateTime: true,
-  keys: [classPath(emailDocumentProxy.properties!.ssl!.emailDeliveryDate).path],
+  keys: [
+    classPath(emailDocumentProxy.properties!.ssl!.digitalDeliveryDeliveryDate)
+      .path
+  ],
   label: t(translationPath(lang.general.delivery))
 };
 
@@ -43,7 +46,10 @@ const Component = () => {
 
   const columns: DataColumn<EmailDocument>[] = [
     {
-      keys: [classPath(emailDocumentProxy.properties!.ssl!.emailSubject).path],
+      keys: [
+        classPath(emailDocumentProxy.properties!.ssl!.digitalDeliverySubject)
+          .path
+      ],
       label: t(translationPath(lang.general.subject))
     },
     {
@@ -62,29 +68,31 @@ const Component = () => {
     defaultColumn,
     {
       keys: [
-        classPath(emailDocumentProxy.properties!.ssl!.emailAttachmentsCount)
-          .path
+        classPath(
+          emailDocumentProxy.properties!.ssl!.digitalDeliveryAttachmentsCount
+        ).path
       ],
       label: t(translationPath(lang.general.attachmentsCount))
     },
     {
       getValue: (item) => {
-        if (!item.properties?.ssl?.emailNotRegisteredReason) {
+        if (!item.properties?.ssl?.digitalDeliveryNotRegisteredReason) {
           return "";
         }
 
         const translation =
           NotRegisteredTranslationMap[
-            item.properties?.ssl?.emailNotRegisteredReason
+            item.properties?.ssl?.digitalDeliveryNotRegisteredReason
           ];
 
         return translation
           ? `${t(translationPath(translation))}`
-          : item.properties?.ssl?.emailNotRegisteredReason;
+          : item.properties?.ssl?.digitalDeliveryNotRegisteredReason;
       },
       keys: [
-        classPath(emailDocumentProxy.properties!.ssl!.emailNotRegisteredReason)
-          .path
+        classPath(
+          emailDocumentProxy.properties!.ssl!.digitalDeliveryNotRegisteredReason
+        ).path
       ],
       label: t(translationPath(lang.general.notRegisterReason))
     }

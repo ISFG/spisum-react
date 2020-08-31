@@ -10,6 +10,7 @@ import { secretEncrypt } from "share/utils/byteOperations";
 import { convertResponse } from "share/utils/convert";
 import { fetchSaga } from "share/utils/fetch";
 import { translationPath } from "share/utils/getPath";
+import { getDomainFromUsername } from "share/utils/utils";
 import { lang, t } from "translation/i18n";
 import { ActionType, getType } from "typesafe-actions";
 import { RootStateType } from "../../../reducers";
@@ -79,6 +80,7 @@ export function* watchLoginAction() {
 
     yield put(
       loginSetSessionTokenAction({
+        domain: getDomainFromUsername(username),
         isAdmin: response.isAdmin,
         token: response.token
       })

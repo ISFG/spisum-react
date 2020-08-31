@@ -26,7 +26,7 @@ const ReadonlyEmailMetadataForm = ({
 
   const mappedValues = {
     ...initialValues,
-    emailDeliveryTime: initialValues.emailDeliveryDate
+    emailDeliveryTime: initialValues.digitalDeliveryDeliveryDate
   };
 
   return (
@@ -40,7 +40,10 @@ const ReadonlyEmailMetadataForm = ({
           <Datepicker
             className={classes.gapRight}
             data-test-id="meta-input-deliveryDate"
-            name={lastPathMember(sslEmailPropsProxy.emailDeliveryDate).path}
+            name={
+              lastPathMember(sslEmailPropsProxy.digitalDeliveryDeliveryDate)
+                .path
+            }
             disabled={true}
             label={t(translationPath(lang.general.deliveryDate))}
           />
@@ -55,7 +58,10 @@ const ReadonlyEmailMetadataForm = ({
           <StyledField
             component={TextField}
             data-test-id="meta-input-attachmentsCount"
-            name={lastPathMember(sslEmailPropsProxy.emailAttachmentsCount).path}
+            name={
+              lastPathMember(sslEmailPropsProxy.digitalDeliveryAttachmentsCount)
+                .path
+            }
             type="number"
             disabled={true}
             label={t(translationPath(lang.general.attachmentsCount))}
@@ -72,7 +78,7 @@ const ReadonlyEmailMetadataForm = ({
         <StyledFieldWide
           component={TextField}
           data-test-id="meta-input-subject"
-          name={lastPathMember(sslEmailPropsProxy.emailSubject).path}
+          name={lastPathMember(sslEmailPropsProxy.digitalDeliverySubject).path}
           type="text"
           disabled={true}
           label={t(translationPath(lang.general.subject))}

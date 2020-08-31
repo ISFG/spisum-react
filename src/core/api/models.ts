@@ -251,7 +251,7 @@ export type SslProperties = {
   settleTime?: Date;
   settleToDate?: Date | null;
   shreddingDate?: string | Date | null;
-  shreddingYear?: number;
+  shreddingYear?: string | Date | null;
   signedAuthor?: string;
   signedDate?: Date;
   sip?: string;
@@ -277,23 +277,21 @@ export type SslProperties = {
 };
 
 export type SslEmail = SslProperties & {
-  emailAttachmentsCount: number;
-  emailDeliveryDate: Date;
+  digitalDeliveryAttachmentsCount: number;
+  digitalDeliveryDeliveryDate: Date;
+  digitalDeliverySubject: string;
   emailDeliveryTime?: Date;
   emailMessageId?: string;
-  emailNotRegisteredReason?: string;
+  digitalDeliveryNotRegisteredReason?: string;
   emailRecipient?: string;
   emailRecipientName?: string;
   emailSender: string;
   emailSenderName?: string;
-  emailSubject: string;
 };
 
 export type SslDatabox = SslProperties & {
   databoxAcceptanceTime?: Date;
   databoxAllowSubstDelivery?: boolean;
-  databoxAttachmentsCount: number;
-  databoxDeliveryDate: Date;
   databoxDeliveryTime?: Date;
   databoxLegalTitleLaw?: string;
   databoxLegalTitlePar?: string;
@@ -302,7 +300,6 @@ export type SslDatabox = SslProperties & {
   databoxLegalTitleYear?: string;
   databoxMessageState?: string;
   databoxMessageType?: string;
-  databoxNotRegisteredReason?: string;
   databoxPersonalDelivery?: boolean;
   databoxRecipient: string;
   databoxRecipientAddress?: string;
@@ -316,8 +313,11 @@ export type SslDatabox = SslProperties & {
   databoxSenderIdent?: string;
   databoxSenderName: string;
   databoxSenderRefNumber?: string;
-  databoxSubject: string;
   databoxToHands?: string;
+  digitalDeliveryAttachmentsCount: number;
+  digitalDeliveryDeliveryDate: Date;
+  digitalDeliveryNotRegisteredReason?: string;
+  digitalDeliverySubject: string;
 };
 
 export type CmProperties = {

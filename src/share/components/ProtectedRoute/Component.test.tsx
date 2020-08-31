@@ -28,6 +28,7 @@ describe("ProtectedRoute test", () => {
             error: null,
             pending: true,
             session: {
+              domain: "",
               groups: [],
               myGroups: [],
               remember: null,
@@ -70,6 +71,7 @@ describe("ProtectedRoute test", () => {
             error: null,
             pending: true,
             session: {
+              domain: "",
               groups: [],
               myGroups: [],
               remember: null,
